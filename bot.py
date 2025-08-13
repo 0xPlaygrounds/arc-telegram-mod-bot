@@ -4,7 +4,7 @@ import json
 import unicodedata
 from dotenv import load_dotenv
 from telegram import Update, ChatPermissions, ParseMode
-from telegram.ext import Updater, MessageHandler, Filters, CallbackContext, CommandHandler, Filters
+from telegram.ext import Updater, MessageHandler, Filters, CallbackContext, CommandHandler
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone, time
 from combot.scheduled_warnings import messages
@@ -31,6 +31,16 @@ MUTE_PHRASES_FILE = "blocklists/mute_phrases.txt"
 DELETE_PHRASES_FILE = "blocklists/delete_phrases.txt"
 WHITELIST_PHRASES_FILE = "whitelists/whitelist_phrases.txt"
 
+# Normalization helper must be defined before use
+def normalize_name(name: str) -> str:
+    name = unicodedata.normalize("NFKD", name)
+    name = ''.join(c for c in name if not unicodedata.combining(c))
+    name = re.sub(r'[^a-zA-Z0-9_ ]+', '', name)
+    name = name.lower()
+    name = name.strip()
+    name = re.sub(r'\s+', ' ', name)
+    return name
+
 # Suspicious names to auto-ban
 SUSPICIOUS_USERNAMES = [normalize_name(name) for name in [
     "dev", "developer", "admin", "mod", "owner", "arc", "arc_agent", "arc agent",
@@ -55,15 +65,6 @@ def get_admin_ids(context, chat_id):
     # Fetch chat admins dynamically
     chat_admins = context.bot.get_chat_administrators(chat_id)
     return [admin.user.id for admin in chat_admins]
-
-def normalize_name(name: str) -> str:
-    name = unicodedata.normalize("NFKD", name)
-    name = ''.join(c for c in name if not unicodedata.combining(c))
-    name = re.sub(r'[^a-zA-Z0-9_ ]+', '', name)
-    name = name.lower()
-    name = name.strip()
-    name = re.sub(r'\s+', ' ', name)
-    return name
 
 def get_admin_names(context, chat_id):
     """Return a list of normalized full names (lowercased, whitespace cleaned) for all human admins."""
