@@ -1,9 +1,10 @@
 import os
 import re
 import json
+import unicodedata
 from dotenv import load_dotenv
 from telegram import Update, ChatPermissions, ParseMode
-from telegram.ext import Updater, MessageHandler, Filters, CallbackContext, CommandHandler, JobQueue
+from telegram.ext import Updater, MessageHandler, Filters, CallbackContext, CommandHandler, Filters
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone, time
 from combot.scheduled_warnings import messages
@@ -18,18 +19,26 @@ GROUP_CHAT_ID = os.getenv('GROUP_CHAT_ID')
 # File path for filters
 FILTERS_FILE = "filters/filters.json"
 
+# File path for metrics
+METRICS_FILE = "filters/metrics.json"
+
 # File path for accompanying filter media
 MEDIA_FOLDER = "media"
 
 # File paths for phrases
 BAN_PHRASES_FILE = "blocklists/ban_phrases.txt"
 MUTE_PHRASES_FILE = "blocklists/mute_phrases.txt"
-DELETE_PHRASES = "blocklists/delete_phrases.txt"
-WHITELIST_PHRASES = "whitelists/whitelist_phrases.txt"
+DELETE_PHRASES_FILE = "blocklists/delete_phrases.txt"
+WHITELIST_PHRASES_FILE = "whitelists/whitelist_phrases.txt"
 
 # Suspicious names to auto-ban
-SUSPICIOUS_USERNAMES = [
-    "dev", "developer", "admin", "mod", "owner", "arc", "arc_agent", "arc agent" "arch_agent", "arch agent", "support", "helpdesk", "administrator", "arc admin", "arc_admin"
+SUSPICIOUS_USERNAMES = [normalize_name(name) for name in [
+    "dev", "developer", "admin", "mod", "owner", "arc", "arc_agent", "arc agent",
+    "arch_agent", "arch agent", "support", "helpdesk", "administrator", "arc admin", "arc_admin"
+]]
+
+BIO_PHRASES = [
+    "verify in bio", "link in bio", "read bio", "look at bio", "info in bio"
 ]
 
 # Mute duration in seconds (3 days)
@@ -42,40 +51,86 @@ SPAM_TRACKER = defaultdict(lambda: deque(maxlen=SPAM_THRESHOLD))
 SPAM_RECORDS = {} # stores flagged spam messages for 5 minutes
 SPAM_RECORD_DURATION = timedelta(minutes=5)
 
-# combot security message index
-message_index = 0
+def get_admin_ids(context, chat_id):
+    # Fetch chat admins dynamically
+    chat_admins = context.bot.get_chat_administrators(chat_id)
+    return [admin.user.id for admin in chat_admins]
+
+def normalize_name(name: str) -> str:
+    name = unicodedata.normalize("NFKD", name)
+    name = ''.join(c for c in name if not unicodedata.combining(c))
+    name = re.sub(r'[^a-zA-Z0-9_ ]+', '', name)
+    name = name.lower()
+    name = name.strip()
+    name = re.sub(r'\s+', ' ', name)
+    return name
+
+def get_admin_names(context, chat_id):
+    """Return a list of normalized full names (lowercased, whitespace cleaned) for all human admins."""
+    chat_admins = context.bot.get_chat_administrators(chat_id)
+    return [normalize_name(admin.user.full_name) for admin in chat_admins if not admin.user.is_bot]
 
 # combot security message
-def post_security_message(context: CallbackContext):
-    global message_index
-    message = messages[message_index]
-    sent_message = context.bot.send_message(
-        chat_id=GROUP_CHAT_ID, 
-        text=message, 
-        parse_mode=ParseMode.HTML
-    )
-    # Pin the sent message
-    context.bot.pin_chat_message(
-        chat_id=GROUP_CHAT_ID, 
-        message_id=sent_message.message_id, 
-        disable_notification=True  # No loud ping
-    )
-    message_index = (message_index + 1) % len(messages)
-
-# combot brand assets
-def post_brand_assets(context: CallbackContext):
-    for message in brand_assets_messages:
+def post_security_message(context: CallbackContext, index: int):
+    try:
+        chat = context.bot.get_chat(GROUP_CHAT_ID)
+        pinned = chat.pinned_message
+        if pinned:
+            try:
+                context.bot.unpin_chat_message(chat_id=GROUP_CHAT_ID, message_id=pinned.message_id)
+            except Exception as e:
+                print(f"[Security] Failed to unpin message: {e}")
+            try:
+                context.bot.delete_message(chat_id=GROUP_CHAT_ID, message_id=pinned.message_id)
+            except Exception as e:
+                print(f"[Security] Failed to delete message: {e}")
+    except Exception as e:
+        print(f"[Security] Failed to retrieve chat or pinned message: {e}")
+    try:
+        message = messages[index]
         sent_message = context.bot.send_message(
             chat_id=GROUP_CHAT_ID, 
             text=message, 
             parse_mode=ParseMode.HTML
         )
-        # Pin the sent message
         context.bot.pin_chat_message(
             chat_id=GROUP_CHAT_ID, 
             message_id=sent_message.message_id, 
             disable_notification=True
         )
+    except Exception as e:
+        print(f"[Security] Failed to pin message: {e}")
+
+# combot brand assets
+def post_brand_assets(context: CallbackContext, index: int = 0):
+    try:
+        chat = context.bot.get_chat(GROUP_CHAT_ID)
+        pinned = chat.pinned_message
+        if pinned:
+            try:
+                context.bot.unpin_chat_message(chat_id=GROUP_CHAT_ID, message_id=pinned.message_id)
+            except Exception as e:
+                print(f"[Brand Assets] Failed to unpin message: {e}")
+            try:
+                context.bot.delete_message(chat_id=GROUP_CHAT_ID, message_id=pinned.message_id)
+            except Exception as e:
+                print(f"[Brand Assets] Failed to delete message: {e}")
+    except Exception as e:
+        print(f"[Brand Assets] Failed to retrieve chat or pinned message: {e}")
+    try:
+        message = brand_assets_messages[index]
+        sent_message = context.bot.send_message(
+            chat_id=GROUP_CHAT_ID,
+            text=message,
+            parse_mode=ParseMode.HTML
+        )
+        context.bot.pin_chat_message(
+            chat_id=GROUP_CHAT_ID,
+            message_id=sent_message.message_id,
+            disable_notification=True
+        )
+    except Exception as e:
+        print(f"[Brand Assets] Failed to send or pin message: {e}")
 
 # Load filters as dict
 def load_filters(file_path):
@@ -84,6 +139,13 @@ def load_filters(file_path):
 
 FILTERS = load_filters(FILTERS_FILE)
 
+# Load metrics 
+def load_metrics(file_path):
+    with open(file_path, 'r', encoding='utf-8') as file:
+        return json.load(file)
+
+METRICS = load_metrics(METRICS_FILE)
+
 # Load blocklist/whitelisted words/phrases from files
 def load_phrases(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -91,13 +153,19 @@ def load_phrases(file_path):
 
 BAN_PHRASES = load_phrases(BAN_PHRASES_FILE)
 MUTE_PHRASES = load_phrases(MUTE_PHRASES_FILE)
-DELETE_PHRASES = load_phrases(DELETE_PHRASES)
-WHITELIST_PHRASES = load_phrases(WHITELIST_PHRASES)
+DELETE_PHRASES = load_phrases(DELETE_PHRASES_FILE)
+WHITELIST_PHRASES = load_phrases(WHITELIST_PHRASES_FILE)
 
 def contains_multiplication_phrase(text):
     text = text.lower()
     # Match digit(s) possibly separated by spaces, next to an 'x'
     pattern = r"(?:\d\s*)+x|x\s*(?:\d\s*)+"
+    return re.search(pattern, text)
+
+def contains_give_sol_phrase(text):
+    text = text.lower()
+    # Match 'give' followed by a number and then 'sol' or 'solana'
+    pattern = r"give\s*(\d+)\s*(sol|solana)"
     return re.search(pattern, text)
 
 # check for spam
@@ -150,39 +218,162 @@ def cleanup_spam_records(context: CallbackContext):
     if not expired_messages:
         print("[CLEANUP] No expired spam messages to remove.")
 
+def contains_non_x_links(text: str) -> bool:
+    # Matches all URLs
+    url_pattern = r'(https?://[^\s]+)'
+    urls = re.findall(url_pattern, text)
+
+    for url in urls:
+        # Allow only Twitter/X links
+        if not re.search(r'https?://(www\.)?(x\.com|twitter\.com)/[^\s]+', url):
+            return True  # Found a non-X link
+    return False
+
+# Suspicious auto-ban function
+def handle_new_members(update, context):
+    message = update.message
+    if message is None or not message.new_chat_members:
+        return
+
+    chat_id = message.chat.id
+    admin_names = get_admin_names(context, chat_id)
+
+    for new_user in message.new_chat_members:
+        name = new_user.full_name or "No Name"
+        username = new_user.username or "No Username"
+        user_id = new_user.id
+
+        name_info = f"Name: {name}, Username: @{username}" if new_user.username else f"Name: {name} (no username)"
+        print(f"[JOIN] {name_info} (ID: {user_id})")
+
+        # Normalize names and usernames
+        name_norm = normalize_name(name)
+        username_norm = normalize_name(username)
+
+        if name_norm in admin_names:
+            try:
+                context.bot.ban_chat_member(chat_id, user_id)
+                print(f"[BANNED] Name '{name}' normalized to '{name_norm}' matches an admin name. Banned for impersonation.")
+                continue
+            except Exception as e:
+                print(f"[ERROR] Failed to ban user with admin name {user_id}: {e}")
+
+        # Check for suspicious keywords
+        if any(keyword in name_norm or keyword in username_norm for keyword in SUSPICIOUS_USERNAMES):
+            try:
+                context.bot.ban_chat_member(chat_id, user_id)
+                print(f"[BANNED] Suspicious user auto-banned: {name_info}")
+                continue
+            except Exception as e:
+                print(f"[ERROR] Failed to ban {user_id}: {e}")
+
+        # Check for bio phrases
+        if any(keyword in name_norm or keyword in username_norm for keyword in BIO_PHRASES):
+            try:
+                context.bot.ban_chat_member(chat_id, user_id)
+                print(f"[BANNED] User with suspicious name (bio phrase): {name_info}")
+            except Exception as e:
+                print(f"[ERROR] Failed to ban user with bio phrase in name {user_id}: {e}")
+
+def list_filters(update: Update, context: CallbackContext):
+    # Load the latest filters
+    with open(FILTERS_FILE, 'r', encoding='utf-8') as f:
+        filters = json.load(f)
+
+    # Get and sort all triggers alphabetically (removing leading slash only for sorting)
+    sorted_triggers = sorted(filters.keys(), key=lambda k: k.lstrip('/').lower())
+
+    # Re-apply slash only if the original trigger had it
+    formatted_triggers = [f"`{trigger}`" for trigger in sorted_triggers]
+
+    # Telegram messages max out at 4096 characters
+    response = "*Available Filters:*\n" + "\n".join(formatted_triggers)
+    if len(response) > 4000:
+        for i in range(0, len(formatted_triggers), 80):  # 80 items per message chunk
+            chunk = "*Available Filters:*\n" + "\n".join(formatted_triggers[i:i+80])
+            update.message.reply_text(chunk, parse_mode="Markdown")
+    else:
+        update.message.reply_text(response, parse_mode="Markdown")
 
 def check_message(update: Update, context: CallbackContext):
+    print(f"[GROUP MESSAGE] {update.message.text}")
     should_skip_spam_check = False
     
     message = update.message or update.channel_post  # Handle both messages and channel posts
+    if not message:
+        print("==== No message or channel post detected ====")
+        return
+    
+    message_text = message.text.lower()
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
     user = update.effective_user
-    message_text = message.text.lower()
 
     # Fetch chat admins to prevent acting on their messages
     chat_admins = context.bot.get_chat_administrators(chat_id)
     admin_ids = [admin.user.id for admin in chat_admins]
 
-    if not message or not message.text:
-        return  # Skip non-text or unsupported messages
+    # Normalize and fetch admin names for impersonation check
+    admin_names_normalized = get_admin_names(context, chat_id)
+    name_normalized = normalize_name(user.full_name)
+    username_normalized = normalize_name(user.username or "")
     
     # Ignore messages from admins
     if user_id not in admin_ids:
+
+        combined_identity = f"{name_normalized} {username_normalized}"
+
+        # Check for suspicious keywords
+        if any(keyword in combined_identity for keyword in SUSPICIOUS_USERNAMES):
+            try:
+                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
+                print(f"[BANNED] Suspicious keyword match in name/username: {user.full_name} (@{user.username})")
+                return
+            except Exception as e:
+                print(f"[ERROR] Failed to ban suspicious user {user_id}: {e}")
+
+        # Check for bio-like phrases
+        if any(keyword in combined_identity for keyword in BIO_PHRASES):
+            try:
+                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
+                print(f"[BANNED] Bio phrase detected in name/username: {combined_identity}")
+                return
+            except Exception as e:
+                print(f"[ERROR] Failed to ban user with bio phrase {user_id}: {e}")
+
+        # Check for impersonation
+        if name_normalized in admin_names_normalized:
+            try:
+                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
+                print(f"[BANNED] Impersonation detected: {user.full_name} matched an admin name")
+                return
+            except Exception as e:
+                print(f"[ERROR] Failed to ban impersonator {user_id}: {e}")
 
         # check if message is too short
         if len(message_text.strip()) < 2:
             context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
             return
-
-        # Auto-ban based on suspicious name or username
-        name_username = f"{user.full_name} {user.username or ''}".lower()
-        if any(keyword in name_username for keyword in SUSPICIOUS_USERNAMES):
-            context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
+        
+        # Delete message if it contains non-X links
+        if contains_non_x_links(message.text):
+            print(f"[LINK FILTER] Message from user {user_id} contains non-X links. Deleting.")
+            context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
             return
 
         # Check for multiplication spam
         if contains_multiplication_phrase(message_text):
+            context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+            return
+        
+        # Check for "give x sol" or "give x solana" spam
+        if contains_give_sol_phrase(message_text):
+            context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+            return
+        
+        # Block forwarded messages from non-admins
+        if message.forward_date or message.forward_from or message.forward_from_chat:
+            print(f"[FORWARD DETECTED] User {user_id} forwarded a message.")
             context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
             return
         
@@ -216,7 +407,6 @@ def check_message(update: Update, context: CallbackContext):
                         until_date = message.date + timedelta(seconds=MUTE_DURATION)
                         permissions = ChatPermissions(can_send_messages=False)
                         context.bot.restrict_chat_member(chat_id=chat_id, user_id=spammer_id, permissions=permissions, until_date=until_date)
-                        context.bot.send_message(chat_id=chat_id, text=f"User {spammer_id} has been muted for 3 days.")
                         print(f"Muted user {spammer_id} for spam message.")
                     except Exception as e:
                         print(f"Failed to mute spammer {spammer_id}: {e}")
@@ -276,48 +466,54 @@ def check_message(update: Update, context: CallbackContext):
             elif response_text:
                 message.reply_text(response_text)
             return  # Respond only once
+        
+    if re.search(r'(?<!\w)/metrics(?!\w)', message_text):
+        try:
+            with open("filters/metrics.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+            response_text = data.get("last_metrics_message", "⚠️ Metrics message is missing or invalid.")
+            message.reply_text(response_text)
+        except Exception as e:
+            message.reply_text(f"⚠️ Error reading metrics: {e}")
+        return
+    
+    if re.search(r'(?<!\w)/growth(?!\w)', message_text):
+        try:
+            with open("filters/growth.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+            response_text = data.get("last_weekly_metrics_message", "⚠️ Weekly metrics message is missing or invalid.")
+            message.reply_text(response_text)
+        except Exception as e:
+            message.reply_text(f"⚠️ Error reading weekly metrics: {e}")
+        return
+    
+    if re.search(r'(?<!\w)/posts(?!\w)', message_text):
+        try:
+            with open("filters/posts.json", "r", encoding="utf-8") as f:
+                data = json.load(f)
+            response_text = data.get("latest_posts_message", "⚠️ Latest posts message is missing or invalid.")
+            message.reply_text(response_text, disable_web_page_preview=False, parse_mode="Markdown")
+        except Exception as e:
+            message.reply_text(f"⚠️ Error reading posts: {e}")
+        return
 
-def list_filters(update: Update, context: CallbackContext):
-    # Load the latest filters
-    with open(FILTERS_FILE, 'r', encoding='utf-8') as f:
-        filters = json.load(f)
 
-    # Get and sort all triggers alphabetically (removing leading slash only for sorting)
-    sorted_triggers = sorted(filters.keys(), key=lambda k: k.lstrip('/').lower())
-
-    # Re-apply slash only if the original trigger had it
-    formatted_triggers = [f"`{trigger}`" for trigger in sorted_triggers]
-
-    # Telegram messages max out at 4096 characters
-    response = "*Available Filters:*\n" + "\n".join(formatted_triggers)
-    if len(response) > 4000:
-        for i in range(0, len(formatted_triggers), 80):  # 80 items per message chunk
-            chunk = "*Available Filters:*\n" + "\n".join(formatted_triggers[i:i+80])
-            update.message.reply_text(chunk, parse_mode="Markdown")
-    else:
-        update.message.reply_text(response, parse_mode="Markdown")
 
 def main():
+    print("starting bot")
     updater = Updater(BOT_TOKEN, use_context=True)
     dp = updater.dispatcher
-
-    # Get the JobQueue from the dispatcher
     job_queue = updater.job_queue
 
-    # Post security message every 4 hours
-    job_queue.run_repeating(post_security_message, interval=4 * 60 * 60, first=0)
-
-    # Post brand assets message at 00:00 and 12:00 (5:00 and 17:00 UTC)
-    job_queue.run_daily(post_brand_assets, time=time(hour=5, minute=0))
-    job_queue.run_daily(post_brand_assets, time=time(hour=17, minute=0))
-
-    # check for expiring SPAM_RECORDS
+    # Scheduled jobs
+    job_queue.run_daily(lambda context: post_security_message(context, 0), time=time(hour=8, minute=0))  
+    job_queue.run_daily(lambda context: post_security_message(context, 1), time=time(hour=16, minute=0))
+    job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
 
-    # output filters
+    # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
-
-    # Add text and command message handler
+    dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, handle_new_members))
     dp.add_handler(MessageHandler(Filters.text | Filters.command, check_message))
 
     updater.start_polling()

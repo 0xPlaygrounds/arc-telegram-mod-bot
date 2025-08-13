@@ -1,0 +1,78 @@
+name: Update Posts Data and Sync Branches
+
+on:
+  schedule:
+    - cron: "0 0,12 * * *"  # At midnight UTC and noon UTC daily (twice per day)
+  workflow_dispatch:
+
+jobs:
+  update-posts:
+    runs-on: ubuntu-latest
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      GROUP_CHAT_ID: ${{ secrets.GROUP_CHAT_ID }}
+      DISCORD_BOT_TOKEN: ${{ secrets.DISCORD_BOT_TOKEN }}
+      DISCORD_CHANNEL_ID: ${{ secrets.DISCORD_CHANNEL_ID }}
+      REPO: ${{ secrets.REPO }}
+      HELIUS_API_KEY: ${{ secrets.HELIUS_API_KEY }}
+      TOKEN_ADDRESS: ${{ secrets.TOKEN_ADDRESS }}
+
+    steps:
+      - name: Checkout repo (fetch all branches)
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Fetch all branches
+        run: git fetch --all
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        run: playwright install
+
+      - name: Checkout staging branch
+        run: |
+          git checkout staging
+          git pull origin staging --rebase
+
+      - name: Run posts update script
+        run: python api/posts.py
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push changes to staging
+        run: |
+          git add .
+          if ! git diff --cached --quiet; then
+            git commit -m "fetch latest posts"
+            git push origin staging
+          else
+            echo "No changes to commit on staging."
+          fi
+
+      - name: Checkout main branch
+        run: |
+          git checkout main
+          git pull origin main --rebase
+
+      - name: Merge staging into main (prefer staging changes)
+        run: |
+          git merge staging -X theirs --no-edit || {
+            echo "Merge failed, aborting."
+            git merge --abort
+            exit 1
+          }
+
+      - name: Push changes to main
+        run: git push origin main
