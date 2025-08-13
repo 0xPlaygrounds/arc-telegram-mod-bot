@@ -1,0 +1,596 @@
+{
+  "dataset_name": "x_follower_metrics",
+  "created_at": "2025-05-18T18:48:56.337126Z",
+  "entries": [
+    {
+      "id": "d08f3106-0e65-46f8-b36e-c1c9fb7c8cc8",
+      "timestamp": "2025-05-18T18:48:56.337126Z",
+      "followers": 50532
+    },
+    {
+      "id": "07271c51-8538-451e-ae27-cd0e34d62206",
+      "timestamp": "2025-05-18T18:51:59.695386Z",
+      "followers": 50532
+    },
+    {
+      "id": "1ce38992-65cd-4a7e-9cb9-cc24dab1b649",
+      "timestamp": "2025-05-18T20:23:46.285739Z",
+      "followers": 50527
+    },
+    {
+      "id": "d77c3e68-80c0-4023-8d4e-cebd25f7bd0c",
+      "timestamp": "2025-05-18T20:26:34.946099Z",
+      "followers": 50527
+    },
+    {
+      "id": "7602ab25-33d7-4a09-8106-48f4580e447e",
+      "timestamp": "2025-05-19T01:54:27.119728Z",
+      "followers": 50517
+    },
+    {
+      "id": "8211bc44-5d5b-484a-9d20-1d055ab46ddc",
+      "timestamp": "2025-05-19T01:57:36.787082Z",
+      "followers": 50517
+    },
+    {
+      "id": "29c8d265-892c-4d29-b089-fecd118aca98",
+      "timestamp": "2025-05-19T02:15:27.583908Z",
+      "followers": 50517
+    },
+    {
+      "id": "5670fa26-faa9-458a-b014-79f3a293a666",
+      "timestamp": "2025-05-19T02:19:44.794717Z",
+      "followers": 50517
+    },
+    {
+      "id": "df076df9-0a74-4913-b830-bb79fa89245a",
+      "timestamp": "2025-05-19T02:23:49.086542Z",
+      "followers": 50517
+    },
+    {
+      "id": "78088484-9920-4336-b5d3-04909896b6ab",
+      "timestamp": "2025-05-19T02:27:21.135409Z",
+      "followers": 50517
+    },
+    {
+      "id": "42acf3d4-4b10-4ec1-a2d8-041b1ce0c5c5",
+      "timestamp": "2025-05-19T02:28:37.037430Z",
+      "followers": 50517
+    },
+    {
+      "id": "6983b52b-d7e8-4f04-ba44-6c6f139977fe",
+      "timestamp": "2025-05-19T02:29:58.926090Z",
+      "followers": 50517
+    },
+    {
+      "id": "ad1d2fbe-cee3-4971-bad8-cfabec0a233f",
+      "timestamp": "2025-05-19T02:33:41.773314Z",
+      "followers": 50517
+    },
+    {
+      "id": "45ff0ddd-f464-4a54-b139-545ebd2924db",
+      "timestamp": "2025-05-19T02:35:05.022633Z",
+      "followers": 50517
+    },
+    {
+      "id": "0e0ac68e-ea45-4fa8-b684-7b594d149646",
+      "timestamp": "2025-05-19T02:37:00.800913Z",
+      "followers": 50517
+    },
+    {
+      "id": "71f14a16-ac19-49b2-95cf-6858382cc83f",
+      "timestamp": "2025-05-19T02:52:56.378596Z",
+      "followers": 50507
+    },
+    {
+      "id": "5cd67ba7-bd22-421a-8e05-f4388f50235d",
+      "timestamp": "2025-05-19T02:56:01.122092Z",
+      "followers": 50507
+    },
+    {
+      "id": "d2f2f69d-63a3-49f6-8dba-922e649a30d7",
+      "timestamp": "2025-05-19T02:59:17.119961Z",
+      "followers": 50508
+    },
+    {
+      "id": "1b46b5d9-9cb1-4d31-9cd6-0ee566979f5c",
+      "timestamp": "2025-05-19T03:01:06.530789Z",
+      "followers": 50508
+    },
+    {
+      "id": "9c9bf536-0e04-470c-9ecd-02b4d8868acd",
+      "timestamp": "2025-05-19T03:03:11.957845Z",
+      "followers": 50508
+    },
+    {
+      "id": "141d177a-9168-4923-b667-900f4ca6dfcc",
+      "timestamp": "2025-05-19T03:12:21.223994Z",
+      "followers": 50508
+    },
+    {
+      "id": "c21dc4d3-0767-43b2-8eb1-3faff1a1046f",
+      "timestamp": "2025-05-19T03:14:42.888228Z",
+      "followers": 50508
+    },
+    {
+      "id": "9599b831-2fd7-4a76-9b84-37101e470735",
+      "timestamp": "2025-05-19T03:17:08.088554Z",
+      "followers": 50508
+    },
+    {
+      "id": "b8dbf3ed-1786-45fe-94de-c9040cb123f6",
+      "timestamp": "2025-05-19T03:19:39.882183Z",
+      "followers": 50508
+    },
+    {
+      "id": "74dd0710-5a30-4520-974a-557e93422a3d",
+      "timestamp": "2025-05-19T03:22:39.348765Z",
+      "followers": 50508
+    },
+    {
+      "id": "c27ff161-1b35-47ea-86c7-8ea60be0cf57",
+      "timestamp": "2025-05-19T03:30:46.494605Z",
+      "followers": 50508
+    },
+    {
+      "id": "46607d33-52cc-42cf-9dfa-48578f653542",
+      "timestamp": "2025-05-19T03:31:56.698003Z",
+      "followers": 50508
+    },
+    {
+      "id": "92ae3959-718c-4f83-b048-8f26c8c0ec82",
+      "timestamp": "2025-05-19T03:38:22.141888Z",
+      "followers": 50507
+    },
+    {
+      "id": "f1eb273e-58c6-4146-8c5a-cb539cc9ccba",
+      "timestamp": "2025-05-19T05:46:21.696775Z",
+      "followers": 50512
+    },
+    {
+      "id": "f8cfede3-a890-4a92-8f49-a7b337a38330",
+      "timestamp": "2025-05-19T05:56:10.671640Z",
+      "followers": 50513
+    },
+    {
+      "id": "37604030-c750-40ab-b01f-b8f92d334256",
+      "timestamp": "2025-05-20T01:00:23.626883Z",
+      "followers": 50558
+    },
+    {
+      "id": "328e2e42-8077-4cde-9126-c82575830253",
+      "timestamp": "2025-05-20T15:36:14.156124Z",
+      "followers": 50585
+    },
+    {
+      "id": "f94ce87f-0af0-4806-8512-6fc3bb664038",
+      "timestamp": "2025-05-21T00:51:19.019296Z",
+      "followers": 50585
+    },
+    {
+      "id": "1180ed46-7ab8-4ca3-a462-46c894bab157",
+      "timestamp": "2025-05-21T01:00:18.581330Z",
+      "followers": 50590
+    },
+    {
+      "id": "de0b2658-7ec6-451b-aeea-bb49fca1b221",
+      "timestamp": "2025-05-22T00:59:54.083835Z",
+      "followers": 50595
+    },
+    {
+      "id": "c03e0d33-0fcd-4283-82d3-3e2f00bbf415",
+      "timestamp": "2025-05-23T00:59:21.925041Z",
+      "followers": 50645
+    },
+    {
+      "id": "318582a3-6762-4d22-97f6-89598edb53f6",
+      "timestamp": "2025-05-24T00:57:00.498038Z",
+      "followers": 50832
+    },
+    {
+      "id": "5a0d852e-8d77-4419-a7a6-617d58223fb6",
+      "timestamp": "2025-05-25T01:05:21.140431Z",
+      "followers": 50883
+    },
+    {
+      "id": "b9aee8ed-c15d-4c99-81ae-dc12f29340d2",
+      "timestamp": "2025-05-26T01:01:24.212944Z",
+      "followers": 50876
+    },
+    {
+      "id": "8ae43ffe-aa3f-4a17-a00e-2bce48c57436",
+      "timestamp": "2025-05-27T00:58:31.007022Z",
+      "followers": 50928
+    },
+    {
+      "id": "f08e06b7-1b82-4d4d-9ab0-f692d1034ced",
+      "timestamp": "2025-05-28T00:59:54.784775Z",
+      "followers": 50918
+    },
+    {
+      "id": "bf6b9db8-9d6d-4964-88a1-8d685e74b6ad",
+      "timestamp": "2025-05-29T01:00:10.871051Z",
+      "followers": 50922
+    },
+    {
+      "id": "45c7f3ca-bcfb-4b83-9dfd-c755a35492ba",
+      "timestamp": "2025-05-30T00:59:51.879985Z",
+      "followers": 50864
+    },
+    {
+      "id": "fff31654-a8bd-4da6-a66e-e098f13d0ffb",
+      "timestamp": "2025-05-31T00:58:35.809599Z",
+      "followers": 50901
+    },
+    {
+      "id": "a9544bfe-19de-4aa8-8e40-b834b6259ea6",
+      "timestamp": "2025-06-01T01:11:45.556517Z",
+      "followers": 50892
+    },
+    {
+      "id": "7f31e745-2f77-41c2-a916-a03e4709c525",
+      "timestamp": "2025-06-02T01:03:03.227340Z",
+      "followers": 50866
+    },
+    {
+      "id": "530b7b69-e75f-49e2-b3fc-b6d0bc71f2f4",
+      "timestamp": "2025-06-03T01:01:10.152364Z",
+      "followers": 50871
+    },
+    {
+      "id": "c32e1122-f8b1-4d3b-93cc-23720830aff0",
+      "timestamp": "2025-06-04T01:01:09.390197Z",
+      "followers": 50851
+    },
+    {
+      "id": "b64cba08-fc2a-4a27-9801-be3a787ba6aa",
+      "timestamp": "2025-06-05T01:00:09.952872Z",
+      "followers": 50806
+    },
+    {
+      "id": "941e0c95-6143-4464-bcad-4d2cda3781b3",
+      "timestamp": "2025-06-06T01:00:25.594964Z",
+      "followers": 50842
+    },
+    {
+      "id": "2360907a-2247-4d33-8167-f390cf0339d4",
+      "timestamp": "2025-06-07T00:59:48.571016Z",
+      "followers": 50824
+    },
+    {
+      "id": "95b0bed4-ffe6-421b-865a-8c516ad1ef8e",
+      "timestamp": "2025-06-08T01:06:16.672152Z",
+      "followers": 50782
+    },
+    {
+      "id": "ef7e56c5-671e-44e2-be1e-095cdfa4d67a",
+      "timestamp": "2025-06-09T01:03:59.354271Z",
+      "followers": 50788
+    },
+    {
+      "id": "7e5d572a-1fae-40f7-9816-7d3c6625fdd6",
+      "timestamp": "2025-06-10T01:01:44.291637Z",
+      "followers": 50786
+    },
+    {
+      "id": "2eb3e812-c7ba-4ad5-b777-a919d7699f26",
+      "timestamp": "2025-06-11T01:01:36.347714Z",
+      "followers": 50770
+    },
+    {
+      "id": "f3e6bbaf-9fa9-465d-a03d-155edb8f6549",
+      "timestamp": "2025-06-12T01:00:29.019162Z",
+      "followers": 50732
+    },
+    {
+      "id": "9ecb41cf-028f-40c7-8391-c45f4667657b",
+      "timestamp": "2025-06-13T01:01:43.642256Z",
+      "followers": 50735
+    },
+    {
+      "id": "6d11907d-a299-4b37-976d-d2fed4993a01",
+      "timestamp": "2025-06-14T00:58:42.664297Z",
+      "followers": 50740
+    },
+    {
+      "id": "f96b7b89-ac92-4734-92bf-d4788122fbcd",
+      "timestamp": "2025-06-15T01:07:25.443303Z",
+      "followers": 50713
+    },
+    {
+      "id": "0e210e6d-343a-413a-b68e-3decfed0ede8",
+      "timestamp": "2025-06-16T01:03:02.411044Z",
+      "followers": 50708
+    },
+    {
+      "id": "9d4422a9-d74d-438c-ae30-2cd7a43f6cf3",
+      "timestamp": "2025-06-17T01:01:28.620728Z",
+      "followers": 50704
+    },
+    {
+      "id": "ffe64fe2-6000-46a9-b2ad-567494bdcd0f",
+      "timestamp": "2025-06-18T01:00:42.429637Z",
+      "followers": 50700
+    },
+    {
+      "id": "f502979c-fdf9-42b9-88f5-45985a76d0b4",
+      "timestamp": "2025-06-19T01:00:59.350612Z",
+      "followers": 50717
+    },
+    {
+      "id": "248d51f8-3b4e-4e51-a0e4-e9530ae6c895",
+      "timestamp": "2025-06-20T01:01:02.273466Z",
+      "followers": 50706
+    },
+    {
+      "id": "0e0ebbc2-c6c3-4b59-8c67-792deeac2931",
+      "timestamp": "2025-06-21T00:59:49.512435Z",
+      "followers": 50656
+    },
+    {
+      "id": "44a9219a-756b-4a8f-b699-2f038f5c6430",
+      "timestamp": "2025-06-22T01:06:48.323993Z",
+      "followers": 50665
+    },
+    {
+      "id": "d005ab7e-b070-4403-9014-194c3622bd37",
+      "timestamp": "2025-06-23T01:05:13.440176Z",
+      "followers": 50644
+    },
+    {
+      "id": "21b84df8-c2df-4c2f-bd25-3fe1a2766a49",
+      "timestamp": "2025-06-24T01:01:18.794696Z",
+      "followers": 50638
+    },
+    {
+      "id": "a6420fbd-91be-4252-8841-4e6c2a4e250f",
+      "timestamp": "2025-06-25T01:01:56.498344Z",
+      "followers": 50615
+    },
+    {
+      "id": "8501d863-968a-436d-bd93-d6b4ab660c47",
+      "timestamp": "2025-06-26T01:01:05.157800Z",
+      "followers": 50609
+    },
+    {
+      "id": "90570232-897d-4c28-bdd8-a24c661b336e",
+      "timestamp": "2025-06-27T01:01:44.495386Z",
+      "followers": 50585
+    },
+    {
+      "id": "56505842-a234-475b-aa9d-905abe733538",
+      "timestamp": "2025-06-28T00:59:58.625852Z",
+      "followers": 50553
+    },
+    {
+      "id": "51289f99-995e-4796-8cec-a33c0b28a7b7",
+      "timestamp": "2025-06-29T01:08:11.294512Z",
+      "followers": 50554
+    },
+    {
+      "id": "c72ee49f-dd68-45f7-9884-f51810c3cc0d",
+      "timestamp": "2025-06-30T01:05:16.152905Z",
+      "followers": 50564
+    },
+    {
+      "id": "c8aca376-e291-48eb-b926-333b5e724b8e",
+      "timestamp": "2025-07-01T01:08:09.859997Z",
+      "followers": 50542
+    },
+    {
+      "id": "8fd05de1-f553-41e0-8591-1d141295fbe1",
+      "timestamp": "2025-07-02T01:01:45.022036Z",
+      "followers": 50538
+    },
+    {
+      "id": "7124c14e-6af7-4727-a360-0b9eee79be48",
+      "timestamp": "2025-07-03T01:01:24.765065Z",
+      "followers": 50529
+    },
+    {
+      "id": "513e08ee-0d88-4473-bc08-51cc381cc1b2",
+      "timestamp": "2025-07-04T01:01:03.505811Z",
+      "followers": 50539
+    },
+    {
+      "id": "d414da42-ee4b-4545-92ab-5723257bdec3",
+      "timestamp": "2025-07-05T00:58:47.298896Z",
+      "followers": 50532
+    },
+    {
+      "id": "75302f5f-48ff-4349-939f-9f0739f275a2",
+      "timestamp": "2025-07-06T01:07:03.647576Z",
+      "followers": 50491
+    },
+    {
+      "id": "8148b8d8-bd14-4c29-8a2f-3c0ef735ca9a",
+      "timestamp": "2025-07-07T01:05:57.326530Z",
+      "followers": 50489
+    },
+    {
+      "id": "bb16ee83-cd73-4f88-9297-ff5dccf0e648",
+      "timestamp": "2025-07-08T01:02:18.878169Z",
+      "followers": 50482
+    },
+    {
+      "id": "7319aa44-92bf-4748-a6fd-2ea9d550a21a",
+      "timestamp": "2025-07-09T01:02:38.140663Z",
+      "followers": 50458
+    },
+    {
+      "id": "b9da4a04-755f-4c8e-bc9d-62d0e112e04e",
+      "timestamp": "2025-07-10T01:02:34.005330Z",
+      "followers": 50445
+    },
+    {
+      "id": "84e5bd36-b70d-4299-9c51-9c1dbae19aec",
+      "timestamp": "2025-07-11T01:03:22.218194Z",
+      "followers": 50467
+    },
+    {
+      "id": "20f0e710-05a0-4798-ad89-875bf8e264a1",
+      "timestamp": "2025-07-12T01:04:27.298218Z",
+      "followers": 50463
+    },
+    {
+      "id": "9a8712aa-c42a-468d-9880-52db18e7b049",
+      "timestamp": "2025-07-13T01:09:14.098699Z",
+      "followers": 50448
+    },
+    {
+      "id": "70a295c8-5872-4c09-a309-d3b4a716b58c",
+      "timestamp": "2025-07-14T01:06:40.504981Z",
+      "followers": 50433
+    },
+    {
+      "id": "b555d973-40a4-44f3-898c-aaa3a9935249",
+      "timestamp": "2025-07-15T01:06:05.604964Z",
+      "followers": 50415
+    },
+    {
+      "id": "e02e3e81-0e71-499c-8544-144fb839cdc7",
+      "timestamp": "2025-07-16T01:04:13.188921Z",
+      "followers": 50383
+    },
+    {
+      "id": "28717004-39d0-4756-92e9-9cf8a6c8c2a7",
+      "timestamp": "2025-07-17T01:04:51.485838Z",
+      "followers": 50372
+    },
+    {
+      "id": "0873ba1d-7c8b-455e-b76c-00b20d07fe9e",
+      "timestamp": "2025-07-18T01:04:20.373116Z",
+      "followers": 50369
+    },
+    {
+      "id": "e63f1411-2d8c-435d-b9eb-f57622ea1318",
+      "timestamp": "2025-07-19T01:02:34.900201Z",
+      "followers": 50357
+    },
+    {
+      "id": "81a3933e-166b-45ea-8e14-3ee797c39ca3",
+      "timestamp": "2025-07-20T01:10:59.501593Z",
+      "followers": 50368
+    },
+    {
+      "id": "ba3d6a81-a6ee-4715-8e74-cbfa074f015a",
+      "timestamp": "2025-07-21T01:08:04.699770Z",
+      "followers": 50367
+    },
+    {
+      "id": "01964c4c-6eff-47cc-b0b6-e26d08d456c5",
+      "timestamp": "2025-07-22T01:04:51.444248Z",
+      "followers": 50358
+    },
+    {
+      "id": "264f14be-50f9-40c2-b1b0-1d9d40dce2ea",
+      "timestamp": "2025-07-23T01:06:03.638156Z",
+      "followers": 50348
+    },
+    {
+      "id": "2b6e222f-89e9-4c07-9781-2ab76731483f",
+      "timestamp": "2025-07-24T01:05:19.629291Z",
+      "followers": 50343
+    },
+    {
+      "id": "c5777e5d-4794-4f39-a972-0252f899cd2a",
+      "timestamp": "2025-07-25T01:04:44.743128Z",
+      "followers": 50339
+    },
+    {
+      "id": "26ba7f8e-0152-45ac-81d9-1e7d43242714",
+      "timestamp": "2025-07-26T01:03:16.005242Z",
+      "followers": 50332
+    },
+    {
+      "id": "96479435-9caa-4b4a-888a-c441f1908202",
+      "timestamp": "2025-07-27T01:10:53.354509Z",
+      "followers": 50338
+    },
+    {
+      "id": "7a0478ea-9eb0-471f-92dc-0dfb7bd82c40",
+      "timestamp": "2025-07-28T01:09:51.945558Z",
+      "followers": 50335
+    },
+    {
+      "id": "b4cc95b9-6bc1-410a-b905-a35e51c8c855",
+      "timestamp": "2025-07-29T01:12:08.541805Z",
+      "followers": 50366
+    },
+    {
+      "id": "42b9811e-f1a6-4a45-a8d5-7f512d8a9c5f",
+      "timestamp": "2025-07-30T01:05:51.448966Z",
+      "followers": 50369
+    },
+    {
+      "id": "5353e763-4bb4-4452-85a2-815bf436b831",
+      "timestamp": "2025-07-31T01:05:39.040852Z",
+      "followers": 50339
+    },
+    {
+      "id": "360bb011-db65-4d27-bc1f-34e48438af5b",
+      "timestamp": "2025-08-01T01:13:10.166582Z",
+      "followers": 50321
+    },
+    {
+      "id": "ed394b56-72ab-464f-95a6-f46c250dd54d",
+      "timestamp": "2025-08-02T01:02:56.872421Z",
+      "followers": 50310
+    },
+    {
+      "id": "a37273e7-d7cf-484e-8149-edc13c4a2884",
+      "timestamp": "2025-08-03T01:12:33.200875Z",
+      "followers": 50295
+    },
+    {
+      "id": "78c43bc0-3eab-4953-82ac-13396687ce27",
+      "timestamp": "2025-08-04T01:11:05.992324Z",
+      "followers": 50299
+    },
+    {
+      "id": "53818df9-af43-4a92-b467-386de4da65ff",
+      "timestamp": "2025-08-05T01:07:27.734283Z",
+      "followers": 50293
+    },
+    {
+      "id": "ef9af017-1256-431d-aacb-3e74ab4146a0",
+      "timestamp": "2025-08-06T01:06:16.485112Z",
+      "followers": 50283
+    },
+    {
+      "id": "28cfc18d-d509-44ad-9d52-9733b0e95e74",
+      "timestamp": "2025-08-07T01:06:39.997567Z",
+      "followers": 50292
+    },
+    {
+      "id": "73d0e252-1e1f-4598-a67d-e2aa1f10c1c9",
+      "timestamp": "2025-08-08T01:06:27.671001Z",
+      "followers": 50284
+    },
+    {
+      "id": "6bea0511-9dcf-42ce-9bba-31c1302c26c9",
+      "timestamp": "2025-08-09T01:00:40.729594Z",
+      "followers": 50262
+    },
+    {
+      "id": "5f3a836c-74f9-4385-bc56-66dac617cfe3",
+      "timestamp": "2025-08-10T01:09:57.217241Z",
+      "followers": 50242
+    },
+    {
+      "id": "2da6791f-86a2-43f7-8f25-2efb0310b362",
+      "timestamp": "2025-08-11T01:07:13.336266Z",
+      "followers": 50262
+    },
+    {
+      "id": "0a2566f0-4d42-46d2-a92c-a4b5b5f0e23d",
+      "timestamp": "2025-08-12T01:00:41.108901Z",
+      "followers": 50296
+    },
+    {
+      "id": "fdab8c70-545b-41a7-a6c6-11e71200c3ed",
+      "timestamp": "2025-08-13T01:02:06.412107Z",
+      "followers": 50295
+    }
+  ]
+}

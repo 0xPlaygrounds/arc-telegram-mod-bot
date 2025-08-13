@@ -1,0 +1,64 @@
+name: Run Weekly Metrics and Sync Branches
+
+on:
+  schedule:
+    - cron: "0 3 * * 1"  # Every Monday at 3 AM UTC
+  workflow_dispatch:
+
+jobs:
+  run-weekly-metrics:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo (all branches)
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Checkout staging branch
+        run: |
+          git checkout staging
+          git pull origin staging --rebase
+
+      - name: Run weekly metrics summary
+        run: python metrics/weekly/metrics.py
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push changes to staging
+        run: |
+          git add .
+          if ! git diff --cached --quiet; then
+            git commit -m "update weekly metrics"
+            git push origin staging
+          else
+            echo "No changes to commit on staging."
+          fi
+
+      - name: Checkout main branch
+        run: |
+          git checkout main
+          git pull origin main --rebase
+
+      - name: Merge staging into main (prefer staging changes)
+        run: |
+          git merge staging -X theirs --no-edit || {
+            echo "Merge failed, aborting."
+            git merge --abort
+            exit 1
+          }
+
+      - name: Push changes to main
+        run: git push origin main

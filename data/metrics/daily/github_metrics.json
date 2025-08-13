@@ -1,0 +1,867 @@
+{
+  "dataset_name": "github_metrics",
+  "created_at": "2025-05-18T08:20:40.856870+00:00",
+  "entries": [
+    {
+      "id": "b8e0d1da-f91f-4771-bd5a-ccc09fd226c2",
+      "timestamp": "2025-05-18T08:20:40.855869+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "04a6fbf9-04f0-463b-b24d-4a2889125fb7",
+      "timestamp": "2025-05-18T08:24:19.750423+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "f20e0bd5-1ccf-4692-8dc4-950cc9a5d083",
+      "timestamp": "2025-05-18T09:12:14.739764+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "7cff6ae5-bba9-4677-962a-268347aaffd7",
+      "timestamp": "2025-05-18T18:45:23.867842+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "8cb456dc-4a56-464f-8cd2-d285f3f6ad82",
+      "timestamp": "2025-05-18T18:47:00.191824+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "053f8428-49a1-480a-ab04-e7befdd6fb27",
+      "timestamp": "2025-05-18T18:48:07.325257+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "fda031f9-833f-480b-a8c7-f54e1dd0c217",
+      "timestamp": "2025-05-18T18:51:17.938483+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "09d149e8-6254-4a97-91b7-de580f6810bb",
+      "timestamp": "2025-05-18T20:20:30.292446+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "a5cc5d3e-1575-4b41-bab9-e02d251632e2",
+      "timestamp": "2025-05-18T20:23:03.719346+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "421ebefa-ac77-45f0-8177-7c61b4363355",
+      "timestamp": "2025-05-18T20:25:48.547759+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "0e5135ec-ca20-4916-b57b-f83ff0d6eddb",
+      "timestamp": "2025-05-19T01:53:31.071175+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "f7398b48-f6dc-4407-8d69-536c652b37bd",
+      "timestamp": "2025-05-19T01:56:49.854069+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "41b96c12-7da1-4ff5-81ec-de253430c6cb",
+      "timestamp": "2025-05-19T02:14:32.617651+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "3648c237-2fd4-40c6-b292-5fec7dd9801a",
+      "timestamp": "2025-05-19T02:19:05.056106+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "00bd5e94-d701-4ea2-93b0-6d3d855b2c9c",
+      "timestamp": "2025-05-19T02:23:06.179233+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "e6b79d5e-d548-42e9-b959-7ed2215365d2",
+      "timestamp": "2025-05-19T02:23:16.443305+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "23cb1a6a-f49e-484c-9216-7724ccaa5a93",
+      "timestamp": "2025-05-19T02:26:42.419806+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "44c26aed-26d4-48bf-99c4-6ce180153005",
+      "timestamp": "2025-05-19T02:27:56.539112+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "cc6c4a07-fbb5-480e-a944-78e7bcff1e8c",
+      "timestamp": "2025-05-19T02:29:16.409098+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "fc191933-f2c9-42fd-9df0-bbcdeb36d1fb",
+      "timestamp": "2025-05-19T02:32:51.829547+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "86b94da3-67ce-44a5-b2a8-c27354ab93bc",
+      "timestamp": "2025-05-19T02:34:24.923696+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "28e3cc3c-8344-4f65-ab86-7dd2103d17a6",
+      "timestamp": "2025-05-19T02:36:12.550054+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "18487f03-ad2b-462c-a4f9-a7b0a42a09c4",
+      "timestamp": "2025-05-19T02:52:11.918187+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "887e0958-c1bf-4d71-8b24-72c7a3dfe03d",
+      "timestamp": "2025-05-19T02:55:22.998832+00:00",
+      "stars": 3629,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "39228e9b-aa30-498a-a1c7-0ddc68d20a97",
+      "timestamp": "2025-05-19T02:58:30.181388+00:00",
+      "stars": 3630,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "d505adfc-a5d6-47ba-a53d-7a10ae6653a8",
+      "timestamp": "2025-05-19T03:00:20.884448+00:00",
+      "stars": 3630,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "24530fae-602c-4c3e-b11b-8e6adf83e5a7",
+      "timestamp": "2025-05-19T03:02:27.291567+00:00",
+      "stars": 3630,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "6a4d4bdd-2579-4176-bd7f-ffe0ec1ba6f2",
+      "timestamp": "2025-05-19T03:11:30.085976+00:00",
+      "stars": 3630,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "89e293b4-a00e-4131-9eb2-2bbaac299343",
+      "timestamp": "2025-05-19T03:14:08.531721+00:00",
+      "stars": 3630,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "917bb4ba-35dd-4462-92ba-b80f6f8e0b0f",
+      "timestamp": "2025-05-19T03:16:28.187738+00:00",
+      "stars": 3630,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "1908d0ec-03db-453a-9a98-19581f8436b0",
+      "timestamp": "2025-05-19T03:18:53.460686+00:00",
+      "stars": 3630,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "27a30038-a7b6-45b6-a38a-b35290d2b038",
+      "timestamp": "2025-05-19T03:21:48.558642+00:00",
+      "stars": 3630,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "0140777a-3769-47bc-9400-338385c09e82",
+      "timestamp": "2025-05-19T03:29:55.405942+00:00",
+      "stars": 3630,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "1817346a-aa70-48a2-8bf9-cbd45be824a8",
+      "timestamp": "2025-05-19T03:31:15.408421+00:00",
+      "stars": 3630,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "75040917-7f91-4793-9035-e3099f7e7eb0",
+      "timestamp": "2025-05-19T03:37:40.381754+00:00",
+      "stars": 3630,
+      "forks": 392,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "0c59b192-39e7-4dcf-8540-7794ca02992f",
+      "timestamp": "2025-05-19T05:45:50.260418+00:00",
+      "stars": 3631,
+      "forks": 393,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "eeeea915-7ee5-4484-8472-4998924a498f",
+      "timestamp": "2025-05-19T05:55:35.261267+00:00",
+      "stars": 3631,
+      "forks": 393,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "4455c1ed-5c50-4159-be57-15480c607851",
+      "timestamp": "2025-05-20T00:59:43.581233+00:00",
+      "stars": 3637,
+      "forks": 394,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "2c297520-00d3-405f-8329-670ed4b4b5a5",
+      "timestamp": "2025-05-20T15:35:43.109369+00:00",
+      "stars": 3639,
+      "forks": 395,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "672fec74-cba4-4078-8cde-62eaf63405c0",
+      "timestamp": "2025-05-21T00:50:44.778889+00:00",
+      "stars": 3639,
+      "forks": 396,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "54b88c29-384c-4044-8645-dc281b7c02be",
+      "timestamp": "2025-05-21T00:59:19.928373+00:00",
+      "stars": 3639,
+      "forks": 396,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "eafde3da-c02a-4544-bac0-98377ea21444",
+      "timestamp": "2025-05-22T00:59:08.065865+00:00",
+      "stars": 3639,
+      "forks": 396,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "212aacfb-b2d7-4046-a397-a3bf055f56e3",
+      "timestamp": "2025-05-23T00:58:41.515248+00:00",
+      "stars": 3641,
+      "forks": 395,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "f4537127-5ffc-45de-b963-5011fe3b81ea",
+      "timestamp": "2025-05-24T00:56:18.895426+00:00",
+      "stars": 3645,
+      "forks": 397,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "658f8219-d645-4119-b4f2-b9a0856e393f",
+      "timestamp": "2025-05-25T01:04:24.122783+00:00",
+      "stars": 3648,
+      "forks": 396,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "c21b7cb7-4c44-484a-a675-19f6df7e04d7",
+      "timestamp": "2025-05-26T01:00:34.207490+00:00",
+      "stars": 3651,
+      "forks": 397,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "c30590aa-69e8-40bd-bbe7-2468cf5b7ef1",
+      "timestamp": "2025-05-27T00:57:53.134143+00:00",
+      "stars": 3658,
+      "forks": 397,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "a32f8091-f242-4037-9ae4-5d1c460c424d",
+      "timestamp": "2025-05-28T00:59:14.612359+00:00",
+      "stars": 3665,
+      "forks": 395,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "0ea346e3-488c-4ae6-9ba3-6c4a1bef2bd2",
+      "timestamp": "2025-05-29T00:59:23.696355+00:00",
+      "stars": 3680,
+      "forks": 395,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "1f30bdde-69fa-4168-b72c-10b3c13469ea",
+      "timestamp": "2025-05-30T00:58:53.396427+00:00",
+      "stars": 3686,
+      "forks": 395,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "6aea6e3f-21e3-439d-8892-b2c45c288c3b",
+      "timestamp": "2025-05-31T00:57:56.384411+00:00",
+      "stars": 3690,
+      "forks": 396,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "b581ba60-f211-4ada-ba99-00c889db94e0",
+      "timestamp": "2025-06-01T01:11:01.707451+00:00",
+      "stars": 3693,
+      "forks": 396,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "93b4a1e5-3b3b-42f9-9d2a-4b434f091305",
+      "timestamp": "2025-06-02T01:02:04.168633+00:00",
+      "stars": 3697,
+      "forks": 396,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "dbf25c38-ccb9-4304-ba2c-2f5fef91823f",
+      "timestamp": "2025-06-03T01:00:28.453341+00:00",
+      "stars": 3699,
+      "forks": 398,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "433dcd19-1d14-46e5-b162-6b3bcf284b58",
+      "timestamp": "2025-06-04T01:00:19.366433+00:00",
+      "stars": 3702,
+      "forks": 399,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "30b510ec-118a-4922-89ec-8906ec4629ed",
+      "timestamp": "2025-06-05T00:59:25.131772+00:00",
+      "stars": 3708,
+      "forks": 399,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "215ce3fe-a63e-4f7f-b87a-af57385d12bc",
+      "timestamp": "2025-06-06T00:59:29.352989+00:00",
+      "stars": 3712,
+      "forks": 400,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "99eaf785-e427-4e0f-904d-bd4efc1e449b",
+      "timestamp": "2025-06-07T00:59:03.589716+00:00",
+      "stars": 3716,
+      "forks": 401,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "c56689ef-01dd-4c6f-8015-a68b4e8dcd5b",
+      "timestamp": "2025-06-08T01:05:32.328208+00:00",
+      "stars": 3723,
+      "forks": 401,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "954f0fa6-c0e5-43a0-b849-c5e456dd1cd0",
+      "timestamp": "2025-06-09T01:03:16.403407+00:00",
+      "stars": 3728,
+      "forks": 401,
+      "release_version": "rig-core-v0.12.0"
+    },
+    {
+      "id": "e5f834a8-9c29-4138-90ee-148e83c12de3",
+      "timestamp": "2025-06-10T01:00:47.292525+00:00",
+      "stars": 3731,
+      "forks": 403,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "f9b81ea8-bf7f-4be1-b020-8832d238f95e",
+      "timestamp": "2025-06-11T01:00:42.363270+00:00",
+      "stars": 3736,
+      "forks": 405,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "79f51bf7-8005-47f2-a9af-77d6eec4f53c",
+      "timestamp": "2025-06-12T00:59:43.492764+00:00",
+      "stars": 3750,
+      "forks": 405,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "68d99e40-52e2-4638-9f7d-6629da5dcadc",
+      "timestamp": "2025-06-13T01:00:36.825992+00:00",
+      "stars": 3759,
+      "forks": 405,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "a0c051ed-8395-496a-acd1-c543e000410d",
+      "timestamp": "2025-06-14T00:58:02.169496+00:00",
+      "stars": 3766,
+      "forks": 405,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "b6d057f1-a9ab-4abd-a4f8-4bece588b231",
+      "timestamp": "2025-06-15T01:06:40.402256+00:00",
+      "stars": 3768,
+      "forks": 407,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "0aeda7fb-ce9e-486f-8c67-5287e90d1d33",
+      "timestamp": "2025-06-16T01:02:27.611975+00:00",
+      "stars": 3774,
+      "forks": 408,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "b646628f-88d6-40cc-9370-b8bb069ce5a5",
+      "timestamp": "2025-06-17T01:00:33.588593+00:00",
+      "stars": 3782,
+      "forks": 409,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "75c8ee49-e637-4d4d-b3c8-2c24b10b8307",
+      "timestamp": "2025-06-18T01:00:20.573747+00:00",
+      "stars": 3786,
+      "forks": 409,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "b7b15821-19b4-42f2-a631-20718c66e912",
+      "timestamp": "2025-06-19T01:00:24.234227+00:00",
+      "stars": 3801,
+      "forks": 410,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "567a17ad-a70e-486e-b849-d9d679b5d9bb",
+      "timestamp": "2025-06-20T01:00:12.476250+00:00",
+      "stars": 3812,
+      "forks": 410,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "7dcc265c-e79b-434f-bdf6-1f30e672de49",
+      "timestamp": "2025-06-21T00:59:16.158963+00:00",
+      "stars": 3818,
+      "forks": 411,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "3b39419f-7c19-4be4-9237-090812f14a9f",
+      "timestamp": "2025-06-22T01:06:11.870038+00:00",
+      "stars": 3826,
+      "forks": 411,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "2d4588b5-83f2-41cf-b3b7-9a805b741973",
+      "timestamp": "2025-06-23T01:04:29.347876+00:00",
+      "stars": 3834,
+      "forks": 413,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "f12a10e9-be0e-4317-8f3f-6da8fb211f77",
+      "timestamp": "2025-06-24T01:00:45.470847+00:00",
+      "stars": 3841,
+      "forks": 410,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "51b71250-a7a1-4173-9417-8490ec6a71ea",
+      "timestamp": "2025-06-25T01:01:20.158011+00:00",
+      "stars": 3849,
+      "forks": 410,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "1a7898fc-e981-4370-b621-1829a79007c8",
+      "timestamp": "2025-06-26T01:00:30.611005+00:00",
+      "stars": 3852,
+      "forks": 412,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "8388663f-f78b-4fed-b8e7-3e336c8b7524",
+      "timestamp": "2025-06-27T01:01:10.599147+00:00",
+      "stars": 3857,
+      "forks": 414,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "2845cabf-8d75-4791-be53-1bbb0fa714e2",
+      "timestamp": "2025-06-28T00:59:06.848870+00:00",
+      "stars": 3867,
+      "forks": 414,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "bbe2e1f3-a3e2-4182-b11b-dc0e60ec1be8",
+      "timestamp": "2025-06-29T01:07:31.775549+00:00",
+      "stars": 3872,
+      "forks": 413,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "237b1b84-cb29-41bf-8d39-8cb921fea927",
+      "timestamp": "2025-06-30T01:04:37.286947+00:00",
+      "stars": 3873,
+      "forks": 413,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "f35ee023-dd21-4d74-a3cd-a4088fcc3322",
+      "timestamp": "2025-07-01T01:07:52.033582+00:00",
+      "stars": 3878,
+      "forks": 413,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "23ccbdae-83ee-461e-a113-3ebe149d8625",
+      "timestamp": "2025-07-02T01:01:10.826360+00:00",
+      "stars": 3883,
+      "forks": 413,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "376493ed-4c34-48e0-9126-cbebc4d736d2",
+      "timestamp": "2025-07-03T01:00:57.409402+00:00",
+      "stars": 3884,
+      "forks": 413,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "a7f58fcd-6554-49d9-866b-e2988487b91b",
+      "timestamp": "2025-07-04T01:00:34.055420+00:00",
+      "stars": 3886,
+      "forks": 413,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "1f17268e-452e-4e27-ae3d-2f3d6cd638bd",
+      "timestamp": "2025-07-05T00:58:18.479241+00:00",
+      "stars": 3893,
+      "forks": 413,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "48bbf7e3-ed87-4dc5-ba9f-9c3ae8118411",
+      "timestamp": "2025-07-06T01:06:32.049056+00:00",
+      "stars": 3895,
+      "forks": 414,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "3ceb4234-3f07-40f3-8201-398a39ab3a0e",
+      "timestamp": "2025-07-07T01:05:14.516536+00:00",
+      "stars": 3902,
+      "forks": 414,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "d777d627-4694-4151-b773-8e055b8d940d",
+      "timestamp": "2025-07-08T01:01:28.459394+00:00",
+      "stars": 3907,
+      "forks": 417,
+      "release_version": "rig-core-v0.13.0"
+    },
+    {
+      "id": "59ee8a09-65d2-4de6-a086-79fd4686ec6c",
+      "timestamp": "2025-07-09T01:02:06.019752+00:00",
+      "stars": 3916,
+      "forks": 419,
+      "release_version": "rig-core-v0.14.0"
+    },
+    {
+      "id": "82ac589e-35c9-452d-a628-e695c1ea37f2",
+      "timestamp": "2025-07-10T01:01:59.700181+00:00",
+      "stars": 3923,
+      "forks": 420,
+      "release_version": "rig-core-v0.14.0"
+    },
+    {
+      "id": "d118d8c2-cffa-4c20-b39d-dde008d45ae3",
+      "timestamp": "2025-07-11T01:02:35.793660+00:00",
+      "stars": 3931,
+      "forks": 420,
+      "release_version": "rig-core-v0.14.0"
+    },
+    {
+      "id": "14f48213-5675-460f-bc43-25f70ae3db29",
+      "timestamp": "2025-07-12T01:03:55.599133+00:00",
+      "stars": 3938,
+      "forks": 420,
+      "release_version": "rig-core-v0.14.0"
+    },
+    {
+      "id": "25d6463b-29fe-4a41-b616-7695dc5fb355",
+      "timestamp": "2025-07-13T01:08:38.345753+00:00",
+      "stars": 3943,
+      "forks": 420,
+      "release_version": "rig-core-v0.14.0"
+    },
+    {
+      "id": "0a5dab12-9bf5-421d-8556-2f9b597ce182",
+      "timestamp": "2025-07-14T01:05:51.790489+00:00",
+      "stars": 3946,
+      "forks": 422,
+      "release_version": "rig-core-v0.14.0"
+    },
+    {
+      "id": "69a1e427-308b-4739-b478-10f99ac7d802",
+      "timestamp": "2025-07-15T01:05:19.768008+00:00",
+      "stars": 3951,
+      "forks": 422,
+      "release_version": "rig-core-v0.15.0"
+    },
+    {
+      "id": "75ebb8ef-9a8c-47a0-99cc-85a5ae1828a9",
+      "timestamp": "2025-07-16T01:03:38.017869+00:00",
+      "stars": 3953,
+      "forks": 422,
+      "release_version": "rig-core-v0.15.0"
+    },
+    {
+      "id": "3016a9f3-f075-4a97-bc29-299f0987a0f5",
+      "timestamp": "2025-07-17T01:04:17.812536+00:00",
+      "stars": 3956,
+      "forks": 422,
+      "release_version": "rig-core-v0.15.1"
+    },
+    {
+      "id": "5cc520a2-76bc-480c-a0dc-7cd12483db4c",
+      "timestamp": "2025-07-19T01:02:00.489324+00:00",
+      "stars": 3984,
+      "forks": 423,
+      "release_version": "rig-core-v0.15.1"
+    },
+    {
+      "id": "4290a616-e0e9-4d4f-b02b-c6db2cf2620c",
+      "timestamp": "2025-07-20T01:10:08.985453+00:00",
+      "stars": 3987,
+      "forks": 423,
+      "release_version": "rig-core-v0.15.1"
+    },
+    {
+      "id": "d4093991-7d5e-4099-baaa-7549b0655c24",
+      "timestamp": "2025-07-21T01:07:31.127192+00:00",
+      "stars": 3991,
+      "forks": 424,
+      "release_version": "rig-core-v0.15.1"
+    },
+    {
+      "id": "00ee15b0-2532-4ca4-a811-366f18201308",
+      "timestamp": "2025-07-22T01:04:01.332832+00:00",
+      "stars": 3992,
+      "forks": 424,
+      "release_version": "rig-core-v0.15.1"
+    },
+    {
+      "id": "ea7caae8-613a-4edf-a3e9-43d80f76ea02",
+      "timestamp": "2025-07-24T01:04:21.776734+00:00",
+      "stars": 3996,
+      "forks": 425,
+      "release_version": "rig-core-v0.15.1"
+    },
+    {
+      "id": "a96dde5e-f230-4285-b6fd-d65a1d813f05",
+      "timestamp": "2025-07-25T01:03:53.631374+00:00",
+      "stars": 3999,
+      "forks": 428,
+      "release_version": "rig-core-v0.15.1"
+    },
+    {
+      "id": "938cc7b4-6424-4b16-b725-69fd54a16681",
+      "timestamp": "2025-07-26T01:02:22.137305+00:00",
+      "stars": 4004,
+      "forks": 428,
+      "release_version": "rig-core-v0.15.1"
+    },
+    {
+      "id": "e5556930-6797-48d7-b25c-85c42cb777ff",
+      "timestamp": "2025-07-27T01:10:17.696733+00:00",
+      "stars": 4004,
+      "forks": 428,
+      "release_version": "rig-core-v0.15.1"
+    },
+    {
+      "id": "3e02b82b-a6a2-4677-9b2c-1720347368d2",
+      "timestamp": "2025-07-28T01:08:49.804198+00:00",
+      "stars": 4007,
+      "forks": 428,
+      "release_version": "rig-core-v0.15.1"
+    },
+    {
+      "id": "7e9357e7-bd50-4871-aad1-c436c54aa5e2",
+      "timestamp": "2025-07-29T01:11:16.623690+00:00",
+      "stars": 4010,
+      "forks": 429,
+      "release_version": "rig-core-v0.15.1"
+    },
+    {
+      "id": "758d60fe-c513-47b6-aad0-adeeb43a828a",
+      "timestamp": "2025-07-30T01:05:12.815543+00:00",
+      "stars": 4022,
+      "forks": 431,
+      "release_version": "rig-core-v0.15.1"
+    },
+    {
+      "id": "a6e77171-b94b-4aba-ae10-82f59c5158b8",
+      "timestamp": "2025-07-31T01:05:03.090432+00:00",
+      "stars": 4039,
+      "forks": 432,
+      "release_version": "rig-core-v0.16.0"
+    },
+    {
+      "id": "ccb45a11-64e9-4a6f-99c7-4ada8c174b70",
+      "timestamp": "2025-08-01T01:12:34.714125+00:00",
+      "stars": 4048,
+      "forks": 434,
+      "release_version": "rig-core-v0.16.0"
+    },
+    {
+      "id": "0cfb9311-f912-4d88-8a8b-349b28ca9fa4",
+      "timestamp": "2025-08-02T01:02:20.080843+00:00",
+      "stars": 4061,
+      "forks": 434,
+      "release_version": "rig-core-v0.16.0"
+    },
+    {
+      "id": "49c4e37f-0dbd-46f7-be08-f49b7b44bf03",
+      "timestamp": "2025-08-03T01:11:41.579521+00:00",
+      "stars": 4069,
+      "forks": 434,
+      "release_version": "rig-core-v0.16.0"
+    },
+    {
+      "id": "20a9c000-13d9-4438-9f2c-2a09644ddcd4",
+      "timestamp": "2025-08-04T01:10:33.022842+00:00",
+      "stars": 4077,
+      "forks": 435,
+      "release_version": "rig-core-v0.16.0"
+    },
+    {
+      "id": "d427d0ae-7ed4-43c2-9bb4-260525b69413",
+      "timestamp": "2025-08-05T01:06:53.721663+00:00",
+      "stars": 4085,
+      "forks": 435,
+      "release_version": "rig-core-v0.16.0"
+    },
+    {
+      "id": "e186aa1a-c697-45c9-91c4-4800e3bb8c1a",
+      "timestamp": "2025-08-06T01:05:41.327940+00:00",
+      "stars": 4087,
+      "forks": 435,
+      "release_version": "rig-core-v0.17.1"
+    },
+    {
+      "id": "eab4cbe7-a4e3-4844-ae8f-524911191eca",
+      "timestamp": "2025-08-07T01:06:06.119365+00:00",
+      "stars": 4092,
+      "forks": 436,
+      "release_version": "rig-core-v0.17.1"
+    },
+    {
+      "id": "d3aba540-b2ac-4016-8dea-bf6ceae4d9da",
+      "timestamp": "2025-08-08T01:05:52.017311+00:00",
+      "stars": 4099,
+      "forks": 437,
+      "release_version": "rig-core-v0.17.1"
+    },
+    {
+      "id": "2931a52a-a2da-4c78-a4fc-8c1ab5d884de",
+      "timestamp": "2025-08-09T01:00:03.453325+00:00",
+      "stars": 4110,
+      "forks": 437,
+      "release_version": "rig-core-v0.17.1"
+    },
+    {
+      "id": "363bddc1-cfbb-4e13-b137-793dde2ef9dc",
+      "timestamp": "2025-08-10T01:09:20.540635+00:00",
+      "stars": 4114,
+      "forks": 438,
+      "release_version": "rig-core-v0.17.1"
+    },
+    {
+      "id": "ee48cc9c-e1b5-41ea-bbef-42cc8892cee3",
+      "timestamp": "2025-08-11T01:06:36.837314+00:00",
+      "stars": 4118,
+      "forks": 438,
+      "release_version": "rig-core-v0.17.1"
+    },
+    {
+      "id": "fe50fc79-0b8e-458c-87f3-6b78702a0faf",
+      "timestamp": "2025-08-12T01:00:05.894492+00:00",
+      "stars": 4125,
+      "forks": 439,
+      "release_version": "rig-core-v0.17.1"
+    },
+    {
+      "id": "c60146a9-dfbe-42b7-910b-61f96127c4f5",
+      "timestamp": "2025-08-13T01:01:18.544105+00:00",
+      "stars": 4132,
+      "forks": 440,
+      "release_version": "rig-core-v0.17.1"
+    }
+  ]
+}

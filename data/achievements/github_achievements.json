@@ -1,0 +1,73 @@
+{
+  "dataset_name": "github_achievements",
+  "created_at": "2025-05-19T03:30:46.496605+00:00",
+  "entries": [
+    {
+      "id": "0140777a-3769-47bc-9400-338385c09e82",
+      "timestamp": "2025-05-19T03:29:55.405942+00:00",
+      "messages": [
+        "\ud83c\udf89 Github Star milestone reached: 3000 stars!",
+        "\ud83c\udf89 Github Fork milestone reached: 300 forks!"
+      ]
+    },
+    {
+      "id": "215ce3fe-a63e-4f7f-b87a-af57385d12bc",
+      "timestamp": "2025-06-06T00:59:29.352989+00:00",
+      "messages": [
+        "\ud83c\udf89 Github Fork milestone reached: 400 forks!"
+      ]
+    },
+    {
+      "id": "e5f834a8-9c29-4138-90ee-148e83c12de3",
+      "timestamp": "2025-06-10T01:00:47.292525+00:00",
+      "messages": [
+        "\ud83c\udf89 New rig-core version detected: rig-core-v0.13.0!"
+      ]
+    },
+    {
+      "id": "59ee8a09-65d2-4de6-a086-79fd4686ec6c",
+      "timestamp": "2025-07-09T01:02:06.019752+00:00",
+      "messages": [
+        "\ud83c\udf89 New rig-core version detected: rig-core-v0.14.0!"
+      ]
+    },
+    {
+      "id": "69a1e427-308b-4739-b478-10f99ac7d802",
+      "timestamp": "2025-07-15T01:05:19.768008+00:00",
+      "messages": [
+        "\ud83c\udf89 New rig-core version detected: rig-core-v0.15.0!"
+      ]
+    },
+    {
+      "id": "3016a9f3-f075-4a97-bc29-299f0987a0f5",
+      "timestamp": "2025-07-17T01:04:17.812536+00:00",
+      "messages": [
+        "\ud83c\udf89 New rig-core version detected: rig-core-v0.15.1!"
+      ]
+    },
+    {
+      "id": "938cc7b4-6424-4b16-b725-69fd54a16681",
+      "timestamp": "2025-07-26T01:02:22.137305+00:00",
+      "messages": [
+        "\ud83c\udf89 Github Star milestone reached: 4000 stars!"
+      ]
+    },
+    {
+      "id": "a6e77171-b94b-4aba-ae10-82f59c5158b8",
+      "timestamp": "2025-07-31T01:05:03.090432+00:00",
+      "messages": [
+        "\ud83c\udf89 New rig-core version detected: rig-core-v0.16.0!"
+      ]
+    },
+    {
+      "id": "e186aa1a-c697-45c9-91c4-4800e3bb8c1a",
+      "timestamp": "2025-08-06T01:05:41.327940+00:00",
+      "messages": [
+        "\ud83c\udf89 New rig-core version detected: rig-core-v0.17.1!"
+      ]
+    }
+  ],
+  "last_star_milestone": 4000,
+  "last_fork_milestone": 400,
+  "last_release_version": "rig-core-v0.17.1"
+}

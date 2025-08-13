@@ -1,0 +1,14 @@
+{
+  "dataset_name": "token_holder_achievements",
+  "created_at": "2025-05-19T03:30:46.503607+00:00",
+  "entries": [
+    {
+      "id": "01a0a598-fec7-4235-b9b7-680fb80718a3",
+      "timestamp": "2025-05-19T03:30:33.794754+00:00",
+      "messages": [
+        "\ud83c\udf89 Token holder milestone reached: 53000 holders!"
+      ]
+    }
+  ],
+  "last_holder_milestone": 53000
+}
