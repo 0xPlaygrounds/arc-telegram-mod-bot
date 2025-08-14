@@ -297,32 +297,19 @@ def list_filters(update: Update, context: CallbackContext):
         update.message.reply_text(response, parse_mode="Markdown")
 
 def check_message(update: Update, context: CallbackContext):
-    message = update.message or update.channel_post
-
+    print(f"[GROUP MESSAGE] {update.message.text}")
+    should_skip_spam_check = False
+    
+    message = update.message or update.channel_post  # Handle both messages and channel posts
     if not message:
         print("==== No message or channel post detected ====")
         return
     
+    message_text = message.text.lower()
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
     user = update.effective_user
-    raw_text = message.text or message.caption or ""
-    message_text = raw_text.lower()
 
-    msg_type = next(
-        (attr for attr in [
-            "text", "caption", "photo", "video", "document", "sticker",
-            "voice", "audio", "animation", "video_note", "location", "contact", "poll"
-        ] if getattr(message, attr, None)),
-        "unknown"
-    )
-
-    print(f"[GROUP MESSAGE] From {user.full_name} (@{user.username} | {user_id})")
-    print(f"  Type: {msg_type}")
-    if message.forward_date or message.forward_from or message.forward_from_chat:
-        print(f"  FORWARD DETECTED from: {message.forward_from or message.forward_from_chat}")
-    print(f"  Text/Capt: {raw_text}")
-    
     # Fetch chat admins to prevent acting on their messages
     chat_admins = context.bot.get_chat_administrators(chat_id)
     admin_ids = [admin.user.id for admin in chat_admins]
@@ -336,12 +323,6 @@ def check_message(update: Update, context: CallbackContext):
     if user_id not in admin_ids:
 
         combined_identity = f"{name_normalized} {username_normalized}"
-        
-        # Forward detection
-        if message.forward_date or message.forward_from or message.forward_from_chat:
-            print(f"[FORWARD DETECTED] Deleting forward from user {user_id}")
-            context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
-            return
 
         # Check for suspicious keywords
         if any(keyword in combined_identity for keyword in SUSPICIOUS_USERNAMES):
@@ -388,6 +369,12 @@ def check_message(update: Update, context: CallbackContext):
         
         # Check for "give x sol" or "give x solana" spam
         if contains_give_sol_phrase(message_text):
+            context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+            return
+        
+        # Block forwarded messages from non-admins
+        if message.forward_date or message.forward_from or message.forward_from_chat:
+            print(f"[FORWARD DETECTED] User {user_id} forwarded a message.")
             context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
             return
         
