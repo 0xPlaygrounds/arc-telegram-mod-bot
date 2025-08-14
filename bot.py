@@ -322,6 +322,8 @@ def check_message(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
     user = update.effective_user
 
+    should_skip_spam_check = False
+
     # Log message
     print(f"[GROUP MESSAGE] From {user.full_name} (@{user.username} | {user_id})")
     print(f"  Text/Capt: {raw_text}")
