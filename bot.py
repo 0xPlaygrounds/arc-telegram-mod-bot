@@ -327,7 +327,9 @@ def check_message(update: Update, context: CallbackContext):
     # --- Detect if message is forwarded ---
     is_forwarded = False
     forward_info = {}
+    linked_telegram_channels = []
 
+    # Classic forward detection
     if getattr(message, "forward_date", None):
         is_forwarded = True
         forward_info["forward_date"] = message.forward_date
@@ -344,9 +346,39 @@ def check_message(update: Update, context: CallbackContext):
         is_forwarded = True
         forward_info["forward_sender_name"] = message.forward_sender_name
 
+    # Scan for Telegram group/channel links in text or entities
+    def extract_telegram_links(msg):
+        links = []
+        entities = msg.entities or []
+        if getattr(msg, "caption_entities", None):
+            entities += msg.caption_entities
+
+        for ent in entities:
+            if ent.type in ["text_link", "url"]:
+                if ent.type == "text_link":
+                    url = ent.url
+                else:
+                    url = msg.text[ent.offset : ent.offset + ent.length]
+
+                if re.match(r"https?://t\.me/[^\s]+", url):
+                    links.append(url)
+
+        # Extra check: scan raw text/caption for any t.me links not marked as entities
+        raw_text = msg.text or msg.caption or ""
+        extra_links = re.findall(r"https?://t\.me/[^\s]+", raw_text)
+        for url in extra_links:
+            if url not in links:
+                links.append(url)
+        return links
+
+    linked_telegram_channels = extract_telegram_links(message)
+    if linked_telegram_channels:
+        is_forwarded = True
+        forward_info["linked_telegram_channels"] = linked_telegram_channels
+
     # --- Logging ---
     if is_forwarded:
-        print(f"[FORWARDED MESSAGE] From {user.full_name} (@{user.username} | {user_id})")
+        print(f"[FORWARDED / LINK MESSAGE] From {user.full_name} (@{user.username} | {user_id})")
         for k, v in forward_info.items():
             print(f"  {k}: {v}")
         print(f"  Text/Capt: {raw_text}")
