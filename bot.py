@@ -309,8 +309,16 @@ def check_message(update: Update, context: CallbackContext):
     raw_text = message.text or message.caption or ""
     message_text = raw_text.lower()
 
+    msg_type = next(
+        (attr for attr in [
+            "text", "caption", "photo", "video", "document", "sticker",
+            "voice", "audio", "animation", "video_note", "location", "contact", "poll"
+        ] if getattr(message, attr, None)),
+        "unknown"
+    )
+
     print(f"[GROUP MESSAGE] From {user.full_name} (@{user.username} | {user_id})")
-    print(f"  Type: {message.content_type}")
+    print(f"  Type: {msg_type}")
     if message.forward_date or message.forward_from or message.forward_from_chat:
         print(f"  FORWARD DETECTED from: {message.forward_from or message.forward_from_chat}")
     print(f"  Text/Capt: {raw_text}")
