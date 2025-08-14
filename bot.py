@@ -373,7 +373,14 @@ def check_message(update: Update, context: CallbackContext):
             return
         
         # Block forwarded messages from non-admins
-        if message.forward_date or message.forward_from or message.forward_from_chat:
+        is_forwarded = (
+            getattr(message, "forward_date", None) or
+            getattr(message, "forward_from", None) or
+            getattr(message, "forward_from_chat", None) or
+            getattr(message, "forward_origin", None)  # New PTB attribute
+        )
+
+        if is_forwarded:
             print(f"[FORWARD DETECTED] User {user_id} forwarded a message.")
             context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
             return
