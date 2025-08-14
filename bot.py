@@ -313,7 +313,7 @@ def check_message(update: Update, context: CallbackContext):
     if not message:
         print("==== No message detected in this update ====")
         return
-    
+
     # Normalize text/caption for spam/filter checks
     raw_text = message.text or message.caption or ""
     message_text = raw_text.lower()
@@ -324,9 +324,17 @@ def check_message(update: Update, context: CallbackContext):
 
     should_skip_spam_check = False
 
-    # Log message
-    print(f"[GROUP MESSAGE] From {user.full_name} (@{user.username} | {user_id})")
-    print(f"  Text/Capt: {raw_text}")
+    # Detect if the message is a forward
+    is_forwarded = getattr(message, "forward_date", None) or getattr(message, "forward_from", None) or getattr(message, "forward_from_chat", None)
+    
+    if is_forwarded:
+        forward_source = message.forward_from or message.forward_from_chat
+        print(f"[FORWARDED MESSAGE] From {user.full_name} (@{user.username} | {user_id})")
+        print(f"  Forwarded from: {forward_source}")
+        print(f"  Text/Capt: {raw_text}")
+    else:
+        print(f"[GROUP MESSAGE] From {user.full_name} (@{user.username} | {user_id})")
+        print(f"  Text/Capt: {raw_text}")
 
     # Fetch chat admins to prevent acting on their messages
     chat_admins = context.bot.get_chat_administrators(chat_id)
@@ -387,19 +395,6 @@ def check_message(update: Update, context: CallbackContext):
         
         # Check for "give x sol" or "give x solana" spam
         if contains_give_sol_phrase(message_text):
-            context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
-            return
-        
-        # Block forwarded messages from non-admins
-        is_forwarded = (
-            getattr(message, "forward_date", None) or
-            getattr(message, "forward_from", None) or
-            getattr(message, "forward_from_chat", None) or
-            getattr(message, "forward_origin", None)  # New PTB attribute
-        )
-
-        if is_forwarded:
-            print(f"[FORWARD DETECTED] User {user_id} forwarded a message.")
             context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
             return
         
