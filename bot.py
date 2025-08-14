@@ -324,13 +324,31 @@ def check_message(update: Update, context: CallbackContext):
 
     should_skip_spam_check = False
 
-    # Detect if the message is a forward
-    is_forwarded = getattr(message, "forward_date", None) or getattr(message, "forward_from", None) or getattr(message, "forward_from_chat", None)
-    
+    # --- Detect if message is forwarded ---
+    is_forwarded = False
+    forward_info = {}
+
+    if getattr(message, "forward_date", None):
+        is_forwarded = True
+        forward_info["forward_date"] = message.forward_date
+
+    if getattr(message, "forward_from", None):
+        is_forwarded = True
+        forward_info["forward_from_user"] = f"{message.forward_from.full_name} (@{message.forward_from.username})"
+
+    if getattr(message, "forward_from_chat", None):
+        is_forwarded = True
+        forward_info["forward_from_chat"] = f"{message.forward_from_chat.title} ({message.forward_from_chat.id})"
+
+    if getattr(message, "forward_sender_name", None):
+        is_forwarded = True
+        forward_info["forward_sender_name"] = message.forward_sender_name
+
+    # --- Logging ---
     if is_forwarded:
-        forward_source = message.forward_from or message.forward_from_chat
         print(f"[FORWARDED MESSAGE] From {user.full_name} (@{user.username} | {user_id})")
-        print(f"  Forwarded from: {forward_source}")
+        for k, v in forward_info.items():
+            print(f"  {k}: {v}")
         print(f"  Text/Capt: {raw_text}")
     else:
         print(f"[GROUP MESSAGE] From {user.full_name} (@{user.username} | {user_id})")
