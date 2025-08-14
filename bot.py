@@ -61,6 +61,18 @@ SPAM_TRACKER = defaultdict(lambda: deque(maxlen=SPAM_THRESHOLD))
 SPAM_RECORDS = {} # stores flagged spam messages for 5 minutes
 SPAM_RECORD_DURATION = timedelta(minutes=5)
 
+def extract_message(update: Update):
+    """
+    Returns a message-like object from an update,
+    handling message, edited_message, channel_post, etc.
+    Returns None if no valid message found.
+    """
+    for attr in ["message", "edited_message", "channel_post", "edited_channel_post"]:
+        msg = getattr(update, attr, None)
+        if msg:
+            return msg
+    return None
+
 def get_admin_ids(context, chat_id):
     # Fetch chat admins dynamically
     chat_admins = context.bot.get_chat_administrators(chat_id)
@@ -297,18 +309,22 @@ def list_filters(update: Update, context: CallbackContext):
         update.message.reply_text(response, parse_mode="Markdown")
 
 def check_message(update: Update, context: CallbackContext):
-    print(f"[GROUP MESSAGE] {update.message.text}")
-    should_skip_spam_check = False
-    
-    message = update.message or update.channel_post  # Handle both messages and channel posts
+    message = extract_message(update)
     if not message:
-        print("==== No message or channel post detected ====")
+        print("==== No message detected in this update ====")
         return
     
-    message_text = message.text.lower()
+    # Normalize text/caption for spam/filter checks
+    raw_text = message.text or message.caption or ""
+    message_text = raw_text.lower()
+
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
     user = update.effective_user
+
+    # Log message
+    print(f"[GROUP MESSAGE] From {user.full_name} (@{user.username} | {user_id})")
+    print(f"  Text/Capt: {raw_text}")
 
     # Fetch chat admins to prevent acting on their messages
     chat_admins = context.bot.get_chat_administrators(chat_id)
