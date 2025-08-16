@@ -102,3 +102,4 @@ staying hot
 pocket change
 fat stack
 sell button
+next send
