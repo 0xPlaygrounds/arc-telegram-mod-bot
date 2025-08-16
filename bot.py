@@ -31,6 +31,16 @@ MUTE_PHRASES_FILE = "blocklists/mute_phrases.txt"
 DELETE_PHRASES_FILE = "blocklists/delete_phrases.txt"
 WHITELIST_PHRASES_FILE = "whitelists/whitelist_phrases.txt"
 
+# Mute duration in seconds (3 days)
+MUTE_DURATION = 3 * 24 * 60 * 60
+
+# auto spam detection variables
+SPAM_THRESHOLD = 3
+TIME_WINDOW = timedelta(seconds=15)
+SPAM_TRACKER = defaultdict(lambda: deque(maxlen=SPAM_THRESHOLD))
+SPAM_RECORDS = {} # stores flagged spam messages for 5 minutes
+SPAM_RECORD_DURATION = timedelta(minutes=5)
+
 # Normalization helper must be defined before use
 def normalize_name(name: str) -> str:
     name = unicodedata.normalize("NFKD", name)
@@ -50,16 +60,6 @@ SUSPICIOUS_USERNAMES = [normalize_name(name) for name in [
 BIO_PHRASES = [
     "verify in bio", "link in bio", "read bio", "look at bio", "info in bio"
 ]
-
-# Mute duration in seconds (3 days)
-MUTE_DURATION = 3 * 24 * 60 * 60
-
-# auto spam detection variables
-SPAM_THRESHOLD = 3
-TIME_WINDOW = timedelta(seconds=15)
-SPAM_TRACKER = defaultdict(lambda: deque(maxlen=SPAM_THRESHOLD))
-SPAM_RECORDS = {} # stores flagged spam messages for 5 minutes
-SPAM_RECORD_DURATION = timedelta(minutes=5)
 
 def extract_message(update: Update):
     """
