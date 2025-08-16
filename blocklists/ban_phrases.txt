@@ -32,5 +32,3 @@ old empty wallet
 wallet with many transactions
 write me up
 preparing for the next phase
-→
-https://t.me
