@@ -475,6 +475,13 @@ def check_message(update: Update, context: CallbackContext):
             message.reply_text(f"arc angel fallen. {user.first_name} has been banned.")
             return
         
+        if contains_arrows(message_text):
+            print(f"[BAN MATCH] Arrow '→' found in message: '{message_text}'")
+            context.bot.ban_chat_member(chat_id=chat_id, user_id=user.id)
+            context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+            context.bot.send_message(chat_id=chat_id, text=f"arc angel fallen. {user.first_name} has been banned.")
+            return
+        
         # 1. autospam - check if its a command or matches a filter
         for trigger in FILTERS.keys():
             normalized_trigger = trigger.strip().lower()
