@@ -187,14 +187,6 @@ def contains_arrows(message_text):
     """
     return "→" in message_text
 
-def is_rosebot_message(message):
-    """
-    Returns True if the message is sent by RoseBot, False otherwise.
-    """
-    if message.from_user and message.from_user.username:
-        return message.from_user.username.lower() == "rosebot"
-    return False
-
 # check for spam
 def check_for_spam(message_text, user_id):
     now = datetime.now(timezone.utc)
@@ -408,12 +400,6 @@ def check_message(update: Update, context: CallbackContext):
     admin_names_normalized = get_admin_names(context, chat_id)
     name_normalized = normalize_name(user.full_name)
     username_normalized = normalize_name(user.username or "")
-
-    # --- Delete messages from RoseBot ---
-    if is_rosebot_message(message):
-        print(f"[ROSEBOT MESSAGE] Deleting message from RoseBot: '{raw_text}'")
-        # do nothing else for now, just testing
-        return
     
     # Ignore messages from admins
     if user_id not in admin_ids:
