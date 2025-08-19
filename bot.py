@@ -145,6 +145,18 @@ def post_brand_assets(context: CallbackContext, index: int = 0):
     except Exception as e:
         print(f"[Brand Assets] Failed to send or pin message: {e}")
 
+def post_news_message(context: CallbackContext):
+    try:
+        # Send /news command in the chat to trigger the listener
+        sent_message = context.bot.send_message(
+            chat_id=GROUP_CHAT_ID,
+            text="/news",
+            parse_mode=ParseMode.MARKDOWN
+        )
+        print("[News] /news command posted successfully.")
+    except Exception as e:
+        print(f"[News] Failed to post /news command: {e}")
+
 # Load filters as dict
 def load_filters(file_path):
     with open(file_path, 'r', encoding='utf-8') as file:
@@ -592,6 +604,9 @@ def main():
     job_queue.run_daily(lambda context: post_security_message(context, 1), time=time(hour=16, minute=0))
     job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
+
+    # /news every 6 hours, starting at 11 PM CST
+    job_queue.run_repeating(post_news_message, interval=6*3600, first=time(hour=23, minute=0))
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
