@@ -22,6 +22,9 @@ FILTERS_FILE = "filters/filters.json"
 # File path for metrics
 METRICS_FILE = "filters/metrics.json"
 
+# File path for news messages
+NEWS_FILE = "filters/news.json"
+
 # File path for accompanying filter media
 MEDIA_FOLDER = "media"
 
@@ -171,14 +174,24 @@ WHITELIST_PHRASES = load_phrases(WHITELIST_PHRASES_FILE)
 
 def send_news(context: CallbackContext):
     try:
+        # Load latest news from JSON file
+        with open(NEWS_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        response_text = data.get(
+            "latest_news_message",
+            "⚠️ Latest news message is missing or invalid."
+        )
+
+        # Send the news message directly
         context.bot.send_message(
             chat_id=GROUP_CHAT_ID,
-            text="/news",
+            text=response_text,
+            disable_web_page_preview=False,
             parse_mode=ParseMode.MARKDOWN
         )
-        print("[NEWS] /news posted successfully")
+        print("[NEWS] Latest news posted successfully")
     except Exception as e:
-        print(f"[NEWS] Failed to post /news: {e}")
+        print(f"[NEWS] Failed to post latest news: {e}")
 
 def contains_multiplication_phrase(text):
     text = text.lower()
@@ -607,7 +620,7 @@ def main():
     
     # Repeating jobs
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
-    # job_queue.run_repeating(send_news, interval=300, first=10)  # every 5 minutes
+    job_queue.run_repeating(send_news, interval=300, first=10)
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
