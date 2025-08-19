@@ -169,6 +169,17 @@ MUTE_PHRASES = load_phrases(MUTE_PHRASES_FILE)
 DELETE_PHRASES = load_phrases(DELETE_PHRASES_FILE)
 WHITELIST_PHRASES = load_phrases(WHITELIST_PHRASES_FILE)
 
+def send_news(context: CallbackContext):
+    try:
+        context.bot.send_message(
+            chat_id=GROUP_CHAT_ID,
+            text="/news",
+            parse_mode=ParseMode.MARKDOWN
+        )
+        print("[NEWS] /news posted successfully")
+    except Exception as e:
+        print(f"[NEWS] Failed to post /news: {e}")
+
 def contains_multiplication_phrase(text):
     text = text.lower()
     # Match digit(s) possibly separated by spaces, next to an 'x'
@@ -594,7 +605,9 @@ def main():
     job_queue.run_daily(lambda context: post_security_message(context, 1), time=time(hour=16, minute=0))
     job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
     
+    # Repeating jobs
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
+    job_queue.run_repeating(send_news, interval=300, first=10)  # every 5 minutes
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
