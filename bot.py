@@ -145,10 +145,10 @@ def post_brand_assets(context: CallbackContext, index: int = 0):
     except Exception as e:
         print(f"[Brand Assets] Failed to send or pin message: {e}")
 
+# news updates (uses filter to pull from the filters/news.json)
 def post_news_message(context: CallbackContext):
     try:
-        # Send /news command in the chat to trigger the listener
-        sent_message = context.bot.send_message(
+        context.bot.send_message(
             chat_id=GROUP_CHAT_ID,
             text="/news",
             parse_mode=ParseMode.MARKDOWN
@@ -605,11 +605,8 @@ def main():
     job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
 
-    # /news every 6 hours starting at 11:06 PM CST
-    job_queue.run_daily(post_news_message, time=time(hour=23, minute=6))
-    job_queue.run_daily(post_news_message, time=time(hour=5, minute=0))
-    job_queue.run_daily(post_news_message, time=time(hour=11, minute=0))
-    job_queue.run_daily(post_news_message, time=time(hour=17, minute=0))
+    # Repeat news updates every 6 hours (21600 seconds), first run immediately
+    job_queue.run_repeating(lambda context: post_security_message(context, 2), interval=21600, first=0)
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
