@@ -605,8 +605,11 @@ def main():
     job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
 
-    # /news every 6 hours, starting at 11 PM CST
-    job_queue.run_repeating(post_news_message, interval=6*3600, first=time(hour=23, minute=0))
+    # /news every 6 hours starting at 11:06 PM CST
+    job_queue.run_daily(post_news_message, time=time(hour=23, minute=6))
+    job_queue.run_daily(post_news_message, time=time(hour=5, minute=0))
+    job_queue.run_daily(post_news_message, time=time(hour=11, minute=0))
+    job_queue.run_daily(post_news_message, time=time(hour=17, minute=0))
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
