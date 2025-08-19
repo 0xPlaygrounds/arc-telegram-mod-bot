@@ -607,7 +607,7 @@ def main():
     
     # Repeating jobs
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
-    job_queue.run_repeating(send_news, interval=300, first=10)  # every 5 minutes
+    # job_queue.run_repeating(send_news, interval=300, first=10)  # every 5 minutes
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
