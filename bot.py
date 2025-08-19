@@ -606,7 +606,7 @@ def main():
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
 
     # Repeat news updates every 6 hours (21600 seconds), first run immediately
-    job_queue.run_repeating(lambda context: post_security_message(context, 2), interval=21600, first=0)
+    job_queue.run_repeating(lambda context: post_security_message(context, 2), interval=120, first=120)
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
