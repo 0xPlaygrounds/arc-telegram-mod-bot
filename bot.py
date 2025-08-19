@@ -569,14 +569,14 @@ def check_message(update: Update, context: CallbackContext):
             message.reply_text(f"⚠️ Error reading weekly metrics: {e}")
         return
     
-    if re.search(r'(?<!\w)/posts(?!\w)', message_text):
+    if re.search(r'(?<!\w)/news(?!\w)', message_text):
         try:
-            with open("filters/posts.json", "r", encoding="utf-8") as f:
+            with open("filters/news.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
-            response_text = data.get("latest_posts_message", "⚠️ Latest posts message is missing or invalid.")
+            response_text = data.get("latest_news_message", "⚠️ Latest news message is missing or invalid.")
             message.reply_text(response_text, disable_web_page_preview=False, parse_mode="Markdown")
         except Exception as e:
-            message.reply_text(f"⚠️ Error reading posts: {e}")
+            message.reply_text(f"⚠️ Error reading news: {e}")
         return
 
 
