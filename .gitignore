@@ -5,3 +5,4 @@ __pycache__/
 # Python virtual environment
 venv/
 telegram-bot-env/
+.github/workflows/
