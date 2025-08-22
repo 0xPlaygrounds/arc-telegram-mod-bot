@@ -28,9 +28,6 @@ NEWS_FILE = "filters/news.json"
 # File path for accompanying filter media
 MEDIA_FOLDER = "media"
 
-# used to track in case we want to limit other message posts, such as news, combot, etc;  
-MESSAGE_COUNTS = defaultdict(int)
-
 # File paths for phrases
 BAN_PHRASES_FILE = "blocklists/ban_phrases.txt"
 MUTE_PHRASES_FILE = "blocklists/mute_phrases.txt"
@@ -89,56 +86,8 @@ def get_admin_names(context, chat_id):
     chat_admins = context.bot.get_chat_administrators(chat_id)
     return [normalize_name(admin.user.full_name) for admin in chat_admins if not admin.user.is_bot]
 
-def track_group_messages(update: Update, context: CallbackContext):
-    """Count messages in the target group for scheduled posts."""
-    chat_id = str(update.effective_chat.id)
-    if chat_id == GROUP_CHAT_ID:
-        MESSAGE_COUNTS[chat_id] += 1
-        print(f"[COUNT] Message received. {chat_id} count = {MESSAGE_COUNTS[chat_id]}")
-
-def should_post(chat_id: str, label: str, threshold: int = 10) -> bool:
-    """Check if enough messages have been sent in chat before posting."""
-    count = MESSAGE_COUNTS.get(chat_id, 0)
-    if count < threshold:
-        print(f"[{label}] Skipping, only {count} messages since last run")
-        return False
-
-    print(f"[{label}] Threshold reached ({count} messages). Posting now and resetting counter.")
-    MESSAGE_COUNTS[chat_id] = 0
-    return True
-
-def send_news(context: CallbackContext):
-    chat_id = str(GROUP_CHAT_ID)
-
-    if not should_post(chat_id, "NEWS"):
-        return
-
-    try:
-        with open(NEWS_FILE, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        response_text = data.get(
-            "latest_news_message",
-            "⚠️ Latest news message is missing or invalid."
-        )
-
-        context.bot.send_message(
-            chat_id=GROUP_CHAT_ID,
-            text=response_text,
-            disable_web_page_preview=False,
-            parse_mode=ParseMode.MARKDOWN
-        )
-        print("[NEWS] Latest news posted successfully")
-
-    except Exception as e:
-        print(f"[NEWS] Failed to post latest news: {e}")
-
 # combot security message
 def post_security_message(context: CallbackContext, index: int):
-    chat_id = str(GROUP_CHAT_ID)
-
-    if not should_post(chat_id, "Security"):
-        return
-
     try:
         chat = context.bot.get_chat(GROUP_CHAT_ID)
         pinned = chat.pinned_message
@@ -165,17 +114,11 @@ def post_security_message(context: CallbackContext, index: int):
             message_id=sent_message.message_id, 
             disable_notification=True
         )
-        print("[Security] Message posted successfully")
     except Exception as e:
         print(f"[Security] Failed to pin message: {e}")
 
 # combot brand assets
 def post_brand_assets(context: CallbackContext, index: int = 0):
-    chat_id = str(GROUP_CHAT_ID)
-
-    if not should_post(chat_id, "Brand Assets"):
-        return
-
     try:
         chat = context.bot.get_chat(GROUP_CHAT_ID)
         pinned = chat.pinned_message
@@ -202,7 +145,6 @@ def post_brand_assets(context: CallbackContext, index: int = 0):
             message_id=sent_message.message_id,
             disable_notification=True
         )
-        print("[Brand Assets] Message posted successfully")
     except Exception as e:
         print(f"[Brand Assets] Failed to send or pin message: {e}")
 
@@ -229,6 +171,27 @@ BAN_PHRASES = load_phrases(BAN_PHRASES_FILE)
 MUTE_PHRASES = load_phrases(MUTE_PHRASES_FILE)
 DELETE_PHRASES = load_phrases(DELETE_PHRASES_FILE)
 WHITELIST_PHRASES = load_phrases(WHITELIST_PHRASES_FILE)
+
+def send_news(context: CallbackContext):
+    try:
+        # Load latest news from JSON file
+        with open(NEWS_FILE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+        response_text = data.get(
+            "latest_news_message",
+            "⚠️ Latest news message is missing or invalid."
+        )
+
+        # Send the news message directly
+        context.bot.send_message(
+            chat_id=GROUP_CHAT_ID,
+            text=response_text,
+            disable_web_page_preview=False,
+            parse_mode=ParseMode.MARKDOWN
+        )
+        print("[NEWS] Latest news posted successfully")
+    except Exception as e:
+        print(f"[NEWS] Failed to post latest news: {e}")
 
 def contains_multiplication_phrase(text):
     text = text.lower()
@@ -660,7 +623,6 @@ def main():
     job_queue.run_repeating(send_news, interval=21600)  # 6 hours = 21600 seconds
 
     # Message and command handlers
-    dp.add_handler(MessageHandler(Filters.chat(int(GROUP_CHAT_ID)) & Filters.text, track_group_messages))
     dp.add_handler(CommandHandler("filters", list_filters))
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, handle_new_members))
     dp.add_handler(MessageHandler(Filters.text | Filters.command, check_message))
