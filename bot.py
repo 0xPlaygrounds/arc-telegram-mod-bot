@@ -9,7 +9,7 @@ from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone, time
 from combot.scheduled_warnings import messages
 from combot.brand_assets import messages as brand_assets_messages
-from db import conn, cursor
+from web.backend.db import conn, cursor
 
 load_dotenv()  # Load .env vars
 
