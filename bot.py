@@ -357,9 +357,6 @@ def check_message(update: Update, context: CallbackContext):
     if not message:
         print("==== No message detected in this update ====")
         return
-    
-    # ✅ Save to DB for dashboard/labeling
-    save_message_to_db(message)
 
     # Normalize text/caption for spam/filter checks
     raw_text = message.text or message.caption or ""
@@ -619,6 +616,9 @@ def check_message(update: Update, context: CallbackContext):
         except Exception as e:
             message.reply_text(f"⚠️ Error reading news: {e}")
         return
+    
+    # Save to DB for dashboard/labeling
+    save_message_to_db(message)
 
 
 
