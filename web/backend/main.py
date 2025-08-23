@@ -1,4 +1,4 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from web.backend.db import telegram_messages
 from bson.objectid import ObjectId
@@ -20,14 +20,16 @@ app.add_middleware(
 )
 
 @app.get("/messages")
-def get_messages():
+def get_messages(page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le=100)):
     """
-    Fetch last 100 messages, sorted by timestamp_message descending
+    Fetch messages with pagination.
+    Sorted by timestamp_message descending.
     """
     try:
-        docs_cursor = telegram_messages.find().sort("timestamp_message", -1).limit(100)
+        skip_count = (page - 1) * page_size
+        docs_cursor = telegram_messages.find().sort("timestamp_message", -1).skip(skip_count).limit(page_size)
         docs_list = list(docs_cursor)
-        logger.info(f"Fetched {len(docs_list)} messages from MongoDB")
+        logger.info(f"Fetched {len(docs_list)} messages from MongoDB (page {page}, page_size {page_size})")
 
         messages = []
         for doc in docs_list:
@@ -43,12 +45,18 @@ def get_messages():
                 "tags": doc.get("tags", []),
                 "timestamp_message": doc.get("timestamp_message")
             })
-        logger.info("Returning messages JSON")
-        return messages
+
+        return {
+            "messages": messages,
+            "page": page,
+            "page_size": page_size,
+            "total_count": telegram_messages.count_documents({})
+        }
+
     except Exception as e:
         logger.error(f"Error fetching messages: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-
+    
 @app.post("/label/{msg_id}/{label}")
 def label_message(msg_id: str, label: str, reviewer_username: str):
     """

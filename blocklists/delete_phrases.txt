@@ -103,3 +103,7 @@ pocket change
 fat stack
 sell button
 next send
+/chart
+/DT
+/jupiter
+/dexscreener
