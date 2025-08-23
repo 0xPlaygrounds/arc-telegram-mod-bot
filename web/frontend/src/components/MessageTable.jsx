@@ -15,9 +15,10 @@ export default function MessageTable({ messages, refreshMessages }) {
   };
 
   const handleLabelSelect = async (msgId, label) => {
+    // No reviewer needed for now; handled in api.js as "Red Candle God"
     await updateLabel(msgId, label);
     setOpenDropdownId(null);
-    refreshMessages(); // refresh data from backend
+    refreshMessages();
   };
 
   return (
@@ -27,6 +28,12 @@ export default function MessageTable({ messages, refreshMessages }) {
           <th>User</th>
           <th>Message</th>
           <th>Label</th>
+          <th>AI Prediction</th>
+          <th>Confidence</th>
+          <th>Review Status</th>
+          <th>Usage Count</th>
+          <th>Timestamp</th>
+          <th>Reviewer</th> {/* optional column */}
         </tr>
       </thead>
       <tbody>
@@ -39,7 +46,6 @@ export default function MessageTable({ messages, refreshMessages }) {
               <td>{msg.text}</td>
               <td style={{ position: "relative" }}>
                 {msg.label === null ? (
-                  // Show all buttons if unlabeled
                   LABELS.map((label) => (
                     <button
                       key={label.name}
@@ -54,7 +60,6 @@ export default function MessageTable({ messages, refreshMessages }) {
                     </button>
                   ))
                 ) : (
-                  // Show only current label and dropdown if clicked
                   <>
                     <button
                       className="label-button"
@@ -87,6 +92,13 @@ export default function MessageTable({ messages, refreshMessages }) {
                   </>
                 )}
               </td>
+
+              <td>{msg.ai_prediction || "-"}</td>
+              <td>{msg.ai_confidence != null ? (msg.ai_confidence * 100).toFixed(1) + "%" : "-"}</td>
+              <td>{msg.review_status}</td>
+              <td>{msg.usage_count}</td>
+              <td>{new Date(msg.timestamp_message).toLocaleString()}</td>
+              <td>{msg.reviewed_by || "-"}</td> {/* reviewer column */}
             </tr>
           );
         })}
