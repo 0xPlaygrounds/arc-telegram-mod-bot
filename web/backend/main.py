@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from db import telegram_messages
+from web.backend.db import telegram_messages
 from bson.objectid import ObjectId
 from datetime import datetime
 import logging

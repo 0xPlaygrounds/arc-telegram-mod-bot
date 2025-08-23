@@ -4,8 +4,14 @@ const BASE_URL = "http://127.0.0.1:8080";
  * Fetch messages from backend
  */
 export async function fetchMessages() {
-  const res = await fetch(`${BASE_URL}/messages`);
-  return await res.json();
+  try {
+    const res = await fetch(`${BASE_URL}/messages`);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (err) {
+    console.error("Fetch failed:", err);
+    return []; // return empty array so the table still renders
+  }
 }
 
 /**
