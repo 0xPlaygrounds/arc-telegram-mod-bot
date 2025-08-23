@@ -559,18 +559,17 @@ def check_message(update: Update, context: CallbackContext):
     )
 
     if not is_custom_command:
-        # Check if message text already exists in DB
         existing_doc = telegram_messages.find_one({"text": message.text})
         if existing_doc:
-            # Increment usage counter
+            # Increment usage counter for duplicates
             telegram_messages.update_one(
-            {"_id": existing_doc["_id"]},
-            {"$inc": {"usage_count": 1}}
-        )
-        print(f"[DB] Message exists, incremented usage_count: '{message.text[:30]}...'")
-    else:
-        # Save new message with full metadata
-        save_message_to_db(message)
+                {"_id": existing_doc["_id"]},
+                {"$inc": {"usage_count": 1}}
+            )
+            print(f"[DB] Message exists, incremented usage_count: '{message.text[:30]}...'")
+        else:
+            # Save new message
+            save_message_to_db(message)
 
     # Filter Responses (apply to all)
     for trigger, filter_data in FILTERS.items():
