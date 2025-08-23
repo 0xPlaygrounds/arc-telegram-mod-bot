@@ -8,7 +8,7 @@ from datetime import datetime
 # load_dotenv()  # load environment variables from .env
 
 # --- Temporary hardcoded URI for testing only ---
-MONGO_URI = "mongodb+srv://username:password@cluster0.mongodb.net/arc_bot?retryWrites=true&w=majority"
+MONGO_URI = "mongodb+srv://arc_bot:pVwneyi8ATuJIM21@cluster0.dvafmmh.mongodb.net/"
 
 # --- Uncomment below for production / env usage ---
 # MONGO_URI = os.getenv("MONGO_URI")
