@@ -560,8 +560,18 @@ def check_message(update: Update, context: CallbackContext):
                 context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
                 return
             
-    # Save to DB for dashboard/labeling
-    save_message_to_db(message)
+    # Determine if message should be saved
+    is_admin = user_id in admin_ids
+    is_custom_command = (
+        re.search(r'(?<!\w)/metrics(?!\w)', message_text) or
+        re.search(r'(?<!\w)/growth(?!\w)', message_text) or
+        re.search(r'(?<!\w)/news(?!\w)', message_text) or
+        any(re.search(rf'(?<!\w)/?{re.escape(trigger)}(_\w+)?(?!\w)', message_text)
+            for trigger in FILTERS.keys())
+    )
+
+    if not is_admin and not is_custom_command:
+        save_message_to_db(message)
 
     # Filter Responses (apply to all)
     for trigger, filter_data in FILTERS.items():
