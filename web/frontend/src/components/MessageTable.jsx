@@ -33,7 +33,7 @@ export default function MessageTable({ messages, refreshMessages }) {
           <th>Review Status</th>
           <th>Usage Count</th>
           <th>Timestamp</th>
-          <th>Reviewer</th> {/* optional column */}
+          <th>Reviewer</th>
         </tr>
       </thead>
       <tbody>
@@ -46,26 +46,28 @@ export default function MessageTable({ messages, refreshMessages }) {
               <td>{msg.text}</td>
               <td style={{ position: "relative" }}>
                 {msg.label === null ? (
-                  LABELS.map((label) => (
-                    <button
-                      key={label.name}
-                      className="label-button"
-                      style={{ 
-                        backgroundColor: label.color,
-                        color: label.name === "Safe" ? "#000" : "#fff"
-                      }}
-                      onClick={() => handleLabelSelect(msg.id, label.name)}
-                    >
-                      {label.name}
-                    </button>
-                  ))
+                  <div style={{ display: "flex", gap: "4px" }}>
+                    {LABELS.map((label) => (
+                      <button
+                        key={label.name}
+                        className="label-button"
+                        style={{
+                          backgroundColor: label.color,
+                          color: label.name === "Safe" ? "#000" : "#fff",
+                        }}
+                        onClick={() => handleLabelSelect(msg.id, label.name)}
+                      >
+                        {label.name}
+                      </button>
+                    ))}
+                  </div>
                 ) : (
-                  <>
+                  <div>
                     <button
                       className="label-button"
-                      style={{ 
-                        backgroundColor: currentLabel?.color || "#98ff98", 
-                        color: msg.label === "Safe" ? "#000" : "#fff"
+                      style={{
+                        backgroundColor: currentLabel?.color || "#98ff98",
+                        color: msg.label === "Safe" ? "#000" : "#fff",
                       }}
                       onClick={() => handleLabelClick(msg.id)}
                     >
@@ -78,9 +80,9 @@ export default function MessageTable({ messages, refreshMessages }) {
                           <div
                             key={label.name}
                             className="label-option"
-                            style={{ 
+                            style={{
                               backgroundColor: label.color,
-                              color: label.name === "Safe" ? "#000" : "#fff"
+                              color: label.name === "Safe" ? "#000" : "#fff",
                             }}
                             onClick={() => handleLabelSelect(msg.id, label.name)}
                           >
@@ -89,16 +91,19 @@ export default function MessageTable({ messages, refreshMessages }) {
                         ))}
                       </div>
                     )}
-                  </>
+                  </div>
                 )}
               </td>
-
               <td>{msg.ai_prediction || "-"}</td>
-              <td>{msg.ai_confidence != null ? (msg.ai_confidence * 100).toFixed(1) + "%" : "-"}</td>
+              <td>
+                {msg.ai_confidence != null
+                  ? (msg.ai_confidence * 100).toFixed(1) + "%"
+                  : "-"}
+              </td>
               <td>{msg.review_status}</td>
               <td>{msg.usage_count}</td>
               <td>{new Date(msg.timestamp_message).toLocaleString()}</td>
-              <td>{msg.reviewed_by || "-"}</td> {/* reviewer column */}
+              <td>{msg.reviewed_by || "-"}</td>
             </tr>
           );
         })}
