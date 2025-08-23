@@ -9,6 +9,7 @@ from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone, time
 from combot.scheduled_warnings import messages
 from combot.brand_assets import messages as brand_assets_messages
+from db import conn, cursor
 
 load_dotenv()  # Load .env vars
 
@@ -338,11 +339,29 @@ def list_filters(update: Update, context: CallbackContext):
     else:
         update.message.reply_text(response, parse_mode="Markdown")
 
+def save_message_to_db(message):
+    try:
+        cursor.execute(
+            "INSERT INTO messages (tg_message_id, user_id, username, text) VALUES (?, ?, ?, ?)",
+            (
+                message.message_id,
+                message.from_user.id if message.from_user else None,
+                message.from_user.username if message.from_user else None,
+                message.text or ""
+            )
+        )
+        conn.commit()
+    except Exception as e:
+        print(f"[DB] Failed to save message: {e}")
+
 def check_message(update: Update, context: CallbackContext):
     message = extract_message(update)
     if not message:
         print("==== No message detected in this update ====")
         return
+    
+    # ✅ Save to DB for dashboard/labeling
+    save_message_to_db(message)
 
     # Normalize text/caption for spam/filter checks
     raw_text = message.text or message.caption or ""
