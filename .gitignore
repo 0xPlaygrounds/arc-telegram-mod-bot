@@ -6,3 +6,6 @@ __pycache__/
 venv/
 telegram-bot-env/
 .github/workflows/
+web/frontend/node_modules
+web/frontend/.parcel-cache
+web/frontend/dist
