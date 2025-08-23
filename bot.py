@@ -559,6 +559,9 @@ def check_message(update: Update, context: CallbackContext):
                 print(f"[DELETE MATCH] Phrase: '{phrase}' matched in message: '{message_text}'")
                 context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
                 return
+            
+    # Save to DB for dashboard/labeling
+    save_message_to_db(message)
 
     # Filter Responses (apply to all)
     for trigger, filter_data in FILTERS.items():
@@ -616,11 +619,6 @@ def check_message(update: Update, context: CallbackContext):
         except Exception as e:
             message.reply_text(f"⚠️ Error reading news: {e}")
         return
-    
-    # Save to DB for dashboard/labeling
-    save_message_to_db(message)
-
-
 
 def main():
     print("starting bot")
