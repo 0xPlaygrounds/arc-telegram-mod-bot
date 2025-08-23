@@ -107,3 +107,4 @@ next send
 /DT
 /jupiter
 /dexscreener
+/website
