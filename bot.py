@@ -561,7 +561,7 @@ def check_message(update: Update, context: CallbackContext):
                 return
             
     # Determine if message should be saved
-    is_admin = user_id in admin_ids
+    # is_admin = user_id in admin_ids
     is_custom_command = (
         re.search(r'(?<!\w)/metrics(?!\w)', message_text) or
         re.search(r'(?<!\w)/growth(?!\w)', message_text) or
@@ -570,8 +570,13 @@ def check_message(update: Update, context: CallbackContext):
             for trigger in FILTERS.keys())
     )
 
-    if not is_admin and not is_custom_command:
-        save_message_to_db(message)
+    if not is_custom_command:
+        # Check if message text already exists in DB
+        exists = telegram_messages.find_one({"text": message.text})
+        if not exists:
+            save_message_to_db(message)
+        else:
+            print(f"[DB] Message already exists: '{message.text[:30]}...'")
 
     # Filter Responses (apply to all)
     for trigger, filter_data in FILTERS.items():
