@@ -1,6 +1,8 @@
-from fastapi import FastAPI
+# main.py
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from db import conn, cursor
+from web.backend.db import telegram_messages
+from bson.objectid import ObjectId
 
 app = FastAPI()
 
@@ -14,12 +16,35 @@ app.add_middleware(
 
 @app.get("/messages")
 def get_messages():
-    cursor.execute("SELECT id, username, text, label FROM messages ORDER BY id DESC LIMIT 100")
-    rows = cursor.fetchall()
-    return [{"id": r[0], "username": r[1], "text": r[2], "label": r[3]} for r in rows]
+    """
+    Fetch last 100 messages, sorted by timestamp descending
+    """
+    try:
+        docs = telegram_messages.find().sort("timestamp", -1).limit(100)
+        messages = []
+        for doc in docs:
+            messages.append({
+                "id": str(doc["_id"]),           # MongoDB ObjectId as string
+                "username": doc.get("username"),
+                "text": doc.get("text"),
+                "label": doc.get("label")
+            })
+        return messages
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/label/{msg_id}/{label}")
-def label_message(msg_id: int, label: str):
-    cursor.execute("UPDATE messages SET label=? WHERE id=?", (label, msg_id))
-    conn.commit()
-    return {"status": "ok", "id": msg_id, "label": label}
+def label_message(msg_id: str, label: str):
+    """
+    Set a label for a specific message by MongoDB _id
+    """
+    try:
+        result = telegram_messages.update_one(
+            {"_id": ObjectId(msg_id)},
+            {"$set": {"label": label}}
+        )
+        if result.matched_count == 0:
+            raise HTTPException(status_code=404, detail="Message not found")
+        return {"status": "ok", "id": msg_id, "label": label}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

@@ -1,20 +1,39 @@
-import sqlite3
+# web/backend/db.py
+from pymongo import MongoClient
+from datetime import datetime
 
-# Create a connection (auto-creates messages.db if it doesn't exist)
-conn = sqlite3.connect("messages.db", check_same_thread=False)
-cursor = conn.cursor()
+# from dotenv import load_dotenv
+# import os
 
-# Create messages table if not exists
-cursor.execute("""
-CREATE TABLE IF NOT EXISTS messages (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    tg_message_id INTEGER,
-    user_id INTEGER,
-    username TEXT,
-    text TEXT,
-    timestamp DATETIME DEFAULT CURRENT_TIMESTAMP,
-    label TEXT
-)
-""")
+# load_dotenv()  # load environment variables from .env
 
-conn.commit()
+# --- Temporary hardcoded URI for testing only ---
+MONGO_URI = "mongodb+srv://username:password@cluster0.mongodb.net/arc_bot?retryWrites=true&w=majority"
+
+# --- Uncomment below for production / env usage ---
+# MONGO_URI = os.getenv("MONGO_URI")
+# if not MONGO_URI:
+#     raise ValueError("MONGO_URI environment variable not set")
+
+# Connect to MongoDB
+client = MongoClient(MONGO_URI)
+db = client["arc_bot"]
+telegram_messages = db["telegram_messages"]
+
+def save_message_to_db(message):
+    """
+    Save a Telegram message document to MongoDB.
+    """
+    try:
+        doc = {
+            "tg_message_id": message.message_id,
+            "user_id": message.from_user.id if message.from_user else None,
+            "username": message.from_user.username if message.from_user else None,
+            "text": message.text or message.caption or "",
+            "timestamp": message.date if hasattr(message, "date") else datetime.utcnow(),
+            "label": None  # optional, can add later
+        }
+        telegram_messages.insert_one(doc)
+        print(f"[DB] Saved message {doc['tg_message_id']} from {doc['username']}")
+    except Exception as e:
+        print(f"[DB] Failed to save message: {e}")

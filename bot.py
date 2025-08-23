@@ -9,7 +9,7 @@ from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone, time
 from combot.scheduled_warnings import messages
 from combot.brand_assets import messages as brand_assets_messages
-from web.backend.db import conn, cursor
+from web.backend.db import telegram_messages
 
 load_dotenv()  # Load .env vars
 
@@ -341,16 +341,14 @@ def list_filters(update: Update, context: CallbackContext):
 
 def save_message_to_db(message):
     try:
-        cursor.execute(
-            "INSERT INTO messages (tg_message_id, user_id, username, text) VALUES (?, ?, ?, ?)",
-            (
-                message.message_id,
-                message.from_user.id if message.from_user else None,
-                message.from_user.username if message.from_user else None,
-                message.text or ""
-            )
-        )
-        conn.commit()
+        telegram_messages.insert_one({
+            "tg_message_id": message.message_id,
+            "user_id": message.from_user.id if message.from_user else None,
+            "username": message.from_user.username if message.from_user else None,
+            "text": message.text or "",
+            "timestamp": datetime.utcnow(),
+            "label": None  # keep for future labeling
+        })
     except Exception as e:
         print(f"[DB] Failed to save message: {e}")
 
