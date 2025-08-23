@@ -10,6 +10,7 @@ from datetime import datetime, timedelta, timezone, time
 from combot.scheduled_warnings import messages
 from combot.brand_assets import messages as brand_assets_messages
 from web.backend.db import telegram_messages
+from web.backend.db import save_message_to_db
 
 load_dotenv()  # Load .env vars
 
@@ -339,19 +340,6 @@ def list_filters(update: Update, context: CallbackContext):
     else:
         update.message.reply_text(response, parse_mode="Markdown")
 
-def save_message_to_db(message):
-    try:
-        telegram_messages.insert_one({
-            "tg_message_id": message.message_id,
-            "user_id": message.from_user.id if message.from_user else None,
-            "username": message.from_user.username if message.from_user else None,
-            "text": message.text or "",
-            "timestamp": datetime.utcnow(),
-            "label": None  # keep for future labeling
-        })
-    except Exception as e:
-        print(f"[DB] Failed to save message: {e}")
-
 def check_message(update: Update, context: CallbackContext):
     message = extract_message(update)
     if not message:
@@ -572,11 +560,17 @@ def check_message(update: Update, context: CallbackContext):
 
     if not is_custom_command:
         # Check if message text already exists in DB
-        exists = telegram_messages.find_one({"text": message.text})
-        if not exists:
-            save_message_to_db(message)
-        else:
-            print(f"[DB] Message already exists: '{message.text[:30]}...'")
+        existing_doc = telegram_messages.find_one({"text": message.text})
+        if existing_doc:
+            # Increment usage counter
+            telegram_messages.update_one(
+            {"_id": existing_doc["_id"]},
+            {"$inc": {"usage_count": 1}}
+        )
+        print(f"[DB] Message exists, incremented usage_count: '{message.text[:30]}...'")
+    else:
+        # Save new message with full metadata
+        save_message_to_db(message)
 
     # Filter Responses (apply to all)
     for trigger, filter_data in FILTERS.items():
