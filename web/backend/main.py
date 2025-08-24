@@ -42,7 +42,8 @@ async def not_found_handler(request: Request, exc):
 async def startup_event():
     port = os.environ.get("PORT", 8080)
     host = "0.0.0.0"
-    public_url = os.environ.get("RAILWAY_STATIC_URL") or f"http://localhost:{port}"
+    # Railway provides RAILWAY_STATIC_URL for frontend deployments, otherwise fallback to localhost
+    public_url = os.environ.get("RAILWAY_STATIC_URL") or f"http://{host}:{port}"
     print(f"🚀 FastAPI is running on {host}:{port}")
     print(f"🌐 Public URL for frontend use: {public_url}")
 
@@ -57,9 +58,8 @@ def get_messages(page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le
         docs_list = list(docs_cursor)
         logger.info(f"Fetched {len(docs_list)} messages from MongoDB (page {page}, page_size {page_size})")
 
-        messages = []
-        for doc in docs_list:
-            messages.append({
+        messages = [
+            {
                 "id": str(doc["_id"]),
                 "username": doc.get("username"),
                 "text": doc.get("text"),
@@ -70,7 +70,9 @@ def get_messages(page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le
                 "usage_count": doc.get("usage_count", 1),
                 "tags": doc.get("tags", []),
                 "timestamp_message": doc.get("timestamp_message").isoformat() if doc.get("timestamp_message") else None
-            })
+            }
+            for doc in docs_list
+        ]
 
         return {
             "messages": messages,
@@ -122,10 +124,10 @@ def label_message(msg_id: str, label: str, reviewer_username: str):
 # Run Uvicorn
 # -----------------------------
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))  # Railway assigns this
+    port = int(os.environ.get("PORT", 8080))  # Railway assigns this automatically
     uvicorn.run(
         "web.backend.main:app",
-        host="0.0.0.0",
+        host="0.0.0.0",   # Bind to all interfaces for Railway
         port=port,
         log_level="warning",
         access_log=False
