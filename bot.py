@@ -37,7 +37,7 @@ DELETE_PHRASES_FILE = "blocklists/delete_phrases.txt"
 WHITELIST_PHRASES_FILE = "whitelists/whitelist_phrases.txt"
 
 # Whitelisted commands
-WHITELIST_FILTERS = ["/growth", "/metrics", "/news", "/posts"]
+WHITELIST_FILTERS = ["/growth", "/metrics", "/news", "/posts", "/report"]
 
 # Mute duration in seconds (3 days)
 MUTE_DURATION = 3 * 24 * 60 * 60
@@ -226,7 +226,7 @@ def disallowed_filters(update, context):
     message_id = update.message.message_id
 
     # Combine your filters with the static whitelist
-    allowed_commands = set(WHITELIST_FILTERS + FILTERS)  # FILTERS already loaded
+    allowed_commands = set(WHITELIST_FILTERS + list(FILTERS.keys()))
 
     if message_text not in allowed_commands:
         print(f"[DELETE MATCH] Disallowed message '{message_text}' found. Deleting message.")
