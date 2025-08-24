@@ -111,11 +111,12 @@ def label_message(msg_id: str, label: str, reviewer_username: str):
 # Run Uvicorn
 # -----------------------------
 if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8080))  # Use Railway's assigned port, default to 8080
     uvicorn.run(
         "web.backend.main:app",
-        host="127.0.0.1",
-        port=8080,
-        reload=True,
-        log_level="warning",  # Only warnings/errors; suppress INFO access logs
-        access_log=False      # Disable default HTTP access logs (removes /api 404s)
+        host="0.0.0.0",    # Bind to all interfaces
+        port=port,
+        log_level="warning",
+        access_log=False
     )
+
