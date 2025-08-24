@@ -36,6 +36,9 @@ MUTE_PHRASES_FILE = "blocklists/mute_phrases.txt"
 DELETE_PHRASES_FILE = "blocklists/delete_phrases.txt"
 WHITELIST_PHRASES_FILE = "whitelists/whitelist_phrases.txt"
 
+# Whitelisted commands
+WHITELIST_FILTERS = ["/growth", "/metrics", "/news", "/posts"]
+
 # Mute duration in seconds (3 days)
 MUTE_DURATION = 3 * 24 * 60 * 60
 
@@ -212,6 +215,25 @@ def contains_arrows(message_text):
     Returns True if the message contains the → character, False otherwise.
     """
     return "→" in message_text
+
+def disallowed_filters(update, context):
+    """
+    Deletes a message if it is not in the whitelist filters or custom filters.
+    Caller should decide whether to run this check (e.g., only for commands starting with '/').
+    """
+    message_text = update.message.text
+    chat_id = update.message.chat_id
+    message_id = update.message.message_id
+
+    # Combine your filters with the static whitelist
+    allowed_commands = set(WHITELIST_FILTERS + FILTERS)  # FILTERS already loaded
+
+    if message_text not in allowed_commands:
+        print(f"[DELETE MATCH] Disallowed message '{message_text}' found. Deleting message.")
+        context.bot.delete_message(chat_id=chat_id, message_id=message_id)
+        return True  # message deleted
+
+    return False  # message is allowed
 
 # check for spam
 def check_for_spam(message_text, user_id):
@@ -486,6 +508,12 @@ def check_message(update: Update, context: CallbackContext):
             context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
             return
         
+        # Check for disallowed commands (only if it starts with '/')
+        if message_text.startswith("/"):
+            if disallowed_filters(update, context):
+                # Message was deleted, no further processing needed
+                return
+        
         # 1. autospam - check if its a command or matches a filter
         for trigger in FILTERS.keys():
             normalized_trigger = trigger.strip().lower()
@@ -549,7 +577,7 @@ def check_message(update: Update, context: CallbackContext):
                 return
             
     # Determine if message should be saved
-    # is_admin = user_id in admin_ids
+    is_admin = user_id in admin_ids
     is_custom_command = (
         re.search(r'(?<!\w)/metrics(?!\w)', message_text) or
         re.search(r'(?<!\w)/growth(?!\w)', message_text) or
@@ -558,7 +586,7 @@ def check_message(update: Update, context: CallbackContext):
             for trigger in FILTERS.keys())
     )
 
-    if not is_custom_command:
+    if not is_admin and not is_custom_command:
         existing_doc = telegram_messages.find_one({"text": message.text})
         if existing_doc:
             # Increment usage counter for duplicates
@@ -570,6 +598,9 @@ def check_message(update: Update, context: CallbackContext):
         else:
             # Save new message
             save_message_to_db(message)
+    else:
+        if is_admin:
+            print(f"[SKIP] Message from admin {user_id} not saved: '{message_text[:30]}...'")
 
     # Filter Responses (apply to all)
     for trigger, filter_data in FILTERS.items():

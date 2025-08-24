@@ -1,14 +1,21 @@
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import JSONResponse
 from web.backend.db import telegram_messages
 from bson.objectid import ObjectId
 from datetime import datetime
 import logging
+import uvicorn
 
+# -----------------------------
 # Setup logging
+# -----------------------------
 logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+logger = logging.getLogger("web.backend.main")
 
+# -----------------------------
+# Initialize FastAPI
+# -----------------------------
 app = FastAPI()
 
 # Allow frontend to connect
@@ -19,12 +26,20 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# -----------------------------
+# Global 404 handler to suppress stray requests
+# -----------------------------
+@app.exception_handler(404)
+async def not_found_handler(request: Request, exc):
+    # Log at DEBUG level only so stray /api requests do not appear in INFO logs
+    logger.debug(f"404 Not Found: {request.url}")
+    return JSONResponse(status_code=404, content={"detail": "Not Found"})
+
+# -----------------------------
+# Routes
+# -----------------------------
 @app.get("/messages")
 def get_messages(page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le=100)):
-    """
-    Fetch messages with pagination.
-    Sorted by timestamp_message descending.
-    """
     try:
         skip_count = (page - 1) * page_size
         docs_cursor = telegram_messages.find().sort("timestamp_message", -1).skip(skip_count).limit(page_size)
@@ -43,7 +58,7 @@ def get_messages(page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le
                 "review_status": doc.get("review_status"),
                 "usage_count": doc.get("usage_count", 1),
                 "tags": doc.get("tags", []),
-                "timestamp_message": doc.get("timestamp_message")
+                "timestamp_message": doc.get("timestamp_message").isoformat() if doc.get("timestamp_message") else None
             })
 
         return {
@@ -56,13 +71,9 @@ def get_messages(page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le
     except Exception as e:
         logger.error(f"Error fetching messages: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-    
+
 @app.post("/label/{msg_id}/{label}")
 def label_message(msg_id: str, label: str, reviewer_username: str):
-    """
-    Set a label for a specific message by MongoDB _id and track reviewer.
-    reviewer_username is sent from frontend (can be "Red Candle God" for now).
-    """
     try:
         now = datetime.utcnow()
         logger.info(f"Labeling message {msg_id} with label '{label}' by {reviewer_username}")
@@ -95,3 +106,16 @@ def label_message(msg_id: str, label: str, reviewer_username: str):
     except Exception as e:
         logger.error(f"Error labeling message {msg_id}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+
+# -----------------------------
+# Run Uvicorn
+# -----------------------------
+if __name__ == "__main__":
+    uvicorn.run(
+        "web.backend.main:app",
+        host="127.0.0.1",
+        port=8080,
+        reload=True,
+        log_level="warning",  # Only warnings/errors; suppress INFO access logs
+        access_log=False      # Disable default HTTP access logs (removes /api 404s)
+    )
