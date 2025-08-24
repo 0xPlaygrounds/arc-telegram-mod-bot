@@ -6,6 +6,7 @@ from bson.objectid import ObjectId
 from datetime import datetime
 import logging
 import uvicorn
+import os
 
 # -----------------------------
 # Setup logging
@@ -31,9 +32,19 @@ app.add_middleware(
 # -----------------------------
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc):
-    # Log at DEBUG level only so stray /api requests do not appear in INFO logs
     logger.debug(f"404 Not Found: {request.url}")
     return JSONResponse(status_code=404, content={"detail": "Not Found"})
+
+# -----------------------------
+# Print URL on startup
+# -----------------------------
+@app.on_event("startup")
+async def startup_event():
+    port = os.environ.get("PORT", 8080)
+    host = "0.0.0.0"
+    public_url = os.environ.get("RAILWAY_STATIC_URL") or f"http://localhost:{port}"
+    print(f"🚀 FastAPI is running on {host}:{port}")
+    print(f"🌐 Public URL for frontend use: {public_url}")
 
 # -----------------------------
 # Routes
@@ -111,12 +122,11 @@ def label_message(msg_id: str, label: str, reviewer_username: str):
 # Run Uvicorn
 # -----------------------------
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))  # Use Railway's assigned port, default to 8080
+    port = int(os.environ.get("PORT", 8080))  # Railway assigns this
     uvicorn.run(
         "web.backend.main:app",
-        host="0.0.0.0",    # Bind to all interfaces
+        host="0.0.0.0",
         port=port,
         log_level="warning",
         access_log=False
     )
-
