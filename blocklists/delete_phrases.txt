@@ -108,3 +108,4 @@ next send
 /jupiter
 /dexscreener
 /website
+chart
