@@ -61,12 +61,23 @@ def normalize_name(name: str) -> str:
 
 # Suspicious names to auto-ban
 SUSPICIOUS_USERNAMES = [normalize_name(name) for name in [
-    "dev", "developer", "admin", "mod", "owner", "arc", "arc_agent", "arc agent",
-    "arch_agent", "arch agent", "support", "helpdesk", "administrator", "arc admin", "arc_admin"
+    "admin", "administrator", "mod", "moderator", "owner", "founder",
+    "dev", "developer", "support", "helpdesk", "staff", "team", "manager",
+    "arc", "arc_agent", "arc agent", "arch_agent", "arch agent",
+    "arc_admin", "arc admin", "system", "bot", "official",
+    "verification", "verify", "verify_account", "verify-account",
+    "check", "checker", "t.me", "telegram", "tg", "contact",
+    "info", "customer_support",
+    "admin_", "_admin", "mod_", "_mod", "support_", "_support"
 ]]
 
 BIO_PHRASES = [
-    "verify in bio", "link in bio", "read bio", "look at bio", "info in bio"
+    "verify in bio", "link in bio", "read bio", "look at bio", "info in bio",
+    "check bio", "click bio", "bio link", "more info in bio", "see bio",
+    "dm me", "message me", "dm for", "contact in bio", "send me", "message for",
+    "free crypto", "free sol", "claim now", "airdrop", "giveaway",
+    "50x", "100x", "50-x", "100-x", "50X", "100X", "50X+", "100X+",
+    "click link", "follow for", "more info", "join now", "instant profit", "earn crypto"
 ]
 
 def extract_message(update: Update):
@@ -317,6 +328,9 @@ def handle_new_members(update, context):
         name_norm = normalize_name(name)
         username_norm = normalize_name(username)
 
+        # Combine normalized name + username for keyword checks
+        combined_identity = f"{name_norm} {username_norm}"
+
         if name_norm in admin_names:
             try:
                 context.bot.ban_chat_member(chat_id, user_id)
@@ -335,12 +349,17 @@ def handle_new_members(update, context):
                 print(f"[ERROR] Failed to ban {user_id}: {e}")
 
         # Check for bio phrases
-        if any(keyword in name_norm or keyword in username_norm for keyword in BIO_PHRASES):
+        if (
+            any(keyword in combined_identity for keyword in BIO_PHRASES) or
+            contains_multiplication_phrase(combined_identity) or
+            contains_non_x_links(combined_identity)
+        ):
             try:
                 context.bot.ban_chat_member(chat_id, user_id)
-                print(f"[BANNED] User with suspicious name (bio phrase): {name_info}")
+                print(f"[BANNED] User with suspicious content on join: {name_info}")
+                continue
             except Exception as e:
-                print(f"[ERROR] Failed to ban user with bio phrase in name {user_id}: {e}")
+                print(f"[ERROR] Failed to ban user {user_id}: {e}")
 
 def list_filters(update: Update, context: CallbackContext):
     # Load the latest filters
@@ -452,7 +471,7 @@ def check_message(update: Update, context: CallbackContext):
     # Ignore messages from admins
     if user_id not in admin_ids:
 
-        combined_identity = f"{name_normalized} {username_normalized}"
+        combined_identity = f"{name_normalized} {username_normalized} {message_text.lower()}"
 
         # Check for suspicious keywords
         if name_normalized in SUSPICIOUS_USERNAMES or username_normalized in SUSPICIOUS_USERNAMES:
@@ -464,13 +483,17 @@ def check_message(update: Update, context: CallbackContext):
                 print(f"[ERROR] Failed to ban suspicious user {user_id}: {e}")
 
         # Check for bio-like phrases
-        if any(keyword in combined_identity for keyword in BIO_PHRASES):
+        if (
+            any(keyword in combined_identity for keyword in BIO_PHRASES) or
+            contains_multiplication_phrase(combined_identity) or
+            contains_non_x_links(combined_identity)
+        ):
             try:
                 context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
-                print(f"[BANNED] Bio phrase detected in name/username: {combined_identity}")
+                print(f"[BANNED] Suspicious content detected: {combined_identity}")
                 return
             except Exception as e:
-                print(f"[ERROR] Failed to ban user with bio phrase {user_id}: {e}")
+                print(f"[ERROR] Failed to ban user {user_id}: {e}")
 
         # Check for impersonation
         if name_normalized in admin_names_normalized:
