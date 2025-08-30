@@ -574,30 +574,62 @@ def check_message(update: Update, context: CallbackContext):
     
         # Check for banned phrases
         for phrase in BAN_PHRASES:
-            # Use word boundaries to match exact words
-            if re.search(r'\b' + re.escape(phrase) + r'\b', message_text):
+            if re.search(r'\b' + re.escape(phrase) + r'\b', message_text, re.IGNORECASE):
                 print(f"[BAN MATCH] Phrase: '{phrase}' matched in message: '{message_text}'")
-                context.bot.ban_chat_member(chat_id=chat_id, user_id=user.id)
-                return
+
+                # Remove the message
+                try:
+                    context.bot.delete_message(chat_id=chat_id, message_id=update.message.message_id)
+                    print(f"Deleted message from user {user.id}")
+                except Exception as e:
+                    print(f"Failed to delete message: {e}")
+
+                # Ban the user
+                try:
+                    context.bot.ban_chat_member(chat_id=chat_id, user_id=user.id)
+                    print(f"Banned user {user.id}")
+                except Exception as e:
+                    print(f"Failed to ban user: {e}")
+
+                return  # Stop further processing
 
         # Check for muted phrases
         for phrase in MUTE_PHRASES:
-            # Use word boundaries to match exact words
-            if re.search(r'\b' + re.escape(phrase) + r'\b', message_text):
+            if re.search(r'\b' + re.escape(phrase) + r'\b', message_text, re.IGNORECASE):
                 print(f"[MUTE MATCH] Phrase: '{phrase}' matched in message: '{message_text}'")
                 until_date = message.date + timedelta(seconds=MUTE_DURATION)
                 permissions = ChatPermissions(can_send_messages=False)
-                context.bot.restrict_chat_member(chat_id=chat_id, user_id=user.id, permissions=permissions, until_date=until_date)
-                message.reply_text(f"{user.first_name} has been muted for 3 days.")
-                return
+
+                try:
+                    context.bot.restrict_chat_member(
+                        chat_id=chat_id, 
+                        user_id=user.id, 
+                        permissions=permissions, 
+                        until_date=until_date
+                    )
+                    print(f"Muted user {user.id} until {until_date}")
+                except Exception as e:
+                    print(f"Failed to mute user {user.id}: {e}")
+
+                try:
+                    message.reply_text(f"{user.first_name} has been muted for 3 days.")
+                except Exception as e:
+                    print(f"Failed to send mute reply: {e}")
+
+                return  # Stop further processing
 
         # Check for deleted phrases
         for phrase in DELETE_PHRASES:
-            # Use word boundaries to match exact words
-            if re.search(r'\b' + re.escape(phrase) + r'\b', message_text):
+            if re.search(r'\b' + re.escape(phrase) + r'\b', message_text, re.IGNORECASE):
                 print(f"[DELETE MATCH] Phrase: '{phrase}' matched in message: '{message_text}'")
-                context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
-                return
+
+                try:
+                    context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+                    print(f"Deleted message {message.message_id} from user {user.id}")
+                except Exception as e:
+                    print(f"Failed to delete message {message.message_id}: {e}")
+
+                return  # Stop further processing
             
     # Determine if message should be saved
     is_admin = user_id in admin_ids
