@@ -51,12 +51,21 @@ async def startup_event():
 # Routes
 # -----------------------------
 @app.get("/messages")
-def get_messages(page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le=100)):
+def get_messages(
+    page: int = Query(1, ge=1),
+    page_size: int = Query(20, ge=1, le=100),
+    sort_key: str = Query("timestamp_message"),  # default sort
+    sort_direction: str = Query("desc"),         # "asc" or "desc"
+):
     try:
         skip_count = (page - 1) * page_size
-        docs_cursor = telegram_messages.find().sort("timestamp_message", -1).skip(skip_count).limit(page_size)
+
+        # Determine MongoDB sort order
+        mongo_sort_dir = 1 if sort_direction == "asc" else -1
+
+        # Sort by field
+        docs_cursor = telegram_messages.find().sort(sort_key, mongo_sort_dir).skip(skip_count).limit(page_size)
         docs_list = list(docs_cursor)
-        logger.info(f"Fetched {len(docs_list)} messages from MongoDB (page {page}, page_size {page_size})")
 
         messages = [
             {
@@ -78,7 +87,9 @@ def get_messages(page: int = Query(1, ge=1), page_size: int = Query(20, ge=1, le
             "messages": messages,
             "page": page,
             "page_size": page_size,
-            "total_count": telegram_messages.count_documents({})
+            "total_count": telegram_messages.count_documents({}),
+            "sort_key": sort_key,
+            "sort_direction": sort_direction
         }
 
     except Exception as e:
