@@ -326,7 +326,7 @@ def handle_new_members(update, context):
                 print(f"[ERROR] Failed to ban user with admin name {user_id}: {e}")
 
         # Check for suspicious keywords
-        if any(keyword in name_norm or keyword in username_norm for keyword in SUSPICIOUS_USERNAMES):
+        if name_norm in SUSPICIOUS_USERNAMES or username_norm in SUSPICIOUS_USERNAMES:
             try:
                 context.bot.ban_chat_member(chat_id, user_id)
                 print(f"[BANNED] Suspicious user auto-banned: {name_info}")
@@ -455,7 +455,7 @@ def check_message(update: Update, context: CallbackContext):
         combined_identity = f"{name_normalized} {username_normalized}"
 
         # Check for suspicious keywords
-        if any(keyword in combined_identity for keyword in SUSPICIOUS_USERNAMES):
+        if name_normalized in SUSPICIOUS_USERNAMES or username_normalized in SUSPICIOUS_USERNAMES:
             try:
                 context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
                 print(f"[BANNED] Suspicious keyword match in name/username: {user.full_name} (@{user.username})")
