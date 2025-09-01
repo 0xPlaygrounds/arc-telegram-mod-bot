@@ -7,6 +7,7 @@ from datetime import datetime
 import logging
 import uvicorn
 import os
+from pathlib import Path
 
 # -----------------------------
 # Setup logging
@@ -28,7 +29,7 @@ app.add_middleware(
 )
 
 # -----------------------------
-# Global 404 handler to suppress stray requests
+# Global 404 handler
 # -----------------------------
 @app.exception_handler(404)
 async def not_found_handler(request: Request, exc):
@@ -42,28 +43,44 @@ async def not_found_handler(request: Request, exc):
 async def startup_event():
     port = os.environ.get("PORT", 8080)
     host = "0.0.0.0"
-    # Railway provides RAILWAY_STATIC_URL for frontend deployments, otherwise fallback to localhost
     public_url = os.environ.get("RAILWAY_STATIC_URL") or f"http://{host}:{port}"
     print(f"🚀 FastAPI is running on {host}:{port}")
     print(f"🌐 Public URL for frontend use: {public_url}")
 
 # -----------------------------
-# Routes
+# Helper to load blocklists
+# -----------------------------
+BLOCKLIST_DIR = Path.cwd() / "blocklists"
+
+def load_blocklists():
+    blocklists = {}
+    for file_name in ["ban_phrases.txt", "delete_phrases.txt", "mute_phrases.txt"]:
+        path = BLOCKLIST_DIR / file_name
+        if path.exists():
+            key = file_name.split("_")[0]  # ban | delete | mute
+            with open(path, "r", encoding="utf-8") as f:
+                blocklists[key] = set(line.strip() for line in f if line.strip())
+            logger.info(f"Loaded {len(blocklists[key])} phrases from {path}")
+        else:
+            logger.warning(f"Blocklist file not found: {path}")
+    if not blocklists:
+        logger.warning("No blocklists loaded. Check blocklist folder existence and files.")
+    return blocklists
+
+# -----------------------------
+# Messages endpoint
 # -----------------------------
 @app.get("/messages")
 def get_messages(
     page: int = Query(1, ge=1),
     page_size: int = Query(20, ge=1, le=100),
-    sort_key: str = Query("timestamp_message"),  # default sort
-    sort_direction: str = Query("desc"),         # "asc" or "desc"
+    sort_key: str = Query("timestamp_message"),
+    sort_direction: str = Query("desc"),
 ):
     try:
         skip_count = (page - 1) * page_size
-
-        # Determine MongoDB sort order
         mongo_sort_dir = 1 if sort_direction == "asc" else -1
 
-        # Sort by field
         docs_cursor = telegram_messages.find().sort(sort_key, mongo_sort_dir).skip(skip_count).limit(page_size)
         docs_list = list(docs_cursor)
 
@@ -78,6 +95,7 @@ def get_messages(
                 "review_status": doc.get("review_status"),
                 "usage_count": doc.get("usage_count", 1),
                 "tags": doc.get("tags", []),
+                "blocklist_status": doc.get("blocklist_status"),
                 "timestamp_message": doc.get("timestamp_message").isoformat() if doc.get("timestamp_message") else None
             }
             for doc in docs_list
@@ -96,6 +114,9 @@ def get_messages(
         logger.error(f"Error fetching messages: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# -----------------------------
+# Label endpoint
+# -----------------------------
 @app.post("/label/{msg_id}/{label}")
 def label_message(msg_id: str, label: str, reviewer_username: str):
     try:
@@ -132,13 +153,54 @@ def label_message(msg_id: str, label: str, reviewer_username: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 # -----------------------------
+# New endpoint: update blocklist_status
+# -----------------------------
+@app.post("/update_blocklist_status")
+def update_blocklist_status():
+    try:
+        blocklists = load_blocklists()
+        if not blocklists:
+            logger.warning("No blocklists loaded. Check blocklist folder existence and files.")
+        
+        updated_count = 0
+        checked_count = 0
+
+        for msg in telegram_messages.find({"blocklist_status": None}):
+            checked_count += 1
+            text = msg.get("text", "").lower()
+            status = None
+
+            for key, phrases in blocklists.items():
+                if any(phrase.lower() in text for phrase in phrases):
+                    status = key  # ban | delete | mute
+                    break
+
+            if status:
+                telegram_messages.update_one(
+                    {"_id": msg["_id"]},
+                    {"$set": {"blocklist_status": status}}
+                )
+                updated_count += 1
+                logger.info(f"Message {msg['_id']} updated with blocklist_status='{status}'")
+            else:
+                logger.debug(f"Message {msg['_id']} has no matching blocklist phrases")
+
+        logger.info(f"Checked {checked_count} messages, updated {updated_count} messages")
+        return {"updated": updated_count, "checked": checked_count}
+
+    except Exception as e:
+        logger.error(f"Error updating blocklist status: {e}")
+        raise HTTPException(status_code=500, detail=str(e))
+
+
+# -----------------------------
 # Run Uvicorn
 # -----------------------------
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 8080))  # Railway assigns this automatically
+    port = int(os.environ.get("PORT", 8080))
     uvicorn.run(
         "web.backend.main:app",
-        host="0.0.0.0",   # Bind to all interfaces for Railway
+        host="0.0.0.0",
         port=port,
         log_level="warning",
         access_log=False

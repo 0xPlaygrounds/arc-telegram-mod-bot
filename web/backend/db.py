@@ -56,7 +56,9 @@ def save_message_to_db(message):
             "tags": [],
             
             # Usage counter for repeated messages
-            "usage_count": 1
+            "usage_count": 1,
+
+            "blocklist_status": None,
         }
 
         telegram_messages.insert_one(doc)

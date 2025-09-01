@@ -32,3 +32,28 @@ export async function updateLabel(msgId, label) {
   );
   return await res.json();
 }
+
+/**
+ * Update messages with blocklist status and optionally refresh messages
+ * @param {Function} refreshCallback - optional function to call after updating
+ */
+export async function updateBlocklistStatus(refreshCallback) {
+  try {
+    const res = await fetch(`${BASE_URL}/update_blocklist_status`, {
+      method: "POST",
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    const data = await res.json(); // returns { updated: number, checked: number }
+    console.info("Blocklist update result:", data);
+
+    // Automatically refresh messages if callback provided
+    if (refreshCallback && typeof refreshCallback === "function") {
+      refreshCallback();
+    }
+
+    return data;
+  } catch (err) {
+    console.error("Blocklist status update failed:", err);
+    return { updated: 0, checked: 0 };
+  }
+}
