@@ -7,17 +7,18 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [lastRefreshed, setLastRefreshed] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const loadMessages = async () => {
     try {
       setRefreshing(true);
 
-      // Update blocklist statuses first
+      // Update blocklist statuses
       await updateBlocklistStatus();
 
-      // Then fetch the messages
+      // fetch the messages
       const data = await fetchMessages();
-      setMessages(data.messages || []); // backend returns { messages, ... }
+      setMessages(data.messages || []);
 
       // Convert timestamp to CST
       const now = new Date();
@@ -37,9 +38,7 @@ export default function App() {
   };
 
   useEffect(() => {
-    // Load immediately
     loadMessages();
-    return
   }, []);
 
   if (loading && messages.length === 0) {
@@ -65,9 +64,13 @@ export default function App() {
         )}
       </div>
 
-      {/* Message table with explicit spacing */}
+      {/* Message table */}
       <div className="mt-4">
-        <MessageTable messages={messages} refreshMessages={loadMessages} />
+        <MessageTable
+          messages={messages}
+          refreshMessages={loadMessages}
+          searchTerm={searchTerm}
+        />
       </div>
 
       {messages.length === 0 && !loading && (

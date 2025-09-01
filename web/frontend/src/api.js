@@ -1,20 +1,30 @@
 const BASE_URL = "http://127.0.0.1:8080";
 
 /**
- * Fetch messages from backend with pagination and sorting
+ * Fetch messages from backend with pagination, sorting, and search
  */
 export async function fetchMessages(
   page = 1,
   page_size = 20,
   sortKey = "timestamp_message",
-  sortDirection = "desc"
+  sortDirection = "desc",
+  searchTerm = ""
 ) {
   try {
-    const res = await fetch(
-      `${BASE_URL}/messages?page=${page}&page_size=${page_size}&sort_key=${sortKey}&sort_direction=${sortDirection}`
-    );
+    const params = new URLSearchParams({
+      page,
+      page_size,
+      sort_key: sortKey,
+      sort_direction: sortDirection,
+    });
+
+    if (searchTerm && searchTerm.trim() !== "") {
+      params.append("search", searchTerm.trim());
+    }
+
+    const res = await fetch(`${BASE_URL}/messages?${params.toString()}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json(); // returns { messages, page, page_size, total_count, sort_key, sort_direction }
+    return await res.json(); // { messages, page, page_size, total_count, sort_key, sort_direction }
   } catch (err) {
     console.error("Fetch failed:", err);
     return { messages: [], page, page_size, total_count: 0 };
@@ -27,7 +37,9 @@ export async function fetchMessages(
 export async function updateLabel(msgId, label) {
   const reviewerUsername = "Red Candle God";
   const res = await fetch(
-    `${BASE_URL}/label/${msgId}/${label}?reviewer_username=${encodeURIComponent(reviewerUsername)}`,
+    `${BASE_URL}/label/${msgId}/${label}?reviewer_username=${encodeURIComponent(
+      reviewerUsername
+    )}`,
     { method: "POST" }
   );
   return await res.json();
@@ -43,10 +55,10 @@ export async function updateBlocklistStatus(refreshCallback) {
       method: "POST",
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json(); // returns { updated: number, checked: number }
+    const data = await res.json(); // { updated, checked }
     console.info("Blocklist update result:", data);
 
-    // Automatically refresh messages if callback provided
+    // Refresh messages if callback provided
     if (refreshCallback && typeof refreshCallback === "function") {
       refreshCallback();
     }

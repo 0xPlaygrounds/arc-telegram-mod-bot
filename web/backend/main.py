@@ -1,12 +1,14 @@
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from typing import Optional
 from web.backend.db import telegram_messages
 from bson.objectid import ObjectId
 from datetime import datetime
 import logging
 import uvicorn
 import os
+import re
 from pathlib import Path
 
 # -----------------------------
@@ -76,12 +78,36 @@ def get_messages(
     page_size: int = Query(20, ge=1, le=100),
     sort_key: str = Query("timestamp_message"),
     sort_direction: str = Query("desc"),
+    search: Optional[str] = Query(None, description="Search term across fields")
 ):
     try:
         skip_count = (page - 1) * page_size
         mongo_sort_dir = 1 if sort_direction == "asc" else -1
 
-        docs_cursor = telegram_messages.find().sort(sort_key, mongo_sort_dir).skip(skip_count).limit(page_size)
+        # Base query (no filters by default)
+        query = {}
+
+        # If search term is provided, build an $or query
+        if search:
+            regex = re.compile(re.escape(search), re.IGNORECASE)
+            query = {
+                "$or": [
+                    {"username": regex},
+                    {"text": regex},
+                    {"label": regex},
+                    {"ai_prediction": regex},
+                    {"review_status": regex},
+                    {"blocklist_status": regex},
+                    {"reviewed_by": regex},
+                ]
+            }
+
+        docs_cursor = (
+            telegram_messages.find(query)
+            .sort(sort_key, mongo_sort_dir)
+            .skip(skip_count)
+            .limit(page_size)
+        )
         docs_list = list(docs_cursor)
 
         messages = [
@@ -96,7 +122,8 @@ def get_messages(
                 "usage_count": doc.get("usage_count", 1),
                 "tags": doc.get("tags", []),
                 "blocklist_status": doc.get("blocklist_status"),
-                "timestamp_message": doc.get("timestamp_message").isoformat() if doc.get("timestamp_message") else None
+                "timestamp_message": doc.get("timestamp_message").isoformat() if doc.get("timestamp_message") else None,
+                "reviewed_by": doc.get("reviewed_by")
             }
             for doc in docs_list
         ]
@@ -105,9 +132,9 @@ def get_messages(
             "messages": messages,
             "page": page,
             "page_size": page_size,
-            "total_count": telegram_messages.count_documents({}),
+            "total_count": telegram_messages.count_documents(query),
             "sort_key": sort_key,
-            "sort_direction": sort_direction
+            "sort_direction": sort_direction,
         }
 
     except Exception as e:

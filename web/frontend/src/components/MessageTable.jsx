@@ -18,9 +18,7 @@ export default function MessageTable({ messages, refreshMessages }) {
   const [expandedMessages, setExpandedMessages] = useState({});
   const [openDropdownId, setOpenDropdownId] = useState(null);
   const [sortConfig, setSortConfig] = useState({ key: null, direction: "asc" });
-  const [updatingBlocklist, setUpdatingBlocklist] = useState(false);
-
-  const totalPages = Math.ceil(messagesData.total_count / PAGE_SIZE);
+  const [searchTerm, setSearchTerm] = useState(""); // 🔍 NEW
 
   const fetchPageData = async (
     pageNum = 1,
@@ -28,7 +26,7 @@ export default function MessageTable({ messages, refreshMessages }) {
     sortDirection = sortConfig.direction || "desc"
   ) => {
     try {
-      const res = await fetchMessages(pageNum, PAGE_SIZE, sortKey, sortDirection);
+      const res = await fetchMessages(pageNum, PAGE_SIZE, sortKey, sortDirection, searchTerm);
       setMessagesData(res);
     } catch (error) {
       console.error("Error fetching messages:", error);
@@ -83,8 +81,60 @@ export default function MessageTable({ messages, refreshMessages }) {
 
   const MAX_CHARS = 50;
 
+  const searchableFields = [
+    "id",                // internal id (if your backend sends it)
+    "tg_message_id",     // Telegram message id
+    "user_id",
+    "username",
+    "text",
+    "label",
+    "review_status",
+    "usage_count",
+    "ai_prediction",
+    "ai_confidence",
+    "reviewed_by",
+    "blocklist_status",
+    "timestamp_message", // date string
+  ];
+
+  // Filter messages by search term
+  const filteredMessages = messagesData.messages.filter((msg) =>
+    searchableFields.some((field) => {
+      const value = msg[field];
+      if (value === null || value === undefined) return false;
+      return value.toString().toLowerCase().includes(searchTerm.toLowerCase());
+    })
+  );
+
+  // Apply pagination *after filtering*
+  const totalPages = Math.ceil(filteredMessages.length / PAGE_SIZE);
+  const paginatedMessages = filteredMessages.slice(
+    (page - 1) * PAGE_SIZE,
+    page * PAGE_SIZE
+  );
+
   return (
     <div>
+      {/* Search Input */}
+      <div style={{ marginBottom: "1rem" }}>
+        <input
+          type="text"
+          placeholder="Search messages..."
+          value={searchTerm}
+          onChange={(e) => {
+            setPage(1); // reset to first page when searching
+            setSearchTerm(e.target.value);
+          }}
+          style={{
+            width: "100%",
+            padding: "8px",
+            borderRadius: "8px",
+            border: "1px solid #ccc",
+            fontSize: "1rem",
+          }}
+        />
+      </div>
+
       <div
         style={{
           overflowX: "auto",
@@ -133,7 +183,7 @@ export default function MessageTable({ messages, refreshMessages }) {
           </thead>
 
           <tbody>
-            {messagesData.messages.map((msg) => {
+            {paginatedMessages.map((msg) => {
               const currentLabel = LABELS.find((l) => l.name === msg.label);
               const isExpanded = expandedMessages[msg.id];
               const displayedText =
