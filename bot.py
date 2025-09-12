@@ -191,12 +191,13 @@ WHITELIST_PHRASES = load_phrases(WHITELIST_PHRASES_FILE)
 def send_news(context: CallbackContext):
     print("[NEWS] Job triggered")
     try:
-        # Load latest news from JSON file
+        # Load latest posts from JSON file
         with open(NEWS_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        news_items = data.get("latest_news", [])
+        news_items = data.get("latest_posts", [])  # <-- use correct key
         if not news_items:
+            print("[NEWS] No posts available")
             return  # silently do nothing if empty
 
         # Header text
@@ -205,7 +206,7 @@ def send_news(context: CallbackContext):
         # inline buttons
         keyboard = []
         for item in news_items:
-            title = item.get("title", "News")
+            author = item.get("author", "News")
             url = item.get("url")
             timestamp_raw = item.get("timestamp")
 
@@ -218,12 +219,13 @@ def send_news(context: CallbackContext):
                 except Exception:
                     pass
 
-            label = f"{title} ({timestamp})" if timestamp else title
+            label = f"{author} ({timestamp})" if timestamp else author
             if url:
                 keyboard.append([InlineKeyboardButton(label, url=url)])
 
         if not keyboard:
-            return  # no valid buttons to show
+            print("[NEWS] No valid buttons to show")
+            return
 
         reply_markup = InlineKeyboardMarkup(keyboard)
 
@@ -739,12 +741,14 @@ def check_message(update: Update, context: CallbackContext):
         return
     
     if re.search(r'(?<!\w)/posts(?!\w)', message_text):
+        print("[POSTS] /posts command triggered")
         try:
             with open("filters/posts.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
 
             posts = data.get("latest_posts", [])
             if not posts:
+                print("[POSTS] No posts available")
                 return  # just do nothing if empty
 
             # Header message
@@ -770,6 +774,7 @@ def check_message(update: Update, context: CallbackContext):
                     keyboard.append([InlineKeyboardButton(label, url=url)])
 
             if not keyboard:
+                print("[POSTS] No valid buttons to show")
                 return  # no valid buttons to show
 
             reply_markup = InlineKeyboardMarkup(keyboard)
@@ -781,9 +786,13 @@ def check_message(update: Update, context: CallbackContext):
                 disable_web_page_preview=True
             )
 
-        except Exception:
-            # fail silently, don’t post anything
+            print("[POSTS] Inline buttons sent successfully")
+
+        except Exception as e:
+            # fail silently, but log for debugging
+            print(f"[POSTS] Failed to send posts: {e}")
             return
+
 
 def main():
     print("starting bot")
