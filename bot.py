@@ -193,21 +193,54 @@ def send_news(context: CallbackContext):
         # Load latest news from JSON file
         with open(NEWS_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
-        response_text = data.get(
-            "latest_news_message",
-            "⚠️ Latest news message is missing or invalid."
-        )
 
-        # Send the news message directly
+        news_items = data.get("latest_news", [])
+        if not news_items:
+            return  # silently do nothing if empty
+
+        # Header text
+        text = "what is new in the arc complex:\n"
+
+        # inline buttons
+        keyboard = []
+        for item in news_items:
+            title = item.get("title", "News")
+            url = item.get("url")
+            timestamp_raw = item.get("timestamp")
+
+            # Format timestamp safely
+            timestamp = ""
+            if timestamp_raw:
+                try:
+                    from datetime import datetime
+                    timestamp = datetime.fromisoformat(timestamp_raw).strftime("%m/%d %H:%M")
+                except Exception:
+                    pass
+
+            label = f"{title} ({timestamp})" if timestamp else title
+            if url:
+                keyboard.append([InlineKeyboardButton(label, url=url)])
+
+        if not keyboard:
+            return  # no valid buttons to show
+
+        reply_markup = InlineKeyboardMarkup(keyboard)
+
+        # Send the message with inline buttons
         context.bot.send_message(
             chat_id=GROUP_CHAT_ID,
-            text=response_text,
-            disable_web_page_preview=False,
-            parse_mode=ParseMode.MARKDOWN
+            text=text,
+            parse_mode=ParseMode.MARKDOWN,
+            disable_web_page_preview=True,
+            reply_markup=reply_markup
         )
+
         print("[NEWS] Latest news posted successfully")
+
     except Exception as e:
+        # Fail silently, log only
         print(f"[NEWS] Failed to post latest news: {e}")
+        return
 
 def contains_multiplication_phrase(text):
     text = text.lower()
