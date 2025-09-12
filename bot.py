@@ -189,6 +189,7 @@ DELETE_PHRASES = load_phrases(DELETE_PHRASES_FILE)
 WHITELIST_PHRASES = load_phrases(WHITELIST_PHRASES_FILE)
 
 def send_news(context: CallbackContext):
+    print("[NEWS] Job triggered")
     try:
         # Load latest news from JSON file
         with open(NEWS_FILE, "r", encoding="utf-8") as f:
