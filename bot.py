@@ -799,7 +799,7 @@ def main():
     
     # Repeating jobs
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
-    job_queue.run_repeating(send_news, interval=21600)  # 6 hours = 21600 seconds
+    job_queue.run_repeating(send_news, interval=216)  # 6 hours = 21600 seconds 216 for test (every 3.6 minutes)
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
