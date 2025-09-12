@@ -228,9 +228,9 @@ def send_news(context: CallbackContext):
         keyboard = []
         for item in news_items:
             url = item.get("url")
-            title = item.get("title", item.get("author", "News"))
+            author = item.get("author", "Unknown")
             if url:
-                keyboard.append([InlineKeyboardButton(f"🔗 {title}", url=url)])
+                keyboard.append([InlineKeyboardButton(f"𝕏 {author}", url=url)])
 
         reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
 
@@ -787,7 +787,7 @@ def check_message(update: Update, context: CallbackContext):
                 url = post.get("url")
                 author = post.get("author", "Unknown")
                 if url:
-                    keyboard.append([InlineKeyboardButton(f"🔗 {author}", url=url)])
+                    keyboard.append([InlineKeyboardButton(f"𝕏 {author}", url=url)])
 
             reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
 
