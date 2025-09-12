@@ -24,8 +24,8 @@ FILTERS_FILE = "filters/filters.json"
 # File path for metrics
 METRICS_FILE = "filters/metrics.json"
 
-# File path for news messages
-NEWS_FILE = "filters/news.json"
+# File path for posts
+NEWS_FILE = "filters/posts.json"
 
 # File path for accompanying filter media
 MEDIA_FOLDER = "media"
@@ -743,13 +743,14 @@ def check_message(update: Update, context: CallbackContext):
     if re.search(r'(?<!\w)/posts(?!\w)', message_text):
         print("[POSTS] /posts command triggered")
         try:
-            with open("filters/posts.json", "r", encoding="utf-8") as f:
+            # Use the same NEWS_FILE variable
+            with open(NEWS_FILE, "r", encoding="utf-8") as f:
                 data = json.load(f)
 
             posts = data.get("latest_posts", [])
             if not posts:
                 print("[POSTS] No posts available")
-                return  # just do nothing if empty
+                return  # silently do nothing if empty
 
             # Header message
             text = "Latest Posts:\n"
@@ -792,7 +793,6 @@ def check_message(update: Update, context: CallbackContext):
             # fail silently, but log for debugging
             print(f"[POSTS] Failed to send posts: {e}")
             return
-
 
 def main():
     print("starting bot")
