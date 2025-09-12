@@ -3,7 +3,7 @@ import re
 import json
 import unicodedata
 from dotenv import load_dotenv
-from telegram import Update, ChatPermissions, ParseMode
+from telegram import Update, ChatPermissions, ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
 from telegram.ext import Updater, MessageHandler, Filters, CallbackContext, CommandHandler
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone, time
@@ -704,15 +704,52 @@ def check_message(update: Update, context: CallbackContext):
             message.reply_text(f"⚠️ Error reading weekly metrics: {e}")
         return
     
-    if re.search(r'(?<!\w)/news(?!\w)', message_text):
+    if re.search(r'(?<!\w)/posts(?!\w)', message_text):
         try:
-            with open("filters/news.json", "r", encoding="utf-8") as f:
+            with open("filters/posts.json", "r", encoding="utf-8") as f:
                 data = json.load(f)
-            response_text = data.get("latest_news_message", "⚠️ Latest news message is missing or invalid.")
-            message.reply_text(response_text, disable_web_page_preview=False, parse_mode="Markdown")
-        except Exception as e:
-            message.reply_text(f"⚠️ Error reading news: {e}")
-        return
+
+            posts = data.get("latest_posts", [])
+            if not posts:
+                return  # just do nothing if empty
+
+            # Header message
+            text = "Latest Posts:\n"
+
+            # Build inline buttons
+            keyboard = []
+            for post in posts:
+                author = post.get("author", "Unknown")
+                url = post.get("url")
+                timestamp_raw = post.get("timestamp")
+
+                # Format timestamp safely
+                timestamp = ""
+                if timestamp_raw:
+                    try:
+                        timestamp = datetime.fromisoformat(timestamp_raw).strftime("%m/%d %H:%M")
+                    except Exception:
+                        pass
+
+                label = f"{author} ({timestamp})" if timestamp else author
+                if url:
+                    keyboard.append([InlineKeyboardButton(label, url=url)])
+
+            if not keyboard:
+                return  # no valid buttons to show
+
+            reply_markup = InlineKeyboardMarkup(keyboard)
+
+            message.reply_text(
+                text,
+                reply_markup=reply_markup,
+                parse_mode="Markdown",
+                disable_web_page_preview=True
+            )
+
+        except Exception:
+            # fail silently, don’t post anything
+            return
 
 def main():
     print("starting bot")
