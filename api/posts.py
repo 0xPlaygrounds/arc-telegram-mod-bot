@@ -1,132 +1,153 @@
 import asyncio
-import json
-import sys
-from pathlib import Path
-from datetime import datetime
 from playwright.async_api import async_playwright
 from urllib.parse import urlparse
+from datetime import datetime
 
 X_PROFILES = [
-    "https://x.com/arcdotfun",
     "https://x.com/0thTachi",
-    "https://x.com/Kezo_Futura"
 ]
 
-def format_timestamp(iso_ts):
-    try:
-        dt = datetime.fromisoformat(iso_ts.replace("Z", "+00:00"))
-        return dt.strftime("%m/%d/%Y %I:%M %p")
-    except Exception:
-        return "Unknown time"
-
-def extract_username(url):
+def extract_username(url: str) -> str:
     parsed = urlparse(url)
     return parsed.path.strip("/").split("/")[0]
 
-async def get_latest_posts_from_profile(url, max_scrolls=10):
+def normalize_tweet_url(url: str) -> str:
+    if "/status/" not in url:
+        return None
+    parts = url.split("/status/")
+    tweet_id = parts[1].split("/")[0]
+    return f"https://x.com/{parts[0].split('/')[-1]}/status/{tweet_id}"
+
+async def click_latest_tab(page):
+    """Try to click the 'Posts' / 'Latest' tab on the profile."""
     try:
-        async with async_playwright() as p:
-            browser = await p.chromium.launch(headless=True)
-            context = await browser.new_context()
-            page = await context.new_page()
-
-            await page.goto(url)
-            await page.wait_for_selector("[data-testid='cellInnerDiv']")
-
-            seen_urls = set()
-            results = []
-
-            for _ in range(max_scrolls):
-                posts = await page.query_selector_all("[data-testid='cellInnerDiv']")
-                for post in posts:
-                    time_element = await post.query_selector("time")
-                    timestamp = await time_element.get_attribute("datetime") if time_element else None
-                    if not timestamp:
-                        continue
-
-                    link_element = await post.query_selector("a[href*='/status/']")
-                    relative_link = await link_element.get_attribute("href") if link_element else None
-                    if not relative_link:
-                        continue
-
-                    full_link = f"https://x.com{relative_link}"
-                    if full_link in seen_urls:
-                        continue
-                    seen_urls.add(full_link)
-
-                    results.append({
-                        "username": extract_username(url),
-                        "url": full_link,
-                        "timestamp": timestamp
-                    })
-
-                # Scroll to bottom and wait for new content
-                await page.evaluate("window.scrollBy(0, document.body.scrollHeight)")
-                await page.wait_for_timeout(1500)
-
-            await browser.close()
-
-            # Sort by timestamp descending
-            sorted_results = sorted(results, key=lambda x: x["timestamp"], reverse=True)
-            return sorted_results
-
+        # Different profiles label it differently ("Posts", "Latest", or localized)
+        latest_button = await page.query_selector('a[href*="/with_replies"], a:has-text("Posts"), a:has-text("Latest")')
+        if latest_button:
+            print("🖱️ Clicking Latest/Posts tab...")
+            await latest_button.click()
+            await page.wait_for_timeout(2000)
     except Exception as e:
-        print(f"Error fetching posts from {url}: {e}")
-        return []
+        print("⚠️ Could not click Latest tab:", e)
 
-async def get_all_latest_posts():
-    all_results = []
-    for profile in X_PROFILES:
-        posts = await get_latest_posts_from_profile(profile)
-        all_results.extend(posts)
-    return all_results
+async def scan_timeline_for_urls(page, max_scrolls=20):
+    """Scrape tweets in DOM order (newest first)."""
+    seen_urls = []
+    seen_set = set()
+    for scroll in range(max_scrolls):
+        print(f"📜 Scroll attempt {scroll+1}/{max_scrolls}")
+        articles = await page.query_selector_all('article[role="article"] a[href*="/status/"]')
+        for link_elem in articles:
+            link = await link_elem.get_attribute("href")
+            if link and not any(x in link for x in ["/analytics", "/photo/"]):
+                full_link = f"https://x.com{link}" if link.startswith("/") else link
+                if full_link not in seen_set:
+                    seen_urls.append(full_link)
+                    seen_set.add(full_link)
+        await page.evaluate("window.scrollBy(0, document.body.scrollHeight)")
+        await page.wait_for_timeout(1500)
+    return seen_urls
 
-async def build_latest_posts_message():
-    posts = await get_all_latest_posts()
-    if not posts:
-        return "⚠️ No posts found."
+async def scrape_tweet(page, url: str):
+    await page.goto(url)
+    await page.wait_for_selector('article[role="article"]', timeout=10000)
 
-    message_lines = ["🧵 **Latest Posts:**"]
-    for post in posts:
-        formatted_time = format_timestamp(post['timestamp'])
-        username = post['username']
-        preview = (
-            f"**{username}**  \n"
-            f"🕒 {formatted_time}  \n"
-            f"[View Post]({post['url']})"
-        )
-        message_lines.append(preview)
+    article = await page.query_selector('article[role="article"]')
+    if not article:
+        return None
 
-    return "\n\n---\n\n".join(message_lines)
+    # Tweet text
+    text_elem = await article.query_selector('[data-testid="tweetText"]')
+    tweet_text = await text_elem.inner_text() if text_elem else ""
+
+    # Username
+    username_elem = await article.query_selector('div[dir="ltr"] > span')
+    username = await username_elem.inner_text() if username_elem else extract_username(url)
+
+    # Timestamp
+    time_elem = await article.query_selector('time')
+    timestamp = None
+    if time_elem:
+        ts_attr = await time_elem.get_attribute("datetime")
+        if ts_attr:
+            try:
+                timestamp = datetime.fromisoformat(ts_attr.replace("Z", "+00:00"))
+            except Exception:
+                timestamp = datetime.now()
+    if not timestamp:
+        timestamp = datetime.now()
+
+    # Engagement
+    replies, retweets, likes = 0, 0, 0
+    stats_elems = await article.query_selector_all('[data-testid$="-count"]')
+    for elem in stats_elems:
+        label = await elem.get_attribute("data-testid")
+        count_text = await elem.inner_text()
+        try:
+            count = int(count_text.replace(",", ""))
+        except:
+            count = 0
+        if label == "reply-count":
+            replies = count
+        elif label == "retweet-count":
+            retweets = count
+        elif label == "like-count":
+            likes = count
+
+    return {
+        "url": url,
+        "username": username,
+        "text": tweet_text,
+        "timestamp": timestamp,
+        "replies": replies,
+        "retweets": retweets,
+        "likes": likes
+    }
+
+async def process_profile(profile_url, headless=True, max_scrolls=20):
+    print(f"\n🔹 Processing profile: {profile_url}")
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(headless=headless)
+        context = await browser.new_context(viewport={"width": 1920, "height": 1080})
+        page = await context.new_page()
+        await page.goto(profile_url)
+        await page.wait_for_selector('article[role="article"]', timeout=15000)
+
+        # ✅ Force into Latest tab before scraping
+        await click_latest_tab(page)
+
+        tweet_urls = await scan_timeline_for_urls(page, max_scrolls=max_scrolls)
+        print(f"Found {len(tweet_urls)} tweet URLs")
+
+        tweets_data = []
+        for url in tweet_urls:
+            clean_url = normalize_tweet_url(url)
+            if not clean_url:
+                continue
+            print(f"📝 Scraping tweet: {clean_url}")
+            tweet_info = await scrape_tweet(page, clean_url)
+            if tweet_info:
+                tweets_data.append(tweet_info)
+                print(f"   @{tweet_info['username']} | {tweet_info['timestamp'].isoformat()} | Likes: {tweet_info['likes']}, Retweets: {tweet_info['retweets']}, Replies: {tweet_info['replies']}")
+                print(f"   Text: {tweet_info['text'][:150]}...\n")
+            else:
+                print("   ⚠️ Tweet could not be scraped")
+
+        await browser.close()
+
+        # Sort tweets newest first
+        tweets_data.sort(key=lambda x: x["timestamp"], reverse=True)
+        return tweets_data
 
 async def main():
-    message = await build_latest_posts_message()
-    data = {
-        "latest_posts_message": message
-    }
-    try:
-        path = Path("filters/posts.json")
-        path.parent.mkdir(parents=True, exist_ok=True)
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f, ensure_ascii=False, indent=2)
-        print("Successfully updated filters/posts.json")
-    except Exception as e:
-        print(f"Error writing posts.json: {e}")
+    all_tweets = []
+    for profile in X_PROFILES:
+        profile_tweets = await process_profile(profile, headless=True, max_scrolls=20)
+        all_tweets.extend(profile_tweets)
 
-# ✅ Local test helper:
-async def test_profile(profile_url):
-    print(f"\n🔍 Testing profile: {profile_url}")
-    posts = await get_latest_posts_from_profile(profile_url, count=3)
-    for i, post in enumerate(posts, 1):
-        print(f"\nPost {i}:")
-        print(f"Username: {post['username']}")
-        print(f"Time: {format_timestamp(post['timestamp'])}")
-        print(f"URL: {post['url']}")
+    print(f"\nTotal tweets collected: {len(all_tweets)}")
+    for tweet in all_tweets:
+        print(f"{tweet['timestamp'].isoformat()} - @{tweet['username']}: {tweet['text'][:150]}...")
 
 if __name__ == "__main__":
-    if len(sys.argv) > 1 and sys.argv[1] == "test":
-        # Example usage: python script.py test https://x.com/arcdotfun
-        test_url = sys.argv[2] if len(sys.argv) > 2 else X_PROFILES[0]
-        asyncio.run(test_profile(test_url))
-    else:
-        asyncio.run(main())
+    asyncio.run(main())
