@@ -195,46 +195,51 @@ def send_news(context: CallbackContext):
         with open(NEWS_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        news_items = data.get("latest_posts", [])  # <-- use correct key
+        news_items = data.get("latest_posts", [])
         if not news_items:
             print("[NEWS] No posts available")
-            return  # silently do nothing if empty
+            return
 
-        # Header text
-        text = "what is new in the arc complex:\n"
+        # Logo URL (top-left)
+        logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757711188/_arc_logo_mintgreen_tgnj0x.png"
 
-        # inline buttons
-        keyboard = []
+        # Build the text message
+        text = "*What is new in the Arc Complex*\n\n"  # header
         for item in news_items:
-            author = item.get("author", "News")
-            url = item.get("url")
+            title = item.get("title", item.get("author", "News"))
+            summary = item.get("summary", "")
             timestamp_raw = item.get("timestamp")
-
-            # Format timestamp safely
             timestamp = ""
             if timestamp_raw:
                 try:
-                    from datetime import datetime
                     timestamp = datetime.fromisoformat(timestamp_raw).strftime("%m/%d %H:%M")
                 except Exception:
                     pass
 
-            label = f"{author} ({timestamp})" if timestamp else author
+            # Each post: title bold, timestamp italic, summary monospaced
+            text += f"*{title}*"
+            if timestamp:
+                text += f" (_{timestamp}_)"
+            if summary:
+                text += f"\n`{summary}`"
+            text += "\n\n"
+
+        # Build inline buttons for the posts
+        keyboard = []
+        for item in news_items:
+            url = item.get("url")
+            title = item.get("title", item.get("author", "News"))
             if url:
-                keyboard.append([InlineKeyboardButton(label, url=url)])
+                keyboard.append([InlineKeyboardButton(f"🔗 {title}", url=url)])
 
-        if not keyboard:
-            print("[NEWS] No valid buttons to show")
-            return
+        reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
 
-        reply_markup = InlineKeyboardMarkup(keyboard)
-
-        # Send the message with inline buttons
-        context.bot.send_message(
+        # Send as photo with caption (logo + text)
+        context.bot.send_photo(
             chat_id=GROUP_CHAT_ID,
-            text=text,
+            photo=logo_url,
+            caption=text,
             parse_mode=ParseMode.MARKDOWN,
-            disable_web_page_preview=True,
             reply_markup=reply_markup
         )
 
@@ -752,17 +757,15 @@ def check_message(update: Update, context: CallbackContext):
                 print("[POSTS] No posts available")
                 return  # silently do nothing if empty
 
-            # Header message
-            text = "Latest Posts:\n"
+            # Logo URL (top-left)
+            logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757711188/_arc_logo_mintgreen_tgnj0x.png"
 
-            # Build inline buttons
-            keyboard = []
+            # Build the text message
+            text = "*Latest Posts in the Arc Complex*\n\n"
             for post in posts:
                 author = post.get("author", "Unknown")
-                url = post.get("url")
+                summary = post.get("summary", "")
                 timestamp_raw = post.get("timestamp")
-
-                # Format timestamp safely
                 timestamp = ""
                 if timestamp_raw:
                     try:
@@ -770,21 +773,31 @@ def check_message(update: Update, context: CallbackContext):
                     except Exception:
                         pass
 
-                label = f"{author} ({timestamp})" if timestamp else author
+                # Format each post: bold author, italic timestamp, monospaced summary
+                text += f"*{author}*"
+                if timestamp:
+                    text += f" (_{timestamp}_)"
+                if summary:
+                    text += f"\n`{summary}`"
+                text += "\n\n"
+
+            # Build inline buttons for the posts
+            keyboard = []
+            for post in posts:
+                url = post.get("url")
+                author = post.get("author", "Unknown")
                 if url:
-                    keyboard.append([InlineKeyboardButton(label, url=url)])
+                    keyboard.append([InlineKeyboardButton(f"🔗 {author}", url=url)])
 
-            if not keyboard:
-                print("[POSTS] No valid buttons to show")
-                return  # no valid buttons to show
+            reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
 
-            reply_markup = InlineKeyboardMarkup(keyboard)
-
-            message.reply_text(
-                text,
-                reply_markup=reply_markup,
+            # Send as photo with caption (logo + text)
+            message.bot.send_photo(
+                chat_id=message.chat_id,
+                photo=logo_url,
+                caption=text,
                 parse_mode="Markdown",
-                disable_web_page_preview=True
+                reply_markup=reply_markup
             )
 
             print("[POSTS] Inline buttons sent successfully")
@@ -793,6 +806,7 @@ def check_message(update: Update, context: CallbackContext):
             # fail silently, but log for debugging
             print(f"[POSTS] Failed to send posts: {e}")
             return
+
 
 def main():
     print("starting bot")
