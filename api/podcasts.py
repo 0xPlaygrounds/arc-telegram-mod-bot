@@ -38,4 +38,4 @@ if __name__ == "__main__":
     with open(output_file, "w", encoding="utf-8") as f:
         json.dump(all_eps, f, ensure_ascii=False, indent=2)
 
-    print(f"✅ Saved {len(all_eps)} episodes to {output_file}")
+    print(f"saved {len(all_eps)} episodes to {output_file}")
