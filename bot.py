@@ -914,11 +914,11 @@ def main():
     job_queue.run_daily(lambda context: post_security_message(context, 0), time=time(hour=8, minute=0))  
     job_queue.run_daily(lambda context: post_security_message(context, 1), time=time(hour=16, minute=0))
     job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
-    job_queue.run_daily(send_podcasts, time=time(hour=0, minute=0))
+    job_queue.run_daily(send_podcasts, time=time(hour=12, minute=0))
     
     # Repeating jobs
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=0)
-    job_queue.run_repeating(send_news, interval=43200, first=0)  # every 12 hours
+    job_queue.run_repeating(send_news, interval=43200, first=7200)  # every 12 hours, first run 02:00
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
