@@ -1,11 +1,11 @@
 {
   "latest_posts": [
     {
-      "author": "arcdotfun",
-      "timestamp": "2025-09-11T12:34:00",
-      "url": "https://x.com/arcdotfun/status/1966203570430308474",
+      "timestamp": "2025-09-11T18:13:56.000Z",
+      "url": "https://x.com/i/status/1966203570430308474",
       "summary": "/hello_complex ep. 3 is live\n\nthe minds behind rig, ryzome and arc speak the quiet truths of building while the future writes itself.\n\nlisten on spotify: https://t.co/QHsrw4c1Vl https://t.co/omGxlhGcXt",
-      "image_url": ""
+      "image_url": "",
+      "author": "arcdotfun"
     },
     {
       "author": "ryzomeai",
@@ -28,5 +28,6 @@
       "summary": "PDF Drop-In for Ryzome is live and I couldn’t be more excited to share it.\n\nYou can now drag and drop any PDF directly into your canvas and the AI will read it with you. Visually summarize, pull out key points, or study together in context.",
       "image_url": ""
     }
-  ]
+  ],
+  "last_updated_index": 1
 }
