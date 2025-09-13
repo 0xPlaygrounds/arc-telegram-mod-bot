@@ -1,0 +1,45 @@
+name: Update Podcasts Data
+
+on:
+  schedule:
+    - cron: "0 6 * * 0"  # once per week: Sunday at 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  update-podcasts:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        run: playwright install --with-deps
+
+      - name: Run podcasts update script
+        run: python api/podcasts.py
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Commit and push updates
+        run: |
+          git add filters/podcasts.json
+          if ! git diff --cached --quiet; then
+            git commit -m "Update latest podcasts"
+            git push origin main
+          else
+            echo "No podcast updates to commit."

@@ -30,6 +30,8 @@ NEWS_FILE = "filters/posts.json"
 # File path for accompanying filter media
 MEDIA_FOLDER = "media"
 
+PODCASTS_FOLDER = "filters/podcasts.json"
+
 # File paths for phrases
 BAN_PHRASES_FILE = "blocklists/ban_phrases.txt"
 MUTE_PHRASES_FILE = "blocklists/mute_phrases.txt"
@@ -249,6 +251,56 @@ def send_news(context: CallbackContext):
         # Fail silently, log only
         print(f"[NEWS] Failed to post latest news: {e}")
         return
+    
+def send_podcasts(context: CallbackContext):
+    print("[PODCASTS] Job triggered")
+    try:
+        # Load podcasts from JSON
+        with open(PODCASTS_FOLDER, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        if not data:
+            print("[PODCASTS] No podcasts available")
+            return
+
+        # Logo (using hello complex podcast cover)
+        logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757728795/ab67656300005f1fe2aa0d6fc0a3290a1d9e5624_wpq6zz.jpg"
+
+        # Build the text message
+        text = "*Latest Podcasts in the Arc Complex*\n\n"
+        for pod in data:
+            title = pod.get("title", "Podcast")
+            url = pod.get("url", "")
+            text += f"*{title}*\n"
+            if url:
+                text += f"[Listen here]({url})\n"
+            text += "\n"
+
+        # Build inline buttons for podcasts
+        keyboard = []
+        for pod in data:
+            title = pod.get("title", "Podcast")
+            url = pod.get("url")
+            if url:
+                keyboard.append([InlineKeyboardButton(title[:25] + "…", url=url)])
+
+        reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
+
+        # Send as photo + caption
+        context.bot.send_photo(
+            chat_id=GROUP_CHAT_ID,
+            photo=logo_url,
+            caption=text,
+            parse_mode=ParseMode.MARKDOWN,
+            reply_markup=reply_markup
+        )
+
+        print("[PODCASTS] Podcasts posted successfully")
+
+    except Exception as e:
+        print(f"[PODCASTS] Failed to post podcasts: {e}")
+        return
+
 
 def contains_multiplication_phrase(text):
     text = text.lower()
@@ -806,7 +858,49 @@ def check_message(update: Update, context: CallbackContext):
             # fail silently, but log for debugging
             print(f"[POSTS] Failed to send posts: {e}")
             return
+        
+    if re.search(r'(?<!\w)/podcasts(?!\w)', message_text):
+        print("[PODCASTS] /podcasts command triggered")
+        try:
+            with open(PODCASTS_FOLDER, "r", encoding="utf-8") as f:
+                podcasts = json.load(f)
 
+            if not podcasts:
+                print("[PODCASTS] No podcasts available")
+                return
+
+            logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757728795/ab67656300005f1fe2aa0d6fc0a3290a1d9e5624_wpq6zz.jpg"
+
+            text = "*Latest Podcasts in the Arc Complex*\n\n"
+            for pod in podcasts:
+                title = pod.get("title", "Podcast")
+                url = pod.get("url", "")
+                text += f"*{title}*\n"
+                if url:
+                    text += f"[Listen here]({url})\n"
+                text += "\n"
+
+            keyboard = []
+            for pod in podcasts:
+                url = pod.get("url")
+                if url:
+                    keyboard.append([InlineKeyboardButton(pod.get("title", "Podcast")[:25] + "…", url=url)])
+
+            reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
+
+            message.bot.send_photo(
+                chat_id=message.chat_id,
+                photo=logo_url,
+                caption=text,
+                parse_mode="Markdown",
+                reply_markup=reply_markup
+            )
+
+            print("[PODCASTS] Inline buttons sent successfully")
+
+        except Exception as e:
+            print(f"[PODCASTS] Failed to send podcasts: {e}")
+            return
 
 def main():
     print("starting bot")
@@ -822,8 +916,9 @@ def main():
     job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
     
     # Repeating jobs
-    job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
-    job_queue.run_repeating(send_news, interval=21600)  # 6 hours = 21600 seconds 21600 for test (every 3.6 minutes)
+    job_queue.run_repeating(cleanup_spam_records, interval=60, first=0)
+    job_queue.run_repeating(send_news, interval=21600, first=0)  # 6 hours = 21600 seconds
+    job_queue.run_repeating(send_podcasts, interval=21600, first=10800)  # every 6h, but offset by 3h
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
