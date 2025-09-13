@@ -203,7 +203,7 @@ def send_news(context: CallbackContext):
             return
 
         # Logo URL (top-left)
-        logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757711188/_arc_logo_mintgreen_tgnj0x.png"
+        logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757711188/arc/_arc_logo_mintgreen_tgnj0x.png"
 
         # Build the text message
         text = "*What is new in the Arc Complex*\n\n"  # header
@@ -264,7 +264,7 @@ def send_podcasts(context: CallbackContext):
             return
 
         # Logo (using hello complex podcast cover)
-        logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757728795/ab67656300005f1fe2aa0d6fc0a3290a1d9e5624_wpq6zz.jpg"
+        logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757728795/arc/ab67656300005f1fe2aa0d6fc0a3290a1d9e5624_wpq6zz.jpg"
 
         # Build the text message
         text = "*Latest Podcasts in the Arc Complex*\n\n"
@@ -810,7 +810,7 @@ def check_message(update: Update, context: CallbackContext):
                 return  # silently do nothing if empty
 
             # Logo URL (top-left)
-            logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757711188/_arc_logo_mintgreen_tgnj0x.png"
+            logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757711188/arc/_arc_logo_mintgreen_tgnj0x.png"
 
             # Build the text message
             text = "*Latest Posts in the Arc Complex*\n\n"
@@ -869,7 +869,7 @@ def check_message(update: Update, context: CallbackContext):
                 print("[PODCASTS] No podcasts available")
                 return
 
-            logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757728795/ab67656300005f1fe2aa0d6fc0a3290a1d9e5624_wpq6zz.jpg"
+            logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757728795/arc/ab67656300005f1fe2aa0d6fc0a3290a1d9e5624_wpq6zz.jpg"
 
             text = "*Latest Podcasts in the Arc Complex*\n\n"
             for pod in podcasts:
