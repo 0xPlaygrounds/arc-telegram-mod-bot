@@ -2,6 +2,7 @@ import asyncio
 import json
 from pathlib import Path
 from playwright.async_api import async_playwright
+from datetime import datetime, timezone
 
 SHOW_URL = "https://open.spotify.com/show/0zveSdaWCuEex4NI1d9SIl"
 
@@ -20,7 +21,8 @@ async def scrape_spotify_show():
             title = await ep.inner_text()
             results.append({
                 "title": title.strip(),
-                "url": f"https://open.spotify.com{url}"
+                "url": f"https://open.spotify.com{url}",
+                "last_updated": datetime.now(timezone.utc).isoformat()
             })
 
         await browser.close()
