@@ -7,7 +7,7 @@ on:
 
 jobs:
   update-podcasts:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04  # Changed from ubuntu-latest to 22.04 for Playwright compatibility
 
     steps:
       - name: Checkout repo
@@ -25,7 +25,7 @@ jobs:
         run: pip install -r requirements.txt
 
       - name: Install Playwright browsers
-        run: playwright install --with-deps
+        run: npx playwright install  # Use npx to install browsers without forcing outdated deps
 
       - name: Run podcasts update script
         run: python api/podcasts.py
