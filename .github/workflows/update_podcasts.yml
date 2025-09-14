@@ -1,5 +1,4 @@
 name: Update Podcasts Data
-
 on:
   schedule:
     - cron: "0 6 * * 0"  # once per week: Sunday at 06:00 UTC
@@ -8,33 +7,36 @@ on:
 jobs:
   update-podcasts:
     runs-on: ubuntu-22.04  # Use Ubuntu 22.04 for Playwright compatibility
-
+    
     steps:
       - name: Checkout repo
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4  # Updated to v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-
+      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-
+      
       - name: Install dependencies
         run: pip install -r requirements.txt
-
+      
       - name: Install Playwright browsers
-        run: npx playwright install
-
+        run: playwright install chromium  # Use Python playwright command and specify browser
+      
+      - name: Install system dependencies for Playwright
+        run: playwright install-deps chromium  # Install system dependencies
+      
       - name: Run podcasts update script
         run: python api/podcasts.py
-
+      
       - name: Configure Git
         run: |
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
+      
       - name: Commit and push updates
         run: |
           set -e
