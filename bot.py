@@ -276,7 +276,29 @@ def send_podcasts(context: CallbackContext):
         with open(PODCASTS_FOLDER, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        if not data:
+        # Handle case where data might be a dict with podcasts array or direct array
+        if isinstance(data, dict):
+            podcasts = data.get("podcasts", [])
+            # Delete previous podcast message if it exists
+            last_message_id = data.get("last_podcast_message_id")
+        else:
+            # If data is directly an array, we need to convert to dict format
+            podcasts = data if isinstance(data, list) else []
+            last_message_id = None
+            # Convert to dict format for storing message ID
+            data = {"podcasts": podcasts}
+
+        if last_message_id:
+            try:
+                context.bot.delete_message(
+                    chat_id=GROUP_CHAT_ID,
+                    message_id=last_message_id
+                )
+                print(f"[PODCASTS] Deleted previous message {last_message_id}")
+            except Exception as e:
+                print(f"[PODCASTS] Could not delete previous message {last_message_id}: {e}")
+
+        if not podcasts:
             print("[PODCASTS] No podcasts available")
             return
 
@@ -285,7 +307,7 @@ def send_podcasts(context: CallbackContext):
 
         # Build the text message
         text = "*Latest Podcasts in the Arc Complex*\n\n"
-        for pod in data:
+        for pod in podcasts:
             title = pod.get("title", "Podcast")
             url = pod.get("url", "")
             text += f"*{title}*\n"
@@ -295,7 +317,7 @@ def send_podcasts(context: CallbackContext):
 
         # Build inline buttons for podcasts
         keyboard = []
-        for pod in data:
+        for pod in podcasts:
             title = pod.get("title", "Podcast")
             url = pod.get("url")
             if url:
@@ -304,7 +326,7 @@ def send_podcasts(context: CallbackContext):
         reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
 
         # Send as photo + caption
-        context.bot.send_photo(
+        message = context.bot.send_photo(
             chat_id=GROUP_CHAT_ID,
             photo=logo_url,
             caption=text,
@@ -312,12 +334,16 @@ def send_podcasts(context: CallbackContext):
             reply_markup=reply_markup
         )
 
-        print("[PODCASTS] Podcasts posted successfully")
+        # Store the new message ID in the JSON file for next time
+        data["last_podcast_message_id"] = message.message_id
+        with open(PODCASTS_FOLDER, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        print(f"[PODCASTS] Podcasts posted successfully, message ID: {message.message_id}")
 
     except Exception as e:
         print(f"[PODCASTS] Failed to post podcasts: {e}")
         return
-
 
 def contains_multiplication_phrase(text):
     text = text.lower()
