@@ -197,6 +197,18 @@ def send_news(context: CallbackContext):
         with open(NEWS_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
 
+        # Delete previous news message if it exists
+        last_message_id = data.get("last_news_message_id")
+        if last_message_id:
+            try:
+                context.bot.delete_message(
+                    chat_id=GROUP_CHAT_ID,
+                    message_id=last_message_id
+                )
+                print(f"[NEWS] Deleted previous message {last_message_id}")
+            except Exception as e:
+                print(f"[NEWS] Could not delete previous message {last_message_id}: {e}")
+
         news_items = data.get("latest_posts", [])
         if not news_items:
             print("[NEWS] No posts available")
@@ -237,7 +249,7 @@ def send_news(context: CallbackContext):
         reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
 
         # Send as photo with caption (logo + text)
-        context.bot.send_photo(
+        message = context.bot.send_photo(
             chat_id=GROUP_CHAT_ID,
             photo=logo_url,
             caption=text,
@@ -245,7 +257,12 @@ def send_news(context: CallbackContext):
             reply_markup=reply_markup
         )
 
-        print("[NEWS] Latest news posted successfully")
+        # Store the new message ID in the JSON file for next time
+        data["last_news_message_id"] = message.message_id
+        with open(NEWS_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        print(f"[NEWS] Latest news posted successfully, message ID: {message.message_id}")
 
     except Exception as e:
         # Fail silently, log only
