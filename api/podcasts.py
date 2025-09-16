@@ -29,15 +29,55 @@ async def scrape_spotify_show():
         return results
 
 if __name__ == "__main__":
-    all_eps = asyncio.run(scrape_spotify_show())
+    try:
+        # Attempt to scrape episodes
+        all_eps = asyncio.run(scrape_spotify_show())
+        
+        # Validate that we actually got data
+        if not all_eps or len(all_eps) == 0:
+            print("⚠️ No episodes found during scraping - keeping existing data unchanged")
+            exit(1)
+            
+        print(f"Successfully scraped {len(all_eps)} episodes")
 
-    # Make sure filters directory exists
-    output_dir = Path(__file__).resolve().parent.parent / "filters"
-    output_dir.mkdir(parents=True, exist_ok=True)
+        # Make sure filters directory exists
+        output_dir = Path(__file__).resolve().parent.parent / "filters"
+        output_dir.mkdir(parents=True, exist_ok=True)
 
-    output_file = output_dir / "podcasts.json"
+        output_file = output_dir / "podcasts.json"
 
-    with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(all_eps, f, ensure_ascii=False, indent=2)
+        # Load existing data to preserve message ID if it exists
+        existing_data = {}
+        if output_file.exists():
+            try:
+                with open(output_file, "r", encoding="utf-8") as f:
+                    existing_data = json.load(f)
+                    # Handle case where existing file is just an array
+                    if isinstance(existing_data, list):
+                        existing_data = {"podcasts": existing_data}
+            except (json.JSONDecodeError, Exception) as e:
+                print(f"Could not load existing data: {e}")
+                existing_data = {}
 
-    print(f"saved {len(all_eps)} episodes to {output_file}")
+        # Prepare new data structure
+        new_data = {
+            "podcasts": all_eps,
+            "last_updated": datetime.now(timezone.utc).isoformat()
+        }
+
+        # Preserve the message ID if it exists
+        if "last_podcast_message_id" in existing_data:
+            new_data["last_podcast_message_id"] = existing_data["last_podcast_message_id"]
+
+        # Write the updated data
+        with open(output_file, "w", encoding="utf-8") as f:
+            json.dump(new_data, f, ensure_ascii=False, indent=2)
+
+        print(f"Saved {len(all_eps)} episodes to {output_file}")
+        if "last_podcast_message_id" in existing_data:
+            print(f"✅ Preserved message ID: {existing_data['last_podcast_message_id']}")
+
+    except asyncio.TimeoutError:
+        print("Scraping timed out - existing data preserved")
+    except Exception as e:
+        print(f"Scraping failed: {e} - existing data preserved")
