@@ -1,6 +1,7 @@
 from fastapi import FastAPI, HTTPException, Query, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
+from fastapi.staticfiles import StaticFiles
 from typing import Optional
 from web.backend.db import telegram_messages
 from bson.objectid import ObjectId
@@ -49,13 +50,24 @@ async def not_found_handler(request: Request, exc):
     return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 # -----------------------------
+# Serve React frontend (dist/)
+# -----------------------------
+FRONTEND_DIST = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+
+if FRONTEND_DIST.exists():
+    logger.info(f"Serving static frontend from: {FRONTEND_DIST}")
+    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
+else:
+    logger.warning(f"⚠️ Frontend dist folder not found at {FRONTEND_DIST}. Did you run `npm run build`?")
+
+# -----------------------------
 # Print URL on startup
 # -----------------------------
 @app.on_event("startup")
 async def startup_event():
     port = os.environ.get("PORT", 8080)
     host = "0.0.0.0"
-    public_url = os.environ.get("RAILWAY_STATIC_URL") or f"http://{host}:{port}"
+    public_url = os.environ.get("BASE_URL") or f"http://{host}:{port}"
     print(f"🚀 FastAPI is running on {host}:{port}")
     print(f"🌐 Public URL for frontend use: {public_url}")
 
