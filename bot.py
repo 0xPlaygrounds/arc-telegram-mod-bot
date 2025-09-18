@@ -292,7 +292,7 @@ def send_news(context: CallbackContext):
         print(f"[NEWS] Failed to post latest news: {e}")
         return
     
-def send_podcasts(bot):
+def send_podcasts(context: CallbackContext):
     print("[PODCASTS] Job triggered")
     try:
         # Load podcasts from JSON
@@ -313,7 +313,7 @@ def send_podcasts(bot):
 
         if last_message_id:
             try:
-                bot.delete_message(
+                context.bot.delete_message(
                     chat_id=GROUP_CHAT_ID,
                     message_id=last_message_id
                 )
@@ -339,14 +339,17 @@ def send_podcasts(bot):
             text += "\n"
 
         # Build inline buttons for podcasts
-        keyboard = [
-            [InlineKeyboardButton(pod.get("title","Podcast")[:25] + "…", url=pod.get("url"))] 
-            for pod in podcasts if pod.get("url")
-        ]
+        keyboard = []
+        for pod in podcasts:
+            title = pod.get("title", "Podcast")
+            url = pod.get("url")
+            if url:
+                keyboard.append([InlineKeyboardButton(title[:25] + "…", url=url)])
+
         reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
 
         # Send as photo + caption
-        message = bot.send_photo(
+        message = context.bot.send_photo(
             chat_id=GROUP_CHAT_ID,
             photo=logo_url,
             caption=text,
@@ -360,11 +363,10 @@ def send_podcasts(bot):
             json.dump(data, f, indent=2, ensure_ascii=False)
 
         print(f"[PODCASTS] Podcasts posted successfully, message ID: {message.message_id}")
-        return {"status": "ok", "message_id": message.message_id}
 
     except Exception as e:
         print(f"[PODCASTS] Failed to post podcasts: {e}")
-        return {"status": "error", "detail": str(e)}
+        return
 
 def contains_multiplication_phrase(text):
     text = text.lower()
