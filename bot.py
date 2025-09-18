@@ -835,10 +835,6 @@ def main():
     job_queue.run_daily(lambda context: post_security_message(context, 0), time=time(hour=8, minute=0))  
     job_queue.run_daily(lambda context: post_security_message(context, 1), time=time(hour=16, minute=0))
     job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
-<<<<<<< Updated upstream
-=======
-    # job_queue.run_daily(send_podcasts, time=time(hour=12, minute=0))
->>>>>>> Stashed changes
     
     # Repeating jobs
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
