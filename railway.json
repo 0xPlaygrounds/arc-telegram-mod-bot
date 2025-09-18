@@ -5,6 +5,6 @@
     "buildCommand": "pip install -r requirements.txt && curl -fsSL https://deb.nodesource.com/setup_18.x | bash - && apt-get install -y nodejs && cd web/frontend && npm install && npm run build"
   },
   "deploy": {
-    "startCommand": "/bin/sh -c \"echo 'Starting bot.py'; python bot.py || echo 'bot.py failed'; echo 'Starting middleware_listener.py'; python middleware_listener.py || echo 'middleware_listener.py failed'; echo 'Starting FastAPI'; python -m uvicorn web.backend.main:app --host 0.0.0.0 --port $PORT --log-level info || echo 'FastAPI failed'; wait\""
+    "startCommand": "/bin/sh -c \"echo 'Starting bot.py'; python bot.py || echo 'bot.py failed'; echo 'Starting FastAPI'; python -m uvicorn web.backend.main:app --host 0.0.0.0 --port $PORT --log-level info || echo 'FastAPI failed'; wait\""
   }
 }
