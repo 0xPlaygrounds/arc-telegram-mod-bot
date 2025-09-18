@@ -180,7 +180,7 @@ def label_message(msg_id: str, label: str, reviewer_username: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 # -----------------------------
-# New endpoint: update blocklist_status
+# update blocklist_status
 # -----------------------------
 @app.post("/update_blocklist_status")
 def update_blocklist_status():
@@ -219,6 +219,25 @@ def update_blocklist_status():
         logger.error(f"Error updating blocklist status: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
+# -----------------------------
+# send podcasts message
+# -----------------------------
+from fastapi import APIRouter
+from telegram.ext import CallbackContext
+from bot import send_podcasts, updater
+
+podcast_router = APIRouter()
+
+@podcast_router.post("/trigger/send-podcasts-message")
+async def trigger_podcasts():
+    try:
+        context = CallbackContext.from_bot(updater.bot)
+        send_podcasts(context)
+        return {"status": "ok", "message": "Podcasts posted"}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
+
+app.include_router(podcast_router)
 
 # -----------------------------
 # Run Uvicorn

@@ -3,14 +3,29 @@ import re
 import json
 import unicodedata
 from dotenv import load_dotenv
-from telegram import Update, ChatPermissions, ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, MessageHandler, Filters, CallbackContext, CommandHandler
+from telegram import (
+    Update, 
+    ChatPermissions, 
+    ParseMode, 
+    InlineKeyboardButton, 
+    InlineKeyboardMarkup,
+    Bot, # so we can send outside of dispatcher context
+)
+from telegram.ext import (
+    Updater, 
+    MessageHandler, 
+    Filters, 
+    CallbackContext, 
+    CommandHandler,
+)
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone, time
 from combot.scheduled_warnings import messages
 from combot.brand_assets import messages as brand_assets_messages
 from web.backend.db import telegram_messages
 from web.backend.db import save_message_to_db
+
+from fastapi import FastAPI, Request
 
 load_dotenv()  # Load .env vars
 
@@ -820,6 +835,10 @@ def main():
     job_queue.run_daily(lambda context: post_security_message(context, 0), time=time(hour=8, minute=0))  
     job_queue.run_daily(lambda context: post_security_message(context, 1), time=time(hour=16, minute=0))
     job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
+<<<<<<< Updated upstream
+=======
+    # job_queue.run_daily(send_podcasts, time=time(hour=12, minute=0))
+>>>>>>> Stashed changes
     
     # Repeating jobs
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
