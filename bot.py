@@ -323,7 +323,7 @@ def send_podcasts(bot):
 
         if not podcasts:
             print("[PODCASTS] No podcasts available")
-            return
+            return None
 
         # Logo (using hello complex podcast cover)
         logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757728795/arc/ab67656300005f1fe2aa0d6fc0a3290a1d9e5624_wpq6zz.jpg"
@@ -363,6 +363,8 @@ def send_podcasts(bot):
             json.dump(data, f, indent=2, ensure_ascii=False)
 
         print(f"[PODCASTS] Podcasts posted successfully, message ID: {message.message_id}")
+
+        return message.message_id # return so api can access and use it
 
     except Exception as e:
         print(f"[PODCASTS] Failed to post podcasts: {e}")
