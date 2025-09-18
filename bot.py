@@ -9,7 +9,6 @@ from telegram import (
     ParseMode, 
     InlineKeyboardButton, 
     InlineKeyboardMarkup,
-    Bot, # so we can send outside of dispatcher context
 )
 from telegram.ext import (
     Updater, 
@@ -292,7 +291,7 @@ def send_news(context: CallbackContext):
         print(f"[NEWS] Failed to post latest news: {e}")
         return
     
-def send_podcasts(context: CallbackContext):
+def send_podcasts(bot):
     print("[PODCASTS] Job triggered")
     try:
         # Load podcasts from JSON
@@ -313,7 +312,7 @@ def send_podcasts(context: CallbackContext):
 
         if last_message_id:
             try:
-                context.bot.delete_message(
+                bot.delete_message(
                     chat_id=GROUP_CHAT_ID,
                     message_id=last_message_id
                 )
@@ -349,7 +348,7 @@ def send_podcasts(context: CallbackContext):
         reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
 
         # Send as photo + caption
-        message = context.bot.send_photo(
+        message = bot.send_photo(
             chat_id=GROUP_CHAT_ID,
             photo=logo_url,
             caption=text,
