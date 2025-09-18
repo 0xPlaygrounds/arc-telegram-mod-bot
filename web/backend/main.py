@@ -11,16 +11,16 @@ import os
 import re
 from pathlib import Path
 
-# -----------------------------
-# Setup logging
-# -----------------------------
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger("web.backend.main")
+# Import API router
+from web.backend.api.send_podcasts_message import router as podcast_router
 
 # -----------------------------
 # Initialize FastAPI
 # -----------------------------
 app = FastAPI()
+
+# Include the podcasts API route
+app.include_router(podcast_router)
 
 # Allow frontend to connect
 app.add_middleware(
@@ -29,6 +29,12 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# -----------------------------
+# Setup logging
+# -----------------------------
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger("web.backend.main")
 
 # -----------------------------
 # Global 404 handler
@@ -84,10 +90,7 @@ def get_messages(
         skip_count = (page - 1) * page_size
         mongo_sort_dir = 1 if sort_direction == "asc" else -1
 
-        # Base query (no filters by default)
         query = {}
-
-        # If search term is provided, build an $or query
         if search:
             regex = re.compile(re.escape(search), re.IGNORECASE)
             query = {
@@ -180,66 +183,6 @@ def label_message(msg_id: str, label: str, reviewer_username: str):
         raise HTTPException(status_code=500, detail=str(e))
 
 # -----------------------------
-# update blocklist_status
-# -----------------------------
-@app.post("/update_blocklist_status")
-def update_blocklist_status():
-    try:
-        blocklists = load_blocklists()
-        if not blocklists:
-            logger.warning("No blocklists loaded. Check blocklist folder existence and files.")
-        
-        updated_count = 0
-        checked_count = 0
-
-        for msg in telegram_messages.find({"blocklist_status": None}):
-            checked_count += 1
-            text = msg.get("text", "").lower()
-            status = None
-
-            for key, phrases in blocklists.items():
-                if any(phrase.lower() in text for phrase in phrases):
-                    status = key  # ban | delete | mute
-                    break
-
-            if status:
-                telegram_messages.update_one(
-                    {"_id": msg["_id"]},
-                    {"$set": {"blocklist_status": status}}
-                )
-                updated_count += 1
-                logger.info(f"Message {msg['_id']} updated with blocklist_status='{status}'")
-            else:
-                logger.debug(f"Message {msg['_id']} has no matching blocklist phrases")
-
-        logger.info(f"Checked {checked_count} messages, updated {updated_count} messages")
-        return {"updated": updated_count, "checked": checked_count}
-
-    except Exception as e:
-        logger.error(f"Error updating blocklist status: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
-
-# -----------------------------
-# send podcasts message
-# -----------------------------
-from fastapi import APIRouter
-from telegram.ext import CallbackContext
-from bot import send_podcasts, updater
-
-podcast_router = APIRouter()
-
-@podcast_router.post("/trigger/send-podcasts-message")
-async def trigger_podcasts():
-    try:
-        context = CallbackContext.from_bot(updater.bot)
-        send_podcasts(context)
-        return {"status": "ok", "message": "Podcasts posted"}
-    except Exception as e:
-        return {"status": "error", "detail": str(e)}
-
-app.include_router(podcast_router)
-
-# -----------------------------
 # Run Uvicorn
 # -----------------------------
 if __name__ == "__main__":
@@ -248,6 +191,6 @@ if __name__ == "__main__":
         "web.backend.main:app",
         host="0.0.0.0",
         port=port,
-        log_level="warning",
-        access_log=False
+        log_level="info",
+        access_log=True
     )
