@@ -31,19 +31,3 @@ jobs:
           status_code=$(curl -s -o response.json -w "%{http_code}" -X POST "$API_URL")
           echo "Status code: $status_code"
           cat response.json
-
-      - name: Configure Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Commit and push updates
-        run: |
-          set -e
-          git add filters/podcasts.json
-          if ! git diff --cached --quiet; then
-            git commit -m "Update last message_id in filters/podcasts.json"
-            git push origin main
-          else
-            echo "No podcast updates to commit."
-          fi

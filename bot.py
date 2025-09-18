@@ -292,31 +292,26 @@ def send_news(context: CallbackContext):
         print(f"[NEWS] Failed to post latest news: {e}")
         return
     
-def send_podcasts(bot):
+def send_podcasts(bot, last_message_id=None):
     print("[PODCASTS] Job triggered")
     try:
         # Load podcasts from JSON
         with open(PODCASTS_FOLDER, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        # Handle case where data might be a dict with podcasts array or direct array
+        podcasts = []
         if isinstance(data, dict):
             podcasts = data.get("podcasts", [])
-            # Delete previous podcast message if it exists
-            last_message_id = data.get("last_podcast_message_id")
+        elif isinstance(data, list):
+            podcasts = data
         else:
-            # If data is directly an array, we need to convert to dict format
-            podcasts = data if isinstance(data, list) else []
-            last_message_id = None
-            # Convert to dict format for storing message ID
-            data = {"podcasts": podcasts}
+            print("[PODCASTS] Invalid podcasts data format")
+            return None
 
+        # Delete previous podcast message if provided
         if last_message_id:
             try:
-                bot.delete_message(
-                    chat_id=GROUP_CHAT_ID,
-                    message_id=last_message_id
-                )
+                bot.delete_message(chat_id=GROUP_CHAT_ID, message_id=last_message_id)
                 print(f"[PODCASTS] Deleted previous message {last_message_id}")
             except Exception as e:
                 print(f"[PODCASTS] Could not delete previous message {last_message_id}: {e}")
@@ -325,7 +320,7 @@ def send_podcasts(bot):
             print("[PODCASTS] No podcasts available")
             return None
 
-        # Logo (using hello complex podcast cover)
+        # Logo
         logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757728795/arc/ab67656300005f1fe2aa0d6fc0a3290a1d9e5624_wpq6zz.jpg"
 
         # Build the text message
@@ -339,13 +334,10 @@ def send_podcasts(bot):
             text += "\n"
 
         # Build inline buttons for podcasts
-        keyboard = []
-        for pod in podcasts:
-            title = pod.get("title", "Podcast")
-            url = pod.get("url")
-            if url:
-                keyboard.append([InlineKeyboardButton(title[:25] + "…", url=url)])
-
+        keyboard = [
+            [InlineKeyboardButton(pod.get("title", "Podcast")[:25] + "…", url=pod.get("url"))]
+            for pod in podcasts if pod.get("url")
+        ]
         reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
 
         # Send as photo + caption
@@ -357,18 +349,13 @@ def send_podcasts(bot):
             reply_markup=reply_markup
         )
 
-        # Store the new message ID in the JSON file for next time
-        data["last_podcast_message_id"] = message.message_id
-        with open(PODCASTS_FOLDER, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-
         print(f"[PODCASTS] Podcasts posted successfully, message ID: {message.message_id}")
 
-        return message.message_id # return so api can access and use it
+        return message  # return full message object so API can store ID in DB
 
     except Exception as e:
         print(f"[PODCASTS] Failed to post podcasts: {e}")
-        return
+        return None
 
 def contains_multiplication_phrase(text):
     text = text.lower()
