@@ -50,17 +50,6 @@ async def not_found_handler(request: Request, exc):
     return JSONResponse(status_code=404, content={"detail": "Not Found"})
 
 # -----------------------------
-# Serve React frontend (dist/)
-# -----------------------------
-FRONTEND_DIST = Path(__file__).resolve().parent.parent / "frontend" / "dist"
-
-if FRONTEND_DIST.exists():
-    logger.info(f"Serving static frontend from: {FRONTEND_DIST}")
-    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
-else:
-    logger.warning(f"⚠️ Frontend dist folder not found at {FRONTEND_DIST}. Did you run `npm run build`?")
-
-# -----------------------------
 # Print URL on startup
 # -----------------------------
 @app.on_event("startup")
@@ -197,6 +186,17 @@ def label_message(msg_id: str, label: str, reviewer_username: str):
     except Exception as e:
         logger.error(f"Error labeling message {msg_id}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
+    
+# -----------------------------
+# Serve React frontend (dist/)
+# -----------------------------
+FRONTEND_DIST = Path(__file__).resolve().parent.parent / "frontend" / "dist"
+
+if FRONTEND_DIST.exists():
+    logger.info(f"Serving static frontend from: {FRONTEND_DIST}")
+    app.mount("/", StaticFiles(directory=FRONTEND_DIST, html=True), name="frontend")
+else:
+    logger.warning(f"⚠️ Frontend dist folder not found at {FRONTEND_DIST}. Did you run `npm run build`?")
 
 # -----------------------------
 # Run Uvicorn
