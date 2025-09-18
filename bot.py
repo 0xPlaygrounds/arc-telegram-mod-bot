@@ -291,6 +291,82 @@ def send_news(context: CallbackContext):
         # Fail silently, log only
         print(f"[NEWS] Failed to post latest news: {e}")
         return
+    
+def send_podcasts(bot):
+    print("[PODCASTS] Job triggered")
+    try:
+        # Load podcasts from JSON
+        with open(PODCASTS_FOLDER, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        # Handle case where data might be a dict with podcasts array or direct array
+        if isinstance(data, dict):
+            podcasts = data.get("podcasts", [])
+            # Delete previous podcast message if it exists
+            last_message_id = data.get("last_podcast_message_id")
+        else:
+            # If data is directly an array, we need to convert to dict format
+            podcasts = data if isinstance(data, list) else []
+            last_message_id = None
+            # Convert to dict format for storing message ID
+            data = {"podcasts": podcasts}
+
+        if last_message_id:
+            try:
+                bot.delete_message(
+                    chat_id=GROUP_CHAT_ID,
+                    message_id=last_message_id
+                )
+                print(f"[PODCASTS] Deleted previous message {last_message_id}")
+            except Exception as e:
+                print(f"[PODCASTS] Could not delete previous message {last_message_id}: {e}")
+
+        if not podcasts:
+            print("[PODCASTS] No podcasts available")
+            return
+
+        # Logo (using hello complex podcast cover)
+        logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757728795/arc/ab67656300005f1fe2aa0d6fc0a3290a1d9e5624_wpq6zz.jpg"
+
+        # Build the text message
+        text = "*Latest Podcasts in the Arc Complex*\n\n"
+        for pod in podcasts:
+            title = pod.get("title", "Podcast")
+            url = pod.get("url", "")
+            text += f"*{title}*\n"
+            if url:
+                text += f"[Listen here]({url})\n"
+            text += "\n"
+
+        # Build inline buttons for podcasts
+        keyboard = []
+        for pod in podcasts:
+            title = pod.get("title", "Podcast")
+            url = pod.get("url")
+            if url:
+                keyboard.append([InlineKeyboardButton(title[:25] + "…", url=url)])
+
+        reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
+
+        # Send as photo + caption
+        message = bot.send_photo(
+            chat_id=GROUP_CHAT_ID,
+            photo=logo_url,
+            caption=text,
+            parse_mode=ParseMode.MARKDOWN,
+            reply_markup=reply_markup
+        )
+
+        # Store the new message ID in the JSON file for next time
+        data["last_podcast_message_id"] = message.message_id
+        with open(PODCASTS_FOLDER, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        print(f"[PODCASTS] Podcasts posted successfully, message ID: {message.message_id}")
+
+    except Exception as e:
+        print(f"[PODCASTS] Failed to post podcasts: {e}")
+        return
 
 def contains_multiplication_phrase(text):
     text = text.lower()
@@ -800,7 +876,7 @@ def check_message(update: Update, context: CallbackContext):
                 return  # silently do nothing if empty
 
             # Logo URL (top-left)
-            logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757711188/arc/_arc_logo_mintgreen_tgnj0x.png"
+            logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757711188/_arc_logo_mintgreen_tgnj0x.png"
 
             # Build the text message
             text = "*Latest Posts in the Arc Complex*\n\n"
@@ -849,7 +925,6 @@ def check_message(update: Update, context: CallbackContext):
             print(f"[POSTS] Failed to send posts: {e}")
             return
 
-
 def main():
     print("starting bot")
 
@@ -857,11 +932,10 @@ def main():
     job_queue.run_daily(lambda context: post_security_message(context, 0), time=time(hour=8, minute=0))  
     job_queue.run_daily(lambda context: post_security_message(context, 1), time=time(hour=16, minute=0))
     job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
-    job_queue.run_daily(send_podcasts, time=time(hour=12, minute=0))
     
     # Repeating jobs
-    job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
-    job_queue.run_repeating(send_news, interval=21600)  # 6 hours = 21600 seconds 21600 for test (every 3.6 minutes)
+    job_queue.run_repeating(cleanup_spam_records, interval=60, first=0)
+    job_queue.run_repeating(send_news, interval=43200, first=7200)
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
