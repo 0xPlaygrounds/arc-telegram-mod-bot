@@ -1,4 +1,5 @@
-const BASE_URL = "http://127.0.0.1:8080";
+// Use Railway env variable, fallback to localhost for local dev
+const BASE_URL = process.env.BASE_URL || "http://127.0.0.1:8080";
 
 /**
  * Fetch messages from backend with pagination, sorting, and search
@@ -24,7 +25,7 @@ export async function fetchMessages(
 
     const res = await fetch(`${BASE_URL}/messages?${params.toString()}`);
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json(); // { messages, page, page_size, total_count, sort_key, sort_direction }
+    return await res.json();
   } catch (err) {
     console.error("Fetch failed:", err);
     return { messages: [], page, page_size, total_count: 0 };
@@ -47,7 +48,6 @@ export async function updateLabel(msgId, label) {
 
 /**
  * Update messages with blocklist status and optionally refresh messages
- * @param {Function} refreshCallback - optional function to call after updating
  */
 export async function updateBlocklistStatus(refreshCallback) {
   try {
@@ -55,10 +55,9 @@ export async function updateBlocklistStatus(refreshCallback) {
       method: "POST",
     });
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const data = await res.json(); // { updated, checked }
+    const data = await res.json();
     console.info("Blocklist update result:", data);
 
-    // Refresh messages if callback provided
     if (refreshCallback && typeof refreshCallback === "function") {
       refreshCallback();
     }
