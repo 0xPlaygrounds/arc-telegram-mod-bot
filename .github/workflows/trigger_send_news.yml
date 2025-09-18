@@ -2,7 +2,7 @@ name: Trigger News Message
 
 on:
   schedule:
-    - cron: "0 18 * * 0"  # once per week: Sunday at 18:00 UTC
+    - cron: "0 18 * * *"  # once per day at 18:00 UTC
   workflow_dispatch:
 
 jobs:
