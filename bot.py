@@ -915,7 +915,6 @@ def main():
     
     # Repeating jobs
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=0)
-    job_queue.run_repeating(send_news, interval=43200, first=7200)
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
