@@ -11,8 +11,9 @@ import os
 import re
 from pathlib import Path
 
-# Import API router
+# Import API routers
 from web.backend.api.send_podcasts_message import router as podcast_router
+from web.backend.api.say_command import router as say_router
 
 # -----------------------------
 # Initialize FastAPI
@@ -21,6 +22,7 @@ app = FastAPI()
 
 # Include the podcasts API route
 app.include_router(podcast_router)
+app.include_router(say_router)
 
 # Allow frontend to connect
 app.add_middleware(
