@@ -33,6 +33,13 @@ load_dotenv()  # Load .env vars
 BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 GROUP_CHAT_ID = os.getenv('GROUP_CHAT_ID')
 
+# -----------------------------
+# Telegram Bot Initialization
+# -----------------------------
+updater = Updater(BOT_TOKEN, use_context=True)
+dp = updater.dispatcher
+job_queue = updater.job_queue
+
 # File path for filters
 FILTERS_FILE = "filters/filters.json"
 
@@ -44,6 +51,9 @@ NEWS_FILE = "filters/posts.json"
 
 # File path for accompanying filter media
 MEDIA_FOLDER = "media"
+
+# File path for accompanying podcasts data including last message id
+PODCASTS_FOLDER = "filters/podcasts.json"
 
 # File paths for phrases
 BAN_PHRASES_FILE = "blocklists/ban_phrases.txt"
@@ -210,13 +220,25 @@ def send_news(context: CallbackContext):
         with open(NEWS_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
 
+        # Delete previous news message if it exists
+        last_message_id = data.get("last_news_message_id")
+        if last_message_id:
+            try:
+                context.bot.delete_message(
+                    chat_id=GROUP_CHAT_ID,
+                    message_id=last_message_id
+                )
+                print(f"[NEWS] Deleted previous message {last_message_id}")
+            except Exception as e:
+                print(f"[NEWS] Could not delete previous message {last_message_id}: {e}")
+
         news_items = data.get("latest_posts", [])
         if not news_items:
             print("[NEWS] No posts available")
             return
 
         # Logo URL (top-left)
-        logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757711188/_arc_logo_mintgreen_tgnj0x.png"
+        logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757711188/arc/_arc_logo_mintgreen_tgnj0x.png"
 
         # Build the text message
         text = "*What is new in the Arc Complex*\n\n"  # header
@@ -250,7 +272,7 @@ def send_news(context: CallbackContext):
         reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
 
         # Send as photo with caption (logo + text)
-        context.bot.send_photo(
+        message = context.bot.send_photo(
             chat_id=GROUP_CHAT_ID,
             photo=logo_url,
             caption=text,
@@ -258,12 +280,91 @@ def send_news(context: CallbackContext):
             reply_markup=reply_markup
         )
 
-        print("[NEWS] Latest news posted successfully")
+        # Store the new message ID in the JSON file for next time
+        data["last_news_message_id"] = message.message_id
+        with open(NEWS_FILE, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        print(f"[NEWS] Latest news posted successfully, message ID: {message.message_id}")
 
     except Exception as e:
         # Fail silently, log only
         print(f"[NEWS] Failed to post latest news: {e}")
         return
+    
+def send_podcasts(context: CallbackContext):
+    print("[PODCASTS] Job triggered")
+    try:
+        # Load podcasts from JSON
+        with open(PODCASTS_FOLDER, "r", encoding="utf-8") as f:
+            data = json.load(f)
+
+        # Handle case where data might be a dict with podcasts array or direct array
+        if isinstance(data, dict):
+            podcasts = data.get("podcasts", [])
+            # Delete previous podcast message if it exists
+            last_message_id = data.get("last_podcast_message_id")
+        else:
+            # If data is directly an array, we need to convert to dict format
+            podcasts = data if isinstance(data, list) else []
+            last_message_id = None
+            # Convert to dict format for storing message ID
+            data = {"podcasts": podcasts}
+
+        if last_message_id:
+            try:
+                context.bot.delete_message(
+                    chat_id=GROUP_CHAT_ID,
+                    message_id=last_message_id
+                )
+                print(f"[PODCASTS] Deleted previous message {last_message_id}")
+            except Exception as e:
+                print(f"[PODCASTS] Could not delete previous message {last_message_id}: {e}")
+
+        if not podcasts:
+            print("[PODCASTS] No podcasts available")
+            return
+
+        # Logo (using hello complex podcast cover)
+        logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757728795/arc/ab67656300005f1fe2aa0d6fc0a3290a1d9e5624_wpq6zz.jpg"
+
+        # Build the text message
+        text = "*Latest Podcasts in the Arc Complex*\n\n"
+        for pod in podcasts:
+            title = pod.get("title", "Podcast")
+            url = pod.get("url", "")
+            text += f"*{title}*\n"
+            if url:
+                text += f"[Listen here]({url})\n"
+            text += "\n"
+
+        # Build inline buttons for podcasts
+        keyboard = [
+            [InlineKeyboardButton(pod.get("title","Podcast")[:25] + "…", url=pod.get("url"))] 
+            for pod in podcasts if pod.get("url")
+        ]
+        reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
+
+        # Send as photo + caption
+        message = context.bot.send_photo(
+            chat_id=GROUP_CHAT_ID,
+            photo=logo_url,
+            caption=text,
+            parse_mode=ParseMode.MARKDOWN,
+            reply_markup=reply_markup
+        )
+
+        # Store the new message ID in the JSON file for next time
+        data["last_podcast_message_id"] = message.message_id
+        with open(PODCASTS_FOLDER, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2, ensure_ascii=False)
+
+        print(f"[PODCASTS] Podcasts posted successfully, message ID: {message.message_id}")
+        return {"status": "ok", "message_id": message.message_id}
+
+    except Exception as e:
+        print(f"[PODCASTS] Failed to post podcasts: {e}")
+        return {"status": "error", "detail": str(e)}
 
 def contains_multiplication_phrase(text):
     text = text.lower()
@@ -837,8 +938,8 @@ def main():
     job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
     
     # Repeating jobs
-    job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
-    job_queue.run_repeating(send_news, interval=21600)  # 6 hours = 21600 seconds 21600 for test (every 3.6 minutes)
+    job_queue.run_repeating(cleanup_spam_records, interval=60, first=0)
+    job_queue.run_repeating(send_news, interval=43200, first=7200)
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
