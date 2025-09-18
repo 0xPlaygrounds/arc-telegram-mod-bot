@@ -1,7 +1,7 @@
 # web/backend/api/send_podcasts_message.py
 
 from fastapi import APIRouter
-from bot import send_podcasts, updater
+from bot import send_podcasts, start_bot
 import threading
 import logging
 
@@ -11,6 +11,9 @@ router = APIRouter()
 logger = logging.getLogger("send_podcasts_message")
 logger.setLevel(logging.INFO)
 
+# Ensure the bot is running
+start_bot()  # Launch Telegram bot in background if not already running
+
 @router.post("/trigger/send-podcasts-message")
 async def trigger_podcasts():
     try:
@@ -19,6 +22,8 @@ async def trigger_podcasts():
         def run_job():
             try:
                 logger.info("Starting send_podcasts job in background thread")
+                # Access the updater globally
+                from bot import updater
                 send_podcasts(updater.bot)  # pass the bot directly
                 logger.info("send_podcasts job completed successfully")
             except Exception as e:

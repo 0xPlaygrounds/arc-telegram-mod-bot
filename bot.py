@@ -2,6 +2,7 @@ import os
 import re
 import json
 import unicodedata
+import threading
 from dotenv import load_dotenv
 from telegram import (
     Update, 
@@ -924,7 +925,6 @@ def check_message(update: Update, context: CallbackContext):
             print(f"[POSTS] Failed to send posts: {e}")
             return
 
-
 def main():
     print("starting bot")
 
@@ -942,8 +942,11 @@ def main():
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, handle_new_members))
     dp.add_handler(MessageHandler(Filters.text | Filters.command, check_message))
 
+    # Start polling without blocking the main thread
     updater.start_polling()
-    updater.idle()
+    print("Bot started and polling in background thread")
 
-if __name__ == '__main__':
-    main()
+def start_bot():
+    # Run main() in a separate thread
+    import threading
+    threading.Thread(target=main, daemon=True).start()
