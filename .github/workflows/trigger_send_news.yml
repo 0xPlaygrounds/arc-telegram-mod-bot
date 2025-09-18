@@ -1,0 +1,34 @@
+name: Trigger News Message
+
+on:
+  schedule:
+    - cron: "0 18 * * 0"  # once per week: Sunday at 18:00 UTC
+  workflow_dispatch:
+
+jobs:
+  trigger-news:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Trigger FastAPI news endpoint
+        env:
+          API_URL: ${{ secrets.NEWS_API_URL }}
+        run: |
+          echo "Triggering news endpoint..."
+          status_code=$(curl -s -o response.json -w "%{http_code}" -X POST "$API_URL")
+          echo "Status code: $status_code"
+          cat response.json

@@ -19,12 +19,14 @@ MONGO_URI = "mongodb+srv://arc_bot:pVwneyi8ATuJIM21@cluster0.dvafmmh.mongodb.net
 client = MongoClient(MONGO_URI)
 db = client["arc_bot"]
 
-# Existing collection
+# messages db collection
 telegram_messages = db["telegram_messages"]
 
-# New collection specifically for last podcast message
+# last podcast message db collection
 last_podcast_message = db["last_podcast_message"]
 
+# last news message db collection
+last_news_message = db["last_news_message"]
 
 def save_message_to_db(message):
     """
@@ -97,3 +99,27 @@ def save_last_podcast_message(message):
         print(f"[DB] Saved last podcast message, message ID: {message.message_id}")
     except Exception as e:
         print(f"[DB] Failed to save last podcast message: {e}")
+
+def save_last_news_message(message):
+    """
+    Save or update the last news message in its own collection.
+    Always keeps a single document with _id='latest'.
+    """
+    try:
+        last_news_message.update_one(
+            {"_id": "latest"},
+            {
+                "$set": {
+                    "message_id": message.message_id,
+                    "text": message.caption or "",
+                    "updated_at": datetime.utcnow()
+                },
+                "$setOnInsert": {
+                    "created_at": datetime.utcnow()
+                }
+            },
+            upsert=True
+        )
+        print(f"[DB] Saved last news message, message ID: {message.message_id}")
+    except Exception as e:
+        print(f"[DB] Failed to save last news message: {e}")

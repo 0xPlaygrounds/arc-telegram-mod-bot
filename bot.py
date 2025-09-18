@@ -213,29 +213,25 @@ MUTE_PHRASES = load_phrases(MUTE_PHRASES_FILE)
 DELETE_PHRASES = load_phrases(DELETE_PHRASES_FILE)
 WHITELIST_PHRASES = load_phrases(WHITELIST_PHRASES_FILE)
 
-def send_news(context: CallbackContext):
+def send_news(bot, last_message_id=None):
     print("[NEWS] Job triggered")
     try:
         # Load latest posts from JSON file
         with open(NEWS_FILE, "r", encoding="utf-8") as f:
             data = json.load(f)
 
-        # Delete previous news message if it exists
-        last_message_id = data.get("last_news_message_id")
-        if last_message_id:
-            try:
-                context.bot.delete_message(
-                    chat_id=GROUP_CHAT_ID,
-                    message_id=last_message_id
-                )
-                print(f"[NEWS] Deleted previous message {last_message_id}")
-            except Exception as e:
-                print(f"[NEWS] Could not delete previous message {last_message_id}: {e}")
-
         news_items = data.get("latest_posts", [])
         if not news_items:
             print("[NEWS] No posts available")
-            return
+            return None
+
+        # Delete previous news message if last_message_id is provided
+        if last_message_id:
+            try:
+                bot.delete_message(chat_id=GROUP_CHAT_ID, message_id=last_message_id)
+                print(f"[NEWS] Deleted previous message {last_message_id}")
+            except Exception as e:
+                print(f"[NEWS] Could not delete previous message {last_message_id}: {e}")
 
         # Logo URL (top-left)
         logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757711188/arc/_arc_logo_mintgreen_tgnj0x.png"
@@ -272,7 +268,7 @@ def send_news(context: CallbackContext):
         reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
 
         # Send as photo with caption (logo + text)
-        message = context.bot.send_photo(
+        message = bot.send_photo(
             chat_id=GROUP_CHAT_ID,
             photo=logo_url,
             caption=text,
@@ -280,17 +276,12 @@ def send_news(context: CallbackContext):
             reply_markup=reply_markup
         )
 
-        # Store the new message ID in the JSON file for next time
-        data["last_news_message_id"] = message.message_id
-        with open(NEWS_FILE, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-
         print(f"[NEWS] Latest news posted successfully, message ID: {message.message_id}")
+        return message  # return the message object so API can save last_message_id
 
     except Exception as e:
-        # Fail silently, log only
         print(f"[NEWS] Failed to post latest news: {e}")
-        return
+        return None
     
 def send_podcasts(bot, last_message_id=None):
     print("[PODCASTS] Job triggered")
