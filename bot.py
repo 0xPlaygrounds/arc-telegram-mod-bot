@@ -2,9 +2,22 @@ import os
 import re
 import json
 import unicodedata
+import threading
 from dotenv import load_dotenv
-from telegram import Update, ChatPermissions, ParseMode, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import Updater, MessageHandler, Filters, CallbackContext, CommandHandler
+from telegram import (
+    Update, 
+    ChatPermissions, 
+    ParseMode, 
+    InlineKeyboardButton, 
+    InlineKeyboardMarkup,
+)
+from telegram.ext import (
+    Updater, 
+    MessageHandler, 
+    Filters, 
+    CallbackContext, 
+    CommandHandler,
+)
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone, time
 from combot.scheduled_warnings import messages
@@ -12,11 +25,20 @@ from combot.brand_assets import messages as brand_assets_messages
 from web.backend.db import telegram_messages
 from web.backend.db import save_message_to_db
 
+from fastapi import FastAPI, Request
+
 load_dotenv()  # Load .env vars
 
 # Get bot token from environment
 BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 GROUP_CHAT_ID = os.getenv('GROUP_CHAT_ID')
+
+# -----------------------------
+# Telegram Bot Initialization
+# -----------------------------
+updater = Updater(BOT_TOKEN, use_context=True)
+dp = updater.dispatcher
+job_queue = updater.job_queue
 
 # File path for filters
 FILTERS_FILE = "filters/filters.json"
@@ -30,6 +52,7 @@ NEWS_FILE = "filters/posts.json"
 # File path for accompanying filter media
 MEDIA_FOLDER = "media"
 
+# File path for accompanying podcasts data including last message id
 PODCASTS_FOLDER = "filters/podcasts.json"
 
 # File paths for phrases
@@ -267,82 +290,6 @@ def send_news(context: CallbackContext):
     except Exception as e:
         # Fail silently, log only
         print(f"[NEWS] Failed to post latest news: {e}")
-        return
-    
-def send_podcasts(context: CallbackContext):
-    print("[PODCASTS] Job triggered")
-    try:
-        # Load podcasts from JSON
-        with open(PODCASTS_FOLDER, "r", encoding="utf-8") as f:
-            data = json.load(f)
-
-        # Handle case where data might be a dict with podcasts array or direct array
-        if isinstance(data, dict):
-            podcasts = data.get("podcasts", [])
-            # Delete previous podcast message if it exists
-            last_message_id = data.get("last_podcast_message_id")
-        else:
-            # If data is directly an array, we need to convert to dict format
-            podcasts = data if isinstance(data, list) else []
-            last_message_id = None
-            # Convert to dict format for storing message ID
-            data = {"podcasts": podcasts}
-
-        if last_message_id:
-            try:
-                context.bot.delete_message(
-                    chat_id=GROUP_CHAT_ID,
-                    message_id=last_message_id
-                )
-                print(f"[PODCASTS] Deleted previous message {last_message_id}")
-            except Exception as e:
-                print(f"[PODCASTS] Could not delete previous message {last_message_id}: {e}")
-
-        if not podcasts:
-            print("[PODCASTS] No podcasts available")
-            return
-
-        # Logo (using hello complex podcast cover)
-        logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757728795/arc/ab67656300005f1fe2aa0d6fc0a3290a1d9e5624_wpq6zz.jpg"
-
-        # Build the text message
-        text = "*Latest Podcasts in the Arc Complex*\n\n"
-        for pod in podcasts:
-            title = pod.get("title", "Podcast")
-            url = pod.get("url", "")
-            text += f"*{title}*\n"
-            if url:
-                text += f"[Listen here]({url})\n"
-            text += "\n"
-
-        # Build inline buttons for podcasts
-        keyboard = []
-        for pod in podcasts:
-            title = pod.get("title", "Podcast")
-            url = pod.get("url")
-            if url:
-                keyboard.append([InlineKeyboardButton(title[:25] + "…", url=url)])
-
-        reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
-
-        # Send as photo + caption
-        message = context.bot.send_photo(
-            chat_id=GROUP_CHAT_ID,
-            photo=logo_url,
-            caption=text,
-            parse_mode=ParseMode.MARKDOWN,
-            reply_markup=reply_markup
-        )
-
-        # Store the new message ID in the JSON file for next time
-        data["last_podcast_message_id"] = message.message_id
-        with open(PODCASTS_FOLDER, "w", encoding="utf-8") as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-
-        print(f"[PODCASTS] Podcasts posted successfully, message ID: {message.message_id}")
-
-    except Exception as e:
-        print(f"[PODCASTS] Failed to post podcasts: {e}")
         return
 
 def contains_multiplication_phrase(text):
@@ -901,57 +848,10 @@ def check_message(update: Update, context: CallbackContext):
             # fail silently, but log for debugging
             print(f"[POSTS] Failed to send posts: {e}")
             return
-        
-    if re.search(r'(?<!\w)/podcasts(?!\w)', message_text):
-        print("[PODCASTS] /podcasts command triggered")
-        try:
-            with open(PODCASTS_FOLDER, "r", encoding="utf-8") as f:
-                podcasts = json.load(f)
 
-            if not podcasts:
-                print("[PODCASTS] No podcasts available")
-                return
-
-            logo_url = "https://res.cloudinary.com/dmbswccbh/image/upload/v1757728795/arc/ab67656300005f1fe2aa0d6fc0a3290a1d9e5624_wpq6zz.jpg"
-
-            text = "*Latest Podcasts in the Arc Complex*\n\n"
-            for pod in podcasts:
-                title = pod.get("title", "Podcast")
-                url = pod.get("url", "")
-                text += f"*{title}*\n"
-                if url:
-                    text += f"[Listen here]({url})\n"
-                text += "\n"
-
-            keyboard = []
-            for pod in podcasts:
-                url = pod.get("url")
-                if url:
-                    keyboard.append([InlineKeyboardButton(pod.get("title", "Podcast")[:25] + "…", url=url)])
-
-            reply_markup = InlineKeyboardMarkup(keyboard) if keyboard else None
-
-            message.bot.send_photo(
-                chat_id=message.chat_id,
-                photo=logo_url,
-                caption=text,
-                parse_mode="Markdown",
-                reply_markup=reply_markup
-            )
-
-            print("[PODCASTS] Inline buttons sent successfully")
-
-        except Exception as e:
-            print(f"[PODCASTS] Failed to send podcasts: {e}")
-            return
 
 def main():
     print("starting bot")
-    
-    # Initialize Updater and Dispatcher
-    updater = Updater(BOT_TOKEN, use_context=True)
-    dp = updater.dispatcher
-    job_queue = updater.job_queue
 
     # Scheduled jobs
     job_queue.run_daily(lambda context: post_security_message(context, 0), time=time(hour=8, minute=0))  
@@ -960,16 +860,19 @@ def main():
     job_queue.run_daily(send_podcasts, time=time(hour=12, minute=0))
     
     # Repeating jobs
-    job_queue.run_repeating(cleanup_spam_records, interval=60, first=0)
-    job_queue.run_repeating(send_news, interval=43200, first=7200)  # every 12 hours, first run 02:00
+    job_queue.run_repeating(cleanup_spam_records, interval=60, first=60)
+    job_queue.run_repeating(send_news, interval=21600)  # 6 hours = 21600 seconds 21600 for test (every 3.6 minutes)
 
     # Message and command handlers
     dp.add_handler(CommandHandler("filters", list_filters))
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, handle_new_members))
     dp.add_handler(MessageHandler(Filters.text | Filters.command, check_message))
 
+    # Start polling without blocking the main thread
     updater.start_polling()
-    updater.idle()
+    print("Bot started and polling in background thread")
 
-if __name__ == '__main__':
-    main()
+def start_bot():
+    # Run main() in a separate thread
+    import threading
+    threading.Thread(target=main, daemon=True).start()
