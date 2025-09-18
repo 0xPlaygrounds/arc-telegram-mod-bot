@@ -1,31 +1,19 @@
 # web/backend/db.py
 from pymongo import MongoClient
 from datetime import datetime
+import os
 
-# from dotenv import load_dotenv
-# import os
-
-# load_dotenv()  # load environment variables from .env
-
-# --- Temporary hardcoded URI for testing only ---
-MONGO_URI = "mongodb+srv://arc_bot:pVwneyi8ATuJIM21@cluster0.dvafmmh.mongodb.net/"
-
-# --- Uncomment below for production / env usage ---
-# MONGO_URI = os.getenv("MONGO_URI")
-# if not MONGO_URI:
-#     raise ValueError("MONGO_URI environment variable not set")
+MONGO_URI = os.getenv("MONGO_URI")
+if not MONGO_URI:
+    raise ValueError("MONGO_URI environment variable not set")
 
 # Connect to MongoDB
 client = MongoClient(MONGO_URI)
 db = client["arc_bot"]
 
-# messages db collection
+# Collections
 telegram_messages = db["telegram_messages"]
-
-# last podcast message db collection
 last_podcast_message = db["last_podcast_message"]
-
-# last news message db collection
 last_news_message = db["last_news_message"]
 
 def save_message_to_db(message):
