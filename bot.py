@@ -926,11 +926,6 @@ def check_message(update: Update, context: CallbackContext):
 
 def main():
     print("starting bot")
-    
-    # Initialize Updater and Dispatcher
-    updater = Updater(BOT_TOKEN, use_context=True)
-    dp = updater.dispatcher
-    job_queue = updater.job_queue
 
     # Scheduled jobs
     job_queue.run_daily(lambda context: post_security_message(context, 0), time=time(hour=8, minute=0))  
