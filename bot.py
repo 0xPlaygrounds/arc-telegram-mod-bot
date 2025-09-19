@@ -2,6 +2,7 @@ import os
 import re
 import json
 import unicodedata
+import logging
 import threading
 from dotenv import load_dotenv
 from telegram import (
@@ -39,6 +40,13 @@ GROUP_CHAT_ID = os.getenv('GROUP_CHAT_ID')
 updater = Updater(BOT_TOKEN, use_context=True)
 dp = updater.dispatcher
 job_queue = updater.job_queue
+
+# configure logging
+logging.basicConfig(
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+    level=logging.INFO
+)
+logger = logging.getLogger(__name__)
 
 # File path for filters
 FILTERS_FILE = "filters/filters.json"
@@ -906,7 +914,7 @@ def check_message(update: Update, context: CallbackContext):
             return
 
 def main():
-    print("starting bot")
+    logger.info("Starting bot...")
 
     # Scheduled jobs
     job_queue.run_daily(lambda context: post_security_message(context, 0), time=time(hour=8, minute=0))  
@@ -923,9 +931,8 @@ def main():
 
     # Start polling without blocking the main thread
     updater.start_polling()
-    print("Bot started and polling in background thread")
+    logger.info("Bot started and polling in background thread")
 
 def start_bot():
-    # Run main() in a separate thread
-    import threading
+    """Run main() in a separate daemon thread so FastAPI can also run."""
     threading.Thread(target=main, daemon=True).start()
