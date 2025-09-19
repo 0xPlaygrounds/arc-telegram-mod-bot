@@ -11,6 +11,11 @@ import uvicorn
 import os
 import re
 from pathlib import Path
+import threading
+
+# Import bot objects
+from bot import main as bot_main, updater
+from telegram import Bot
 
 # Import API routers
 from web.backend.api.send_podcasts_message import router as podcast_router
@@ -22,7 +27,7 @@ from web.backend.api.send_news_message import router as news_router
 # -----------------------------
 app = FastAPI()
 
-# Include the podcasts API route
+# Include the API routes
 app.include_router(podcast_router)
 app.include_router(say_router)
 app.include_router(news_router)
@@ -59,6 +64,10 @@ async def startup_event():
     public_url = os.environ.get("BASE_URL") or f"http://{host}:{port}"
     print(f"🚀 FastAPI is running on {host}:{port}")
     print(f"🌐 Public URL for frontend use: {public_url}")
+
+    # Start Telegram bot in background thread
+    threading.Thread(target=bot_main, daemon=True).start()
+    print("🤖 Telegram bot started in background thread")
 
 # -----------------------------
 # Helper to load blocklists
@@ -186,7 +195,18 @@ def label_message(msg_id: str, label: str, reviewer_username: str):
     except Exception as e:
         logger.error(f"Error labeling message {msg_id}: {e}")
         raise HTTPException(status_code=500, detail=str(e))
-    
+
+# -----------------------------
+# Endpoint to trigger bot.send_message from FastAPI
+# -----------------------------
+@app.post("/say")
+async def say_message(chat_id: int, text: str):
+    try:
+        updater.bot.send_message(chat_id=chat_id, text=text)
+        return {"status": "ok"}
+    except Exception as e:
+        return {"status": "error", "detail": str(e)}
+
 # -----------------------------
 # Serve React frontend (dist/)
 # -----------------------------

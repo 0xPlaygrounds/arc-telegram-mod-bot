@@ -924,15 +924,11 @@ def main():
     # Repeating jobs
     job_queue.run_repeating(cleanup_spam_records, interval=60, first=0)
 
-    # Message and command handlers
+    # Handlers
     dp.add_handler(CommandHandler("filters", list_filters))
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, handle_new_members))
     dp.add_handler(MessageHandler(Filters.text | Filters.command, check_message))
 
-    # Start polling without blocking the main thread
+    # Start polling (non-blocking)
     updater.start_polling()
-    logger.info("Bot started and polling in background thread")
-
-def start_bot():
-    """Run main() in a separate daemon thread so FastAPI can also run."""
-    threading.Thread(target=main, daemon=True).start()
+    logger.info("Bot started and polling")
