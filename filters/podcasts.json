@@ -1,22 +1,25 @@
-[
-  {
-    "title": "Humans behind the AI",
-    "url": "https://open.spotify.com/episode/4CRIHa5V1Q4XOtgekRY87b",
-    "last_updated": "2025-09-14T06:07:16.395926+00:00"
-  },
-  {
-    "title": "Will from Soulgraph joins HELLO, COMPLEX to talk about the future of AI agents with soul.",
-    "url": "https://open.spotify.com/episode/6AR5FWXQunRV4wn0oguAUd",
-    "last_updated": "2025-09-14T06:07:16.402267+00:00"
-  },
-  {
-    "title": "AI Meets Crypto: Building the Future of Autonomous Finance – with Piotrek from Listen",
-    "url": "https://open.spotify.com/episode/2rHuLqfnXHtnzf77HcE21E",
-    "last_updated": "2025-09-14T06:07:16.407982+00:00"
-  },
-  {
-    "title": "HELLO, COMPLEX! trailer",
-    "url": "https://open.spotify.com/episode/5vZFZxNC3LMnZtzx6lButT",
-    "last_updated": "2025-09-14T06:07:16.413550+00:00"
-  }
-]
+{
+  "podcasts": [
+    {
+      "title": "Humans behind the AI",
+      "url": "https://open.spotify.com/episode/4CRIHa5V1Q4XOtgekRY87b",
+      "last_updated": "2025-09-21T06:09:10.628855+00:00"
+    },
+    {
+      "title": "Will from Soulgraph joins HELLO, COMPLEX to talk about the future of AI agents with soul.",
+      "url": "https://open.spotify.com/episode/6AR5FWXQunRV4wn0oguAUd",
+      "last_updated": "2025-09-21T06:09:10.637283+00:00"
+    },
+    {
+      "title": "AI Meets Crypto: Building the Future of Autonomous Finance – with Piotrek from Listen",
+      "url": "https://open.spotify.com/episode/2rHuLqfnXHtnzf77HcE21E",
+      "last_updated": "2025-09-21T06:09:10.670522+00:00"
+    },
+    {
+      "title": "HELLO, COMPLEX! trailer",
+      "url": "https://open.spotify.com/episode/5vZFZxNC3LMnZtzx6lButT",
+      "last_updated": "2025-09-21T06:09:10.683816+00:00"
+    }
+  ],
+  "last_updated": "2025-09-21T06:09:10.721860+00:00"
+}
