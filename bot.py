@@ -829,9 +829,6 @@ def main():
     job_queue.run_daily(lambda context: post_security_message(context, 1), time=time(hour=16, minute=0))
     job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
     
-    # Repeating jobs
-    # job_queue.run_repeating(cleanup_spam_records, interval=60, first=0)
-
     # Handlers
     dp.add_handler(CommandHandler("filters", list_filters))
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, handle_new_members))
