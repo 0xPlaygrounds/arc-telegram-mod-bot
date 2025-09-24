@@ -75,13 +75,6 @@ WHITELIST_FILTERS = ["/growth", "/metrics", "/news", "/posts", "/report"]
 # Mute duration in seconds (3 days)
 MUTE_DURATION = 3 * 24 * 60 * 60
 
-# auto spam detection variables
-SPAM_THRESHOLD = 3
-TIME_WINDOW = timedelta(seconds=15)
-SPAM_TRACKER = defaultdict(lambda: deque(maxlen=SPAM_THRESHOLD))
-SPAM_RECORDS = {} # stores flagged spam messages for 5 minutes
-SPAM_RECORD_DURATION = timedelta(minutes=5)
-
 # Normalization helper must be defined before use
 def normalize_name(name: str) -> str:
     name = unicodedata.normalize("NFKD", name)
@@ -393,56 +386,6 @@ def disallowed_filters(update, context):
 
     return False  # message is allowed
 
-# check for spam
-def check_for_spam(message_text, user_id):
-    now = datetime.now(timezone.utc)
-    # track user and timestamp of the message
-    print(f"Checking for spam: {message_text} from user: {user_id}")
-    SPAM_TRACKER[message_text].append((user_id, now))
-
-    # Filter out old messages that are outside of the time window
-    recent = [entry for entry in SPAM_TRACKER[message_text] if now - entry[1] <= TIME_WINDOW]
-    SPAM_TRACKER[message_text] = deque(recent)
-
-    print(f"Recent messages for '{message_text}': {recent}")
-
-    # If recent messages exceed the threshold, flag as spam
-    if len(recent) >= SPAM_THRESHOLD:
-        print(f"Spam detected for message: '{message_text}'")
-        # flag message as spam and store for 5 minutes in memory
-        SPAM_RECORDS[message_text] = now # only store message and timestamp
-        spammer_ids = list(set([entry[0] for entry in recent])) # Return list of user_ids to mute
-        print(f"Flagging {len(spammer_ids)} users for spam: {spammer_ids}") 
-        return spammer_ids
-    
-    elif recent and len(recent) < SPAM_THRESHOLD and (now - recent[0][1] > TIME_WINDOW):
-        # Not spam, expired window – clean it up
-        SPAM_TRACKER.pop(message_text, None)
-
-    return []
-
-# check for recent spam and mute spammers
-def check_recent_spam(message_text):
-    now = datetime.now(timezone.utc)
-    timestamp = SPAM_RECORDS.get(message_text)
-    if timestamp:
-        print(f"Message '{message_text}' is flagged as spam, timestamp: {timestamp}")
-    return timestamp and (now - timestamp <= SPAM_RECORD_DURATION)
-
-# clean up spam records
-def cleanup_spam_records(context: CallbackContext):
-    now = datetime.now(timezone.utc)
-    expired_messages = []
-
-    for message_text, timestamp in list(SPAM_RECORDS.items()):
-        if now - timestamp > SPAM_RECORD_DURATION:
-            expired_messages.append(message_text)
-            del SPAM_RECORDS[message_text]
-            print(f"[CLEANUP] Removed expired spam record: '{message_text}'")
-
-    if not expired_messages:
-        print("[CLEANUP] No expired spam messages to remove.")
-
 def contains_non_x_links(text: str) -> bool:
     # Matches all URLs
     url_pattern = r'(https?://[^\s]+)'
@@ -683,42 +626,7 @@ def check_message(update: Update, context: CallbackContext):
             if disallowed_filters(update, context):
                 # Message was deleted, no further processing needed
                 return
-        
-        # 1. autospam - check if its a command or matches a filter
-        for trigger in FILTERS.keys():
-            normalized_trigger = trigger.strip().lower()
-            pattern = rf'(?<!\w)/?{re.escape(normalized_trigger)}(_\w+)?(?!\w)'
-            if re.search(pattern, message_text):
-                should_skip_spam_check = True
-                print(f"[SPAM CHECK SKIPPED] Message '{message_text}' matched FILTER trigger: '{trigger}'")
-                break
 
-        # 2. autospam - check whitelist
-        if not should_skip_spam_check:
-            if message_text.strip() in WHITELIST_PHRASES:
-                print(f"[SPAM CHECK SKIPPED] Message '{message_text}' matched WHITELIST.")
-                should_skip_spam_check = True
-
-        # 3. autospam - check for spam
-        if not should_skip_spam_check:
-            # Run spam detection only if no FILTER trigger matched
-            spammer_ids = check_for_spam(message_text, user_id)
-
-            if check_recent_spam(message_text) and user_id not in spammer_ids:
-                spammer_ids.append(user_id)
-
-            if spammer_ids:
-                print(f"Muting spammers for message: '{message_text}'")
-                for spammer_id in set(spammer_ids):
-                    try:
-                        until_date = message.date + timedelta(seconds=MUTE_DURATION)
-                        permissions = ChatPermissions(can_send_messages=False)
-                        context.bot.restrict_chat_member(chat_id=chat_id, user_id=spammer_id, permissions=permissions, until_date=until_date)
-                        print(f"Muted user {spammer_id} for spam message.")
-                    except Exception as e:
-                        print(f"Failed to mute spammer {spammer_id}: {e}")
-                return
-    
         # Check for banned phrases
         for phrase in BAN_PHRASES:
             if re.search(r'\b' + re.escape(phrase) + r'\b', message_text, re.IGNORECASE):
@@ -922,7 +830,7 @@ def main():
     job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
     
     # Repeating jobs
-    job_queue.run_repeating(cleanup_spam_records, interval=60, first=0)
+    # job_queue.run_repeating(cleanup_spam_records, interval=60, first=0)
 
     # Handlers
     dp.add_handler(CommandHandler("filters", list_filters))
