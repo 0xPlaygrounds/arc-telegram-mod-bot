@@ -94,7 +94,7 @@ SUSPICIOUS_USERNAMES = [normalize_name(name) for name in [
     "verification", "verify", "verify_account", "verify-account",
     "check", "checker", "t.me", "telegram", "tg", "contact",
     "info", "customer_support",
-    "admin_", "_admin", "mod_", "_mod", "support_", "_support"
+    "admin_", "_admin", "mod_", "_mod", "support_", "_support", "arc complex"
 ]]
 
 BIO_PHRASES = [
