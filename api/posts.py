@@ -62,7 +62,8 @@ def extract_keywords(text):
     return found
 
 # Get latest post ---
-def get_latest_post(user_id):
+# Get latest post ---
+def get_latest_post(user_id, summary_word_limit=50):
     url = f"https://api.twitter.com/2/users/{user_id}/tweets"
     headers = {"Authorization": f"Bearer {BEARER_TOKEN}"}
     params = {"max_results": 5, "tweet.fields": "created_at,text,attachments"}
@@ -78,10 +79,17 @@ def get_latest_post(user_id):
     if "data" in data and len(data["data"]) > 0:
         tweet = data["data"][0]
         image_url = ""
+
+        full_text = tweet.get("text", "")
+        words = full_text.split()
+        summary = " ".join(words[:summary_word_limit])
+        if len(words) > summary_word_limit:
+            summary += "..."  # indicate truncation
+
         return {
             "timestamp": tweet["created_at"],
             "url": f"https://x.com/i/status/{tweet['id']}",  # actual tweet URL
-            "summary": tweet.get("text", ""),
+            "summary": summary,
             "image_url": image_url
         }
     return None
