@@ -114,47 +114,43 @@ def main():
         user_id = get_user_id(username)
         if not user_id:
             print(f"Skipping {username} due to rate limit / missing ID")
-            return
-
-        time.sleep(1)  # delay
-        post = get_latest_post(user_id)
-        if not post:
-            print(f"No post found for {username}")
-            return
-
-        post["author"] = username
-        post_keywords = extract_keywords(post.get("summary", ""))
-
-        if username.lower() == "kezo_futura" and not post_keywords:
-            print(f"Skipping {username} since no relevant keywords found.")
-            # still increment last_updated_index to move on next day
-            posts_data["last_updated_index"] = (next_index + 1) % len(USERNAMES)
         else:
-            post["keywords"] = post_keywords
+            time.sleep(1)  # delay
+            post = get_latest_post(user_id)
+            if not post:
+                print(f"No post found for {username}")
+            else:
+                post["author"] = username
+                post_keywords = extract_keywords(post.get("summary", ""))
 
-            # Update or append in JSON
-            updated = False
-            for i, rec in enumerate(posts_data["latest_posts"]):
-                if rec["author"].lower() == username.lower():
-                    posts_data["latest_posts"][i] = post
-                    updated = True
-                    break
-            if not updated:
-                posts_data["latest_posts"].append(post)
+                if username.lower() == "kezo_futura" and not post_keywords:
+                    print(f"Skipping {username} since no relevant keywords found.")
+                else:
+                    post["keywords"] = post_keywords
 
-            # Update last_updated_index
-            posts_data["last_updated_index"] = (next_index + 1) % len(USERNAMES)
+                    # Update or append in JSON
+                    updated = False
+                    for i, rec in enumerate(posts_data["latest_posts"]):
+                        if rec["author"].lower() == username.lower():
+                            posts_data["latest_posts"][i] = post
+                            updated = True
+                            break
+                    if not updated:
+                        posts_data["latest_posts"].append(post)
 
-            # Restore the message ID if it existed
-            if last_news_message_id is not None:
-                posts_data["last_news_message_id"] = last_news_message_id
-                print(f"Preserved message ID: {last_news_message_id}")
+                    print(f"Successfully updated posts for {username}. Keywords found: {post_keywords}")
 
-            # Write JSON
-            with open(posts_json_path, "w", encoding="utf-8") as f:
-                json.dump(posts_data, f, ensure_ascii=False, indent=2)
+        # Increment last_updated_index regardless of skip / success
+        posts_data["last_updated_index"] = (next_index + 1) % len(USERNAMES)
 
-            print(f"Successfully updated posts for {username}. Keywords found: {post_keywords}")
+        # Restore the message ID if it existed
+        if last_news_message_id is not None:
+            posts_data["last_news_message_id"] = last_news_message_id
+            print(f"Preserved message ID: {last_news_message_id}")
+
+        # Always write JSON
+        with open(posts_json_path, "w", encoding="utf-8") as f:
+            json.dump(posts_data, f, ensure_ascii=False, indent=2)
 
     except requests.exceptions.RequestException as e:
         print(f"Request failed for {username}: {e}")
