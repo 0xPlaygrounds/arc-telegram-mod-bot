@@ -121,24 +121,29 @@ def main():
                 print(f"No post found for {username}")
             else:
                 post["author"] = username
-                post_keywords = extract_keywords(post.get("summary", ""))
 
-                if username.lower() == "kezo_futura" and not post_keywords:
-                    print(f"Skipping {username} since no relevant keywords found.")
+                # Only extract keywords for kezo_futura
+                if username.lower() == "kezo_futura":
+                    post_keywords = extract_keywords(post.get("summary", ""))
+                    if not post_keywords:
+                        print(f"Skipping {username} since no relevant keywords found.")
+                        post["keywords"] = []
+                    else:
+                        post["keywords"] = post_keywords
+                        print(f"Successfully updated posts for {username}. Keywords found: {post_keywords}")
                 else:
-                    post["keywords"] = post_keywords
+                    post["keywords"] = []  # no keyword check for other accounts
+                    print(f"Successfully updated posts for {username}. No keyword check required.")
 
-                    # Update or append in JSON
-                    updated = False
-                    for i, rec in enumerate(posts_data["latest_posts"]):
-                        if rec["author"].lower() == username.lower():
-                            posts_data["latest_posts"][i] = post
-                            updated = True
-                            break
-                    if not updated:
-                        posts_data["latest_posts"].append(post)
-
-                    print(f"Successfully updated posts for {username}. Keywords found: {post_keywords}")
+                # Update or append in JSON
+                updated = False
+                for i, rec in enumerate(posts_data["latest_posts"]):
+                    if rec["author"].lower() == username.lower():
+                        posts_data["latest_posts"][i] = post
+                        updated = True
+                        break
+                if not updated:
+                    posts_data["latest_posts"].append(post)
 
         # Increment last_updated_index regardless of skip / success
         posts_data["last_updated_index"] = (next_index + 1) % len(USERNAMES)
