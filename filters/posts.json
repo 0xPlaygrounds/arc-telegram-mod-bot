@@ -1,11 +1,14 @@
 {
   "latest_posts": [
     {
-      "timestamp": "2025-09-24T20:46:02.000Z",
-      "url": "https://x.com/i/status/1970952890945806500",
-      "summary": "RT @kezo_futura: /the digital second brain that actually thinks with you\n\nI used to go down these massive rabbit holes with ChatGPT and Cla…",
+      "timestamp": "2025-10-01T17:34:39.000Z",
+      "url": "https://x.com/i/status/1973441445001298390",
+      "summary": "ideas don’t just sit still. they spread, connect, and transform when given space. the ryzome challenge is live. show us what emerges. https://t.co/oBQvbrAcWh https://t.co/1iuxjGazMV",
       "image_url": "",
-      "author": "arcdotfun"
+      "author": "arcdotfun",
+      "keywords": [
+        "ryzome"
+      ]
     },
     {
       "timestamp": "2025-09-24T15:09:27.000Z",
@@ -34,5 +37,5 @@
       ]
     }
   ],
-  "last_updated_index": 0
+  "last_updated_index": 1
 }
