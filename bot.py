@@ -566,10 +566,17 @@ def check_message(update: Update, context: CallbackContext):
         # Check for suspicious keywords
         if name_normalized in SUSPICIOUS_USERNAMES or username_normalized in SUSPICIOUS_USERNAMES:
             try:
+                # ban the user
                 context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
+
+                # delete triggering message
+                context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+
+                # log result
                 print(f"[BANNED] Suspicious keyword match in name/username: {user.full_name} (@{user.username})")
                 return
             except Exception as e:
+                # log error
                 print(f"[ERROR] Failed to ban suspicious user {user_id}: {e}")
 
         # Check for bio-like phrases
@@ -579,19 +586,33 @@ def check_message(update: Update, context: CallbackContext):
             contains_non_x_links(combined_identity)
         ):
             try:
+                # ban the user
                 context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
+
+                # delete triggering message
+                context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+
+                # log result
                 print(f"[BANNED] Suspicious content detected: {combined_identity}")
                 return
             except Exception as e:
+                # log error
                 print(f"[ERROR] Failed to ban user {user_id}: {e}")
 
         # Check for impersonation
         if name_normalized in admin_names_normalized:
             try:
+                # ban the user
                 context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
+
+                # delete triggering message
+                context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+
+                # log result
                 print(f"[BANNED] Impersonation detected: {user.full_name} matched an admin name")
                 return
             except Exception as e:
+                # log error
                 print(f"[ERROR] Failed to ban impersonator {user_id}: {e}")
 
         # check if message is too short
@@ -630,23 +651,21 @@ def check_message(update: Update, context: CallbackContext):
         # Check for banned phrases
         for phrase in BAN_PHRASES:
             if re.search(r'\b' + re.escape(phrase) + r'\b', message_text, re.IGNORECASE):
-                print(f"[BAN MATCH] Phrase: '{phrase}' matched in message: '{message_text}'")
-
-                # Remove the message
                 try:
-                    context.bot.delete_message(chat_id=chat_id, message_id=update.message.message_id)
-                    print(f"Deleted message from user {user.id}")
-                except Exception as e:
-                    print(f"Failed to delete message: {e}")
-
-                # Ban the user
-                try:
+                    # ban the user
                     context.bot.ban_chat_member(chat_id=chat_id, user_id=user.id)
-                    print(f"Banned user {user.id}")
-                except Exception as e:
-                    print(f"Failed to ban user: {e}")
 
-                return  # Stop further processing
+                    # delete triggering message
+                    context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+
+                    # log result
+                    print(f"[BANNED] Phrase match: '{phrase}' in message '{message_text}' from user {user.id}")
+
+                except Exception as e:
+                    # log error
+                    print(f"[ERROR] Failed to ban/delete user {user.id} for banned phrase '{phrase}': {e}")
+
+                return
 
         # Check for muted phrases
         for phrase in MUTE_PHRASES:
