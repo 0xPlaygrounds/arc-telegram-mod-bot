@@ -648,9 +648,12 @@ def check_message(update: Update, context: CallbackContext):
                 # Message was deleted, no further processing needed
                 return
 
-        # Check for banned phrases
+        # Normalize the message
+        normalized = message_text.strip().lower()
+
+        # Check for banned phrases (exact match only)
         for phrase in BAN_PHRASES:
-            if re.search(r'\b' + re.escape(phrase) + r'\b', message_text, re.IGNORECASE):
+            if normalized == phrase.lower():
                 try:
                     # ban the user
                     context.bot.ban_chat_member(chat_id=chat_id, user_id=user.id)
@@ -659,18 +662,18 @@ def check_message(update: Update, context: CallbackContext):
                     context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
 
                     # log result
-                    print(f"[BANNED] Phrase match: '{phrase}' in message '{message_text}' from user {user.id}")
+                    print(f"[BANNED] Exact match: '{phrase}' in message '{message_text}' from user {user.id}")
 
                 except Exception as e:
                     # log error
                     print(f"[ERROR] Failed to ban/delete user {user.id} for banned phrase '{phrase}': {e}")
 
-                return
+                return  # Stop further processing
 
-        # Check for muted phrases
+        # Check for muted phrases (exact match only)
         for phrase in MUTE_PHRASES:
-            if re.search(r'\b' + re.escape(phrase) + r'\b', message_text, re.IGNORECASE):
-                print(f"[MUTE MATCH] Phrase: '{phrase}' matched in message: '{message_text}'")
+            if normalized == phrase.lower():
+                print(f"[MUTE MATCH] Exact phrase: '{phrase}' matched in message: '{message_text}'")
                 until_date = message.date + timedelta(seconds=MUTE_DURATION)
                 permissions = ChatPermissions(can_send_messages=False)
 
@@ -692,10 +695,10 @@ def check_message(update: Update, context: CallbackContext):
 
                 return  # Stop further processing
 
-        # Check for deleted phrases
+        # Check for deleted phrases (exact match only)
         for phrase in DELETE_PHRASES:
-            if re.search(r'\b' + re.escape(phrase) + r'\b', message_text, re.IGNORECASE):
-                print(f"[DELETE MATCH] Phrase: '{phrase}' matched in message: '{message_text}'")
+            if normalized == phrase.lower():
+                print(f"[DELETE MATCH] Exact phrase: '{phrase}' matched in message: '{message_text}'")
 
                 try:
                     context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
