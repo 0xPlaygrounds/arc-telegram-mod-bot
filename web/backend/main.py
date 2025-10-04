@@ -21,6 +21,7 @@ from telegram import Bot
 from web.backend.api.send_podcasts_message import router as podcast_router
 from web.backend.api.say_command import router as say_router
 from web.backend.api.send_news_message import router as news_router
+from api.arclan_turing import router as arclan_router
 
 # -----------------------------
 # Initialize FastAPI
@@ -31,6 +32,7 @@ app = FastAPI()
 app.include_router(podcast_router)
 app.include_router(say_router)
 app.include_router(news_router)
+app.include_router(arclan_router)
 
 # Allow frontend to connect
 app.add_middleware(
@@ -64,6 +66,13 @@ async def startup_event():
     public_url = os.environ.get("BASE_URL") or f"http://{host}:{port}"
     print(f"🚀 FastAPI is running on {host}:{port}")
     print(f"🌐 Public URL for frontend use: {public_url}")
+    
+    # DEBUG: Print all registered routes
+    print("\n📋 Registered routes:")
+    for route in app.routes:
+        if hasattr(route, "methods"):
+            print(f"  {route.methods} {route.path}")
+    print()
 
     # Start Telegram bot in background thread
     threading.Thread(target=bot_main, daemon=True).start()
