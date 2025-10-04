@@ -32,7 +32,6 @@ RAG_DOCS = {
     "rig": {},         # Framework documentation (flagship product)
     "arc_core": {},    # Core ARC token/project docs
     "arc_ecosystem": {}, # Ecosystem: partnerships, projects, vision
-    "guides": {},      # Tutorials, getting started, how-tos
     "news": {},        # Latest updates, announcements
     "roadmap": {},     # Upcoming features, goals, timeline
     "podcasts": {},    # Podcast episodes, interviews, discussions
@@ -132,7 +131,6 @@ def load_rag_documents() -> Dict[str, Any]:
         "rig": rag_path / "rig" / "framework.json",
         "arc_core": rag_path / "arc" / "core.json",
         "arc_ecosystem": rag_path / "arc" / "ecosystem.json",
-        "guides": rag_path / "guides" / "getting_started.json",
         "news": filters_path / "posts.json",
         "roadmap": rag_path / "roadmap" / "upcoming.json",
         "podcasts": filters_path / "podcasts.json",
@@ -185,10 +183,6 @@ def categorize_message(message: str) -> str:
     if re.search(r'\b(partner|ecosystem|vision|mission|team|community|collab|project)\b', lower_message):
         return 'arc_ecosystem'
     
-    # Getting started/guides
-    if re.search(r'\b(how to|tutorial|guide|start|begin|learn|setup|install)\b', lower_message):
-        return 'guides'
-    
     # News/updates
     if re.search(r'\b(news|update|announcement|latest|recent|new|launch)\b', lower_message):
         return 'news'
@@ -240,15 +234,6 @@ def get_relevant_docs(category: str, message: str) -> Dict[str, Any]:
     if 'arc_core' in category:
         relevant['arc_core'] = RAG_DOCS['arc_core']
         relevant['arc_ecosystem'] = RAG_DOCS['arc_ecosystem']
-    
-    # If asking about building/development, include RIG and guides
-    if 'build' in lower_message or 'develop' in lower_message or 'integrate' in lower_message:
-        relevant['rig'] = RAG_DOCS['rig']
-        relevant['guides'] = RAG_DOCS['guides']
-    
-    # If asking about getting started, include guides and relevant product
-    if any(word in lower_message for word in ['start', 'begin', 'how', 'tutorial']):
-        relevant['guides'] = RAG_DOCS['guides']
     
     # If asking about future/plans, include roadmap
     if any(word in lower_message for word in ['future', 'plan', 'upcoming', 'roadmap', 'when']):
