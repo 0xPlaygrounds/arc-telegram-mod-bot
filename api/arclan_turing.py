@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from typing import Optional, Dict, List, Any
-import openai
+from openai import AsyncOpenAI
 import os
 import re
 import json
@@ -10,8 +10,8 @@ from datetime import datetime
 
 router = APIRouter()
 
-# Initialize OpenAI
-openai.api_key = os.getenv("OPENAI_API_KEY")
+# Initialize OpenAI async client
+client = AsyncOpenAI(api_key=os.getenv("OPENAI_API_KEY"))
 
 # Pydantic models
 class ChatRequest(BaseModel):
@@ -101,22 +101,6 @@ def format_posts_for_context(posts_data: Dict[str, Any]) -> str:
     
     return "\n".join(formatted)
 
-def format_filters_for_context(filters_data: Dict[str, Any]) -> str:
-    """Format filters JSON into readable context for AI"""
-    if not filters_data:
-        return ""
-    
-    formatted = ["AVAILABLE FILTERS/COMMANDS:\n"]
-    
-    for command, details in filters_data.items():
-        formatted.append(f"\nCommand: {command}")
-        if details.get("response_text"):
-            formatted.append(f"  Response: {details['response_text']}")
-        if details.get("media"):
-            formatted.append(f"  Media: {details['media']} ({details.get('type', 'unknown')})")
-    
-    return "\n".join(formatted)
-
 def load_rag_documents() -> Dict[str, Any]:
     """Load all RAG documents from organized folders (JSON format)"""
     base_path = Path(__file__).parent.parent  # Gets to project root
@@ -168,7 +152,7 @@ def categorize_message(message: str) -> str:
     lower_message = message.lower()
     
     # Platform-specific (flagship)
-    if re.search(r'\b(ryzome|platform|dashboard|interface|ui)\b', lower_message):
+    if re.search(r'\b(ryzome|platform|dashboard|interface|ui|competition|challenge)\b', lower_message):
         return 'ryzome'
     
     # Framework-specific (flagship)
@@ -266,6 +250,9 @@ async def chat_endpoint(chat_request: ChatRequest):
         telegram_username = chat_request.telegram_username
         conversation_history = chat_request.conversation_history or ""
         
+        # Log the request
+        print(f"[ARCLAN] Request from {telegram_username or 'unknown'} ({telegram_user_id}): {message[:50]}...")
+        
         if not message.strip():
             raise HTTPException(status_code=400, detail="No message provided")
         
@@ -353,14 +340,14 @@ TASK:
 """
         
         # --- Generate AI response ---
-        completion = await openai.chat.completions.acreate(
+        completion = await client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
                 {"role": "system", "content": system_prompt},
                 {"role": "user", "content": user_prompt}
             ],
             temperature=0.5,
-            max_tokens=150  # Reduced for brevity
+            max_tokens=150
         )
         
         ai_message = completion.choices[0].message.content or \
@@ -402,7 +389,8 @@ async def reload_docs():
         RAG_DOCS = load_rag_documents()
         
         stats = {
-            doc: len(content) for doc, content in RAG_DOCS.items()
+            doc: len(content) if isinstance(content, str) else len(json.dumps(content)) 
+            for doc, content in RAG_DOCS.items()
         }
         
         return {
@@ -442,11 +430,18 @@ async def get_docs_stats():
     stats = {}
     
     for doc_name, content in RAG_DOCS.items():
+        if isinstance(content, str):
+            size = len(content)
+            lines = content.count('\n')
+        else:
+            size = len(json.dumps(content))
+            lines = 0
+            
         stats[doc_name] = {
             "loaded": len(content) > 0,
-            "size": len(content),
-            "lines": content.count('\n') if content else 0,
-            "last_updated": "runtime"  # Could track file modified time
+            "size": size,
+            "lines": lines,
+            "last_updated": "runtime"
         }
     
     return {
