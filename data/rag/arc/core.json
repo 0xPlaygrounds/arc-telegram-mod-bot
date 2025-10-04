@@ -1,0 +1,148 @@
+{
+  "overview": {
+    "name": "ARC",
+    "full_name": "Agentic Revolution Collective",
+    "tagline": "we take the red pill then the blue pill",
+    "motto": "we build rig, rig builds us",
+    "description": "Arc is a tokenized ecosystem designed to unify and accelerate innovation in the rapidly evolving world of agentic AI. It provides an integrated, economically viable way to create, access, and monetize advanced AI agents and the services they use.",
+    "contract_address": "61V8vBaqAGMpgDQi4JcAwo1dmBGHsyhzodcPqnEVpump",
+    "blockchain": "Solana",
+    "website": "https://arc.fun",
+    "twitter": "https://twitter.com/arcdotfun"
+  },
+  "manifesto": {
+    "title": "The Transformation of Software",
+    "content": "software is undergoing its most profound transformation since the birth of computing, and most developers haven't noticed yet. the change isn't about better algorithms or faster processors. it's about meaning. modern AI agents can now process and generate human-like semantics, transforming dumb programs into context-aware systems. this changes everything. tasks that once required complex specialized code - understanding natural language, analyzing images, generating human-like responses - can now be handled through simple prompts and orchestration logic. the puzzle between rigid rules of logic and fluid meaning has been abstracted away. but here's where it gets interesting: these capabilities map perfectly onto existing cloud architectures. the way we use microservices - modular, small footprint, quick to scale - is ideal for deploying swarms of agents. AI needs new compute infrastructure, but agents just need new thinking. the first ones are already emerging in public clouds. soon it will extend to edge devices, robots, and decentralized networks. not necessarily as sci-fi virtual life, but as practical tools that understand context and meaning. that's why we're building rig. an open source framework for building portable, modular, lightweight AI agents in rust",
+    "key_points": [
+      "Software is transforming through semantic understanding, not just better algorithms",
+      "AI agents can now process and generate human-like semantics",
+      "Tasks requiring complex code can now be handled through simple prompts",
+      "The gap between logic and meaning has been abstracted away",
+      "Microservices architecture is ideal for deploying agent swarms",
+      "Agents don't need new infrastructure, just new thinking",
+      "Rig is the open source framework enabling this future"
+    ]
+  },
+  "tokenomics": {
+    "title": "ARC Token Distribution",
+    "total_supply": "100%",
+    "allocation": {
+      "circulating_supply": {
+        "percentage": "90%",
+        "description": "Fairly launched and available to the world. This ensures wide distribution and community ownership from day one."
+      },
+      "prize_pool_and_treasury": {
+        "percentage": "5.5%",
+        "description": "Prize pool for participants and winners of the arc experiments. This allocation incentivizes active participation and rewards those who contribute to the ecosystem's growth.",
+        "release_schedule": "Released at the end of each arc experiment"
+      },
+      "team": {
+        "percentage": "4.5%",
+        "description": "Development of the Rig framework, arc ecosystem, and community. This allocation ensures continued development and improvement of the platform.",
+        "vesting": "Locked in escrow and vested over 1 year to ensure long-term alignment and prevent market disruption"
+      }
+    },
+    "team_escrow_accounts": [
+      "Ap5X6HmtL4fcy2zCcAVhmhRZhrhKJjDagmkQZURUWGqV",
+      "E38PbYFWsMV6csnSSDkfz3YVgxHka5BZhv9b1mqFHDoX",
+      "DWMZSspWKYa1gZzhr8KQVtKBrzU778vhYuMCo59nCC7Z",
+      "8baRPufxZrZYq4wwkTsBkpTyz17w6JgbpPrzHWfqqrqL",
+      "7ziUixTvfbhum67VcaqxDH88PbvxNiSpgsxRFoKfm3EA",
+      "5o7tdWMcHaruJZNcKxZeqnaXytN86D5qsTH4d1hZgmZx",
+      "EVfLDLqWGkPzGQbGtxYZmLdE2auN7DtuzRuifaRhvB3k",
+      "9td9nntEdY5uWy7mzcqMQkWAHszajunV6zKWan1QtQyA",
+      "6kqHBNdyRJ9QzJX8eBZcEQWRLpwky2bZkyPfZTqa2yoL"
+    ]
+  },
+  "vision": {
+    "problem_statement": "AI agents remain cut off from the digital services they need. Most AI can recommend but cannot execute. Integration is fragmented, user context vanishes when switching platforms, and no universal system exists for automated payments.",
+    "solution": "Arc provides a cohesive economic infrastructure combined with a curated marketplace where agents and services can be seamlessly discovered, accessed, and combined.",
+    "key_capabilities": [
+      "Universal connection protocol for AI agents",
+      "Streamlined economic infrastructure with ARC token",
+      "Persistent identity and context system",
+      "Human-in-the-loop approval for sensitive operations",
+      "Composable AI services marketplace",
+      "Bridging Web2 and Web3 services"
+    ]
+  },
+  "pillars": {
+    "rig": {
+      "name": "RIG Framework",
+      "description": "Open-source Rust-based AI framework that acts as the technical backbone, offering high-performance foundation for building next-generation agents",
+      "role": "Technical foundation for building agents that can handle complex tasks in real time"
+    },
+    "playgrounds": {
+      "name": "Playgrounds",
+      "description": "The team and commercial engine behind both Rig and the Arc ecosystem",
+      "role": "Incubating specialized AI products, forming partnerships, and cultivating developer community"
+    },
+    "ryzome": {
+      "name": "Ryzome",
+      "description": "Universal 'agentic app store' built on the Arc foundation",
+      "role": "Connecting AI agents to Web2 and Web3 services with seamless payment flows through ARC token"
+    }
+  },
+  "arc_complex": {
+    "title": "Arc Complex",
+    "description": "A cyborg collective where developers and AI agents collaborate to build and enhance rig, sharing insights, culture, and technical advances.",
+    "components": [
+      "Handshake Program: Open call for devs and innovators to propose and build with rig",
+      "Arc Forge: Token launch platform built atop Meteora's DLMM",
+      "Developers & Community: Vibrant network of humans and agents co-creating",
+      "Agents & Semantic Applications: Building AI-driven products powered by rig",
+      "Feedback & Rewards: Token flows to contributors through prize pools",
+      "Experiments & Funding: Gamified experiments exploring novel UX and AI paradigms"
+    ]
+  },
+  "trading": {
+    "exchanges": {
+      "cex": [
+        "Kucoin",
+        "Bitget",
+        "Lbank",
+        "Bitmart",
+        "XT",
+        "Poloniex",
+        "Mexc",
+        "Coinex",
+        "Ourbit",
+        "Bitmax",
+        "KCEX",
+        "gate.io",
+        "Bybit",
+        "Coin W",
+        "Kraken"
+      ],
+      "dex": "https://dexscreener.com/solana/j3b6dvhes2y1cbmtvz5tcwxnegsjjdbukxduvdpoqms7"
+    }
+  },
+  "resources": {
+    "website": "https://arc.fun",
+    "twitter": "https://twitter.com/arcdotfun",
+    "telegram": "https://t.me/+CI-vivonuApiZWQ0",
+    "discord": "https://discord.com/invite/VjS32d2gpj",
+    "github": "https://github.com/0xplaygrounds/rig",
+    "documentation": "https://docs.rs/rig-core",
+    "forge": "https://www.arc.fun/forge",
+    "handshake": "https://arc.fun/handshake",
+    "registry": "https://www.arc.fun/registry",
+    "architecture": "https://www.arc.fun/architecture",
+    "tokenomics": "https://www.arc.fun/tokenomics",
+    "blog": "https://www.arc.fun/blog"
+  },
+  "meta": {
+    "launch_type": "Fair launch",
+    "token_holders": "Tens of thousands",
+    "focus": "Agentic AI ecosystem",
+    "key_differentiator": "Economic infrastructure + technical foundation + curated marketplace",
+    "target_users": [
+      "AI developers",
+      "Service providers",
+      "Enterprises",
+      "End users seeking autonomous agents",
+      "Blockchain developers",
+      "DeFi participants"
+    ]
+  }
+}

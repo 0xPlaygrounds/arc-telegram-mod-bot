@@ -1,0 +1,548 @@
+{
+  "overview": {
+    "title": "What is Ryzome",
+    "description": "Ryzome is a visual workspace where your thoughts become connected insights. It's designed to solve the fundamental limitations of linear AI interactions by providing a 2D canvas where ideas exist as interconnected nodes.",
+    "problem_statement": "Traditional AI interfaces like ChatGPT and Claude force you into a linear conversation model. You constantly switch contexts and lose your flow, re-type prompts and explanations, struggle to see connections between branching ideas, and hit the limits of what chat can handle for complex thinking.",
+    "solution": "Ryzome reimagines AI interaction through a spatial, visual interface. Instead of a chat thread, you work on an infinite canvas where every idea becomes a node on a 2D canvas.",
+    "key_features": [
+      "Visual & Spatial Interface: Every idea becomes a node on a 2D canvas. This mirrors how your mind actually works - thoughts branch naturally, connections stay visible, and everything flows.",
+      "Connected Intelligence: When you connect nodes, the AI understands the full upstream context. It can synthesize information from multiple sources rather than just responding to isolated prompts.",
+      "Agentic Core: Every node is AI-enabled. Generate content, transform ideas, synthesize insights - all while maintaining the visual context of your thinking process."
+    ],
+    "capabilities": [
+      "Markdown-Enabled Nodes: Full markdown support with images, tables, code blocks, and formatting",
+      "Content Drop-In: Import PDFs, YouTube videos, images, web pages, and text with automatic node creation",
+      "Context Chains: Connect nodes to build context that AI understands and can work with",
+      "Instant Knowledge Graphs: Watch your research evolve into living, interconnected insights"
+    ],
+    "differentiation": "Unlike static note-taking apps or linear AI chats, Ryzome creates a second brain that actually thinks with you. The spatial interface combined with context-aware AI enables new forms of knowledge work that weren't possible before.",
+    "target_users": [
+      "Researchers building complex arguments and literature reviews",
+      "Writers developing interconnected narratives and ideas",
+      "Consultants synthesizing insights from multiple sources",
+      "Strategists mapping out complex problems and solutions",
+      "AI power users seeking more sophisticated interaction models"
+    ],
+    "website": "https://ryzome.ai"
+  },
+  "quick_start": {
+    "title": "Quick Start Guide",
+    "description": "Get up and running with Ryzome in just a few minutes",
+    "steps": [
+      {
+        "step": 1,
+        "title": "Sign up",
+        "description": "Create your Ryzome account at ryzome.ai. No API keys or complex setup required - just sign up and you're ready to start thinking visually."
+      },
+      {
+        "step": 2,
+        "title": "Dashboard overview",
+        "description": "Once logged in, you'll see your dashboard with options to create a new canvas. Click 'Create canvas' to start your first visual workspace."
+      },
+      {
+        "step": 3,
+        "title": "Add a node",
+        "description": "Click anywhere on the canvas to create your first node. Ryzome nodes support rich markdown content including images and media, URLs and links, tables and data, code blocks, and rich formatting."
+      },
+      {
+        "step": 4,
+        "title": "Use AI (prompt hat)",
+        "description": "Hover your mouse over a node to reveal its AI prompt interface. The AI overwrites existing content - the node is both input and response. The prompt hat overwrites your node content, so duplicate the node first if you want to keep the original. Connected nodes provide context for better responses."
+      },
+      {
+        "step": 5,
+        "title": "Build context with connections",
+        "description": "Connect nodes by dragging from one node's edge to another. Only directly connected nodes count as context. A node can receive context from several connected nodes."
+      }
+    ],
+    "next_steps": [
+      "Take the Onboarding Tour to explore all features",
+      "Watch Demos to see real workflows in action",
+      "Learn Keyboard Shortcuts to speed up your workflow"
+    ],
+    "pro_tip": "Start with a simple research question or project outline. Add related documents, connect them, and let AI help you synthesize insights across your connected knowledge."
+  },
+  "content_types": {
+    "writing_in_nodes": {
+      "title": "Writing in a Node",
+      "description": "Ryzome nodes support full markdown formatting, making them powerful containers for rich content. Every node is a mini-document that can hold text, images, tables, code, and more.",
+      "supported_formats": [
+        "Text Formatting: Bold text, italic text, strikethrough, inline code",
+        "Headers and Structure: Main headers, section headers, subsections, bullet points, nested lists, numbered lists",
+        "Links and References: Link text with URLs, internal links, image references",
+        "Tables: Full markdown table support with columns and rows",
+        "Code Blocks: Syntax highlighted code in multiple languages",
+        "JSON and Data: Paste JSON directly for structured data",
+        "CSV Data: Paste CSV content with automatic formatting"
+      ],
+      "ai_context_usage": "When you connect nodes containing rich content to other nodes, the AI can read and understand formatted content including tables and code, reference specific sections from headers and structure, synthesize information across multiple connected markdown nodes, and maintain formatting when generating related content.",
+      "best_practices": [
+        "Keep nodes focused: One main idea or topic per node works best",
+        "Use clear headers: Structure your content with descriptive headers",
+        "Format for readability: Use tables, lists, and formatting to make content scannable"
+      ],
+      "limitations": "Very long nodes (10,000+ characters) may impact performance. Consider breaking large content into connected smaller nodes."
+    },
+    "images": {
+      "title": "Adding Images",
+      "description": "Images in Ryzome are powerful visual elements that can be used as standalone content or connected to other nodes for AI analysis and context.",
+      "how_to_add": [
+        "Drag and drop: Drag an image file from your computer directly onto the canvas",
+        "Paste from clipboard: Copy an image and paste it directly onto the canvas using Cmd+V (Mac) or Ctrl+V (Windows)"
+      ],
+      "supported_formats": [
+        "PNG: Best for screenshots and graphics with transparency",
+        "JPG/JPEG: Ideal for photos and complex images",
+        "WebP: Modern format with excellent compression"
+      ],
+      "ai_capabilities": [
+        "Describe the image content in detail",
+        "Extract text from images (OCR capabilities)",
+        "Analyze visual elements like charts, diagrams, and infographics",
+        "Reference image content when generating related text or insights"
+      ],
+      "best_practices": [
+        "High resolution: Use clear, high-resolution images for better AI analysis",
+        "Descriptive connections: Add brief text description of what you want the AI to focus on",
+        "Organize visually: Group related images near each other on the canvas",
+        "File size: Keep images under 10MB for optimal performance"
+      ],
+      "features": [
+        "Zoom and pan: Click on image nodes to view in full detail",
+        "Resize: Drag corners to adjust canvas size",
+        "Move freely: Drag image nodes anywhere",
+        "Connect easily: Draw connections from any edge"
+      ]
+    },
+    "pdfs": {
+      "title": "PDF Files",
+      "description": "PDF documents are powerful sources of information in Ryzome. When you import a PDF, it creates a specialized PDF reader node that can be used as rich context for AI generation.",
+      "how_to_add": "Drag a PDF file from your computer directly onto the canvas. Ryzome will create a PDF reader node that displays the document content.",
+      "features": [
+        "Full document preview: Browse through all pages",
+        "Text extraction: Automatically extracts text content for AI processing",
+        "Page navigation: Jump to specific pages or sections",
+        "Zoom and scroll: View documents at comfortable reading sizes"
+      ],
+      "ai_capabilities": [
+        "Summarize the entire document or specific sections",
+        "Extract key insights and main points",
+        "Answer questions based on PDF content",
+        "Compare information across multiple connected PDFs",
+        "Generate content that references and builds on PDF material"
+      ],
+      "best_practices": [
+        "File size: Keep PDFs under 7MB for optimal processing speed",
+        "Text-based PDFs work best - scanned images may have limited text extraction",
+        "Academic papers: Excellent for research synthesis and literature reviews",
+        "Reports and documentation: Perfect for extracting key insights",
+        "Multiple PDFs: Connect several related documents to build comprehensive context"
+      ],
+      "limitations": [
+        "PDF files should be under ~7MB for best performance",
+        "Scanned PDFs (image-only) may have limited text extraction",
+        "Very long documents may take longer to process initially",
+        "Password-protected PDFs are not currently supported"
+      ],
+      "workflows": [
+        "Literature reviews: Connect multiple research papers and generate synthesis",
+        "Document analysis: Extract key points from reports and presentations",
+        "Fact checking: Use PDFs as authoritative sources",
+        "Content creation: Reference PDF material when generating new content",
+        "Research organization: Build knowledge graphs from academic papers"
+      ]
+    },
+    "youtube": {
+      "title": "YouTube Videos",
+      "description": "YouTube videos can be embedded directly in Ryzome as playable nodes. These video nodes serve as rich context sources for AI generation and analysis.",
+      "how_to_add": "Copy any YouTube video URL and paste it directly onto the canvas. Ryzome will automatically create a playable video node.",
+      "supported_formats": [
+        "https://www.youtube.com/watch?v=VIDEO_ID",
+        "https://youtu.be/VIDEO_ID",
+        "https://youtube.com/watch?v=VIDEO_ID"
+      ],
+      "features": [
+        "Embedded player: Watch videos directly on your canvas",
+        "Automatic metadata: Title, description, and thumbnail extraction",
+        "Playback controls: Standard YouTube player functionality",
+        "Responsive sizing: Resize video nodes to fit your canvas layout"
+      ],
+      "ai_capabilities": [
+        "Analyze video content: Understand topics, themes, and key points",
+        "Extract insights: Pull out main ideas and important information",
+        "Generate summaries: Create concise overviews of video content",
+        "Answer questions: Respond based on video material",
+        "Create related content: Generate text that builds on video concepts"
+      ],
+      "best_practices": [
+        "Educational content: Works best with tutorials, lectures, presentations",
+        "Clear audio: Videos with clear speech provide better AI analysis",
+        "Reasonable length: Shorter videos (under 30 minutes) process faster",
+        "Public videos: Only public YouTube videos can be embedded"
+      ],
+      "workflows": [
+        "Research synthesis: Connect multiple related videos and generate comprehensive summaries",
+        "Learning notes: Create study guides and key takeaways",
+        "Content inspiration: Use videos as starting points for content creation",
+        "Fact extraction: Pull specific information and data points",
+        "Comparative analysis: Connect multiple videos on similar topics for AI comparison"
+      ],
+      "limitations": [
+        "Only public YouTube videos can be embedded",
+        "Processing time varies based on video length and content",
+        "Very long videos (2+ hours) may have extended processing times"
+      ]
+    },
+    "web_pages": {
+      "title": "Web Pages",
+      "description": "Web page URLs can be imported directly into Ryzome to create web page nodes. These nodes capture the content of web pages and make them available as context for AI generation.",
+      "how_to_add": "Copy any web page URL and paste it directly onto the canvas. Ryzome will automatically fetch the page content and create a web page node.",
+      "supported_content": [
+        "Articles and blog posts: News sites, Medium, personal blogs",
+        "Documentation: Technical docs, API references, guides",
+        "Research papers: Online publications and academic content",
+        "Product pages: Company websites, product descriptions",
+        "Social media: Public posts and threads (where accessible)"
+      ],
+      "features": [
+        "Content extraction: Clean text content without ads and navigation",
+        "Metadata capture: Title, description, and key information",
+        "Link preservation: Internal links and references maintained",
+        "Readable format: Content formatted for easy reading and AI processing",
+        "Source attribution: Original URL and publication information"
+      ],
+      "ai_capabilities": [
+        "Summarize articles: Extract key points and main arguments",
+        "Fact-check information: Use web content as authoritative sources",
+        "Compare perspectives: Analyze multiple articles on the same topic",
+        "Extract quotes: Pull relevant quotes and citations",
+        "Generate related content: Create content that builds on web sources"
+      ],
+      "best_practices": [
+        "Quality sources: Use reputable websites and publications",
+        "Public content: Only publicly accessible pages can be imported",
+        "Multiple sources: Connect several related web pages for comprehensive context"
+      ],
+      "workflows": [
+        "News analysis: Connect multiple news articles and generate balanced summaries",
+        "Research compilation: Gather sources on a topic and synthesize findings",
+        "Competitive analysis: Import competitor content and generate insights",
+        "Content inspiration: Use articles as starting points for writing",
+        "Fact verification: Reference authoritative sources in AI generations"
+      ],
+      "supported_sites": [
+        "News sites: CNN, BBC, Reuters, etc.",
+        "Blogs: Medium, personal blogs, company blogs",
+        "Documentation: GitHub, technical docs, wikis",
+        "Academic sites: Research institutions, paper repositories",
+        "Reference sites: Wikipedia, encyclopedias, fact sites"
+      ],
+      "limitations": [
+        "Only publicly accessible web pages can be imported",
+        "Paywalled or login-required content cannot be accessed",
+        "Very large pages may take longer to process",
+        "Dynamic content (live feeds, real-time data) captures a snapshot"
+      ]
+    },
+    "external_text": {
+      "title": "Copying in External Text",
+      "description": "Pasting text into Ryzome is one of the fastest ways to get content onto your canvas. Ryzome automatically creates rich nodes that preserve formatting and structure.",
+      "how_to_add": [
+        "Direct paste: Copy text from anywhere and paste directly onto canvas using Cmd+V (Mac) or Ctrl+V (Windows)",
+        "Smart formatting: Ryzome automatically detects and preserves HTML formatting, rich text, code blocks, tables, and links",
+        "Manual entry: Click anywhere on canvas to create a new node and start typing"
+      ],
+      "processing": [
+        "HTML to Markdown: Web content is converted to clean markdown",
+        "Formatting preservation: Bold, italic, headers, and lists are maintained",
+        "Link extraction: URLs become clickable links",
+        "Structure detection: Tables and code blocks are properly formatted",
+        "Clean output: Unnecessary styling and clutter are removed"
+      ],
+      "best_practices": [
+        "Clean source material: Well-formatted source text produces better results",
+        "Logical structure: Use headers and lists to organize information",
+        "Focused content: Keep each node focused on a specific topic or idea",
+        "Meaningful connections: Connect related text nodes to build comprehensive context",
+        "Edit after pasting: Clean up any formatting issues after pasting"
+      ],
+      "common_sources": [
+        "Web articles: News, blog posts, research articles",
+        "Documents: Word docs, Google Docs, PDFs (copy/paste)",
+        "Emails: Important correspondence and information",
+        "Notes: Meeting notes, research notes, personal thoughts",
+        "Code: Programming code with syntax highlighting",
+        "Data: CSV, JSON, and structured information"
+      ]
+    }
+  },
+  "features": {
+    "publishing": {
+      "title": "Publishing a Canvas",
+      "description": "Publishing a canvas makes it publicly viewable and shareable. Once published, anyone can view your canvas in read-only mode and clone it to their own workspace for collaboration.",
+      "prerequisites": [
+        "Profile must be public: Your Ryzome profile must be set to public before you can publish any canvases",
+        "Name your canvas: Give your canvas a meaningful name. Default 'Untitled' canvases don't make good public content"
+      ],
+      "steps": [
+        {
+          "step": 1,
+          "title": "Make Your Profile Public",
+          "options": [
+            "Option 1: Click user profile icon in side panel, click Edit Profile button, click Make Profile Public button",
+            "Option 2: Click Ryzome logo dropdown (top left of canvas), navigate to settings, update profile visibility to public"
+          ]
+        },
+        {
+          "step": 2,
+          "title": "Name Your Canvas",
+          "description": "Double-click the canvas name next to the Ryzome logo (top left), replace 'Untitled' with a meaningful name, press Enter to save"
+        },
+        {
+          "step": 3,
+          "title": "Publish Your Canvas",
+          "description": "Click the Publish button in the top right. A modal will appear with publishing options: Canvas name (auto-populated), Description (add detailed description of canvas content), Tags (select relevant tags). Fill out description and tags, then click Publish to make canvas public."
+        },
+        {
+          "step": 4,
+          "title": "Share Your Published Canvas",
+          "description": "After publishing, you'll receive a shareable link: ryzome.ai/[username]/[canvas-slug]"
+        }
+      ],
+      "managing_published_canvases": {
+        "accessing": "Go to dashboard/canvas home, click Published canvases tab, view all publicly published canvases with thumbnails and tags",
+        "getting_share_links": "Find canvas in published canvases, click menu button (three dots), select Copy Share Link, link is copied to clipboard"
+      },
+      "how_it_works": {
+        "for_viewers": [
+          "View in read-only mode: Can explore but cannot edit",
+          "See all content: Images, text, connections, and layout fully visible",
+          "Clone the canvas: Can copy it to their own workspace",
+          "Navigate freely: Zoom, pan, and explore like a regular canvas"
+        ],
+        "for_owners": [
+          "Update the canvas: Changes are reflected in published version",
+          "Edit publication details: Update description and tags anytime",
+          "Unpublish: Remove canvas from public view",
+          "Track engagement: See views and stars"
+        ]
+      },
+      "available_tags": [
+        "design",
+        "research",
+        "programming",
+        "AI",
+        "education",
+        "art",
+        "data",
+        "finance",
+        "health",
+        "science",
+        "productivity",
+        "blockchain",
+        "writing"
+      ],
+      "best_practices": {
+        "descriptions": "Explain what your canvas covers and why it's useful, mention key insights or conclusions, include any special techniques or approaches used, keep it concise but informative (under 2000 characters)",
+        "tags": "Select 2-4 relevant tags that best describe your canvas, consider your target audience when choosing tags, use popular tags for better discoverability, don't over-tag - quality over quantity",
+        "preparation": "Ensure your canvas tells a clear story, organize nodes logically with good visual flow, include helpful context and explanations, remove any sensitive or private information"
+      }
+    },
+    "keyboard_shortcuts": {
+      "title": "Keyboard Shortcuts",
+      "description": "Master these essential keyboard shortcuts to work faster and more efficiently in Ryzome",
+      "navigation": [
+        "Select multiple: Drag - Click and drag to select multiple nodes",
+        "Pan canvas: Space + Drag - Hold space and drag to move around canvas",
+        "Zoom in/out: Ctrl + Scroll - Use mouse wheel with Ctrl to zoom",
+        "Fit to screen: Ctrl + 0 - Reset zoom to fit all content"
+      ],
+      "node_operations": [
+        "Create node: Click - Click anywhere on canvas to create new node",
+        "Edit node: Double click - Double-click a node to start editing",
+        "Delete node: Delete - Select node(s) and press Delete",
+        "Duplicate node: Ctrl + D - Duplicate selected node(s)"
+      ],
+      "editing": [
+        "Undo: Ctrl + Z - Undo last action",
+        "Redo: Ctrl + Y - Redo last undone action",
+        "Copy: Ctrl + C - Copy selected node(s)",
+        "Cut: Ctrl + X - Cut selected node(s)",
+        "Paste: Ctrl + V - Paste content or nodes",
+        "Select all: Ctrl + A - Select all nodes on canvas"
+      ],
+      "content_operations": [
+        "Save canvas: Ctrl + S - Save current canvas (auto-saves enabled)",
+        "New canvas: Ctrl + N - Create a new canvas",
+        "Search: Ctrl + F - Search within canvas content"
+      ],
+      "platform_notes": {
+        "mac": "Replace Ctrl with Cmd for all shortcuts",
+        "windows_linux": "Use Ctrl as shown in shortcuts"
+      },
+      "pro_tips": [
+        "Use Space + Drag for quick canvas navigation",
+        "Combine shortcuts for faster workflows (Ctrl + C → Ctrl + V → Double click)",
+        "Hold Shift while clicking to select multiple individual nodes",
+        "Box select: Click and drag on empty canvas to select multiple nodes in area"
+      ]
+    }
+  },
+  "ryzome_challenge": {
+    "title": "Ryzome Challenge",
+    "description": "Join the social-first competition to showcase your best canvases and win from a 250,000 ARC prize pool",
+    "duration": "14 days",
+    "tagline": "Show us what you've built",
+    "overview": "The Ryzome Challenge is a social-first competition where creators publish their best Ryzome canvases and compete for engagement both on-platform (stars) and off-platform (social media).",
+    "goals": [
+      "Showcase Innovation: Highlight the most creative and impactful canvases",
+      "Build Community: Connect creators and foster knowledge sharing",
+      "Reward Excellence: Recognize outstanding work with substantial prizes",
+      "Drive Engagement: Encourage platform and social media interaction"
+    ],
+    "participation_steps": [
+      {
+        "step": 1,
+        "title": "Create Your Ryzome Account",
+        "description": "Sign up at ryzome.ai if you don't already have an account"
+      },
+      {
+        "step": 2,
+        "title": "Build and Publish Your Canvas",
+        "description": "Create your best work in Ryzome, then publish it to make it eligible. Only published canvases can be entered."
+      },
+      {
+        "step": 3,
+        "title": "Enter the Competition",
+        "description": "Visit ryzome.ai/challenge and click Enter Competition to submit your published canvas"
+      },
+      {
+        "step": 4,
+        "title": "Share on Social Media",
+        "description": "Post about your canvas on social media with the #RyzomeChallenge hashtag. This is required and contributes to your social score."
+      },
+      {
+        "step": 5,
+        "title": "Track Your Performance",
+        "description": "Monitor your ranking and scores on the challenge dashboard"
+      }
+    ],
+    "requirements": [
+      "Account Required: Must have a Ryzome account and be logged in",
+      "Published Canvases Only: Only published canvases can be entered",
+      "Social Media Required: Must share canvas with #RyzomeChallenge",
+      "Submission Limits: Maximum 5 canvas entries per participant, 5 social links per submission"
+    ],
+    "scoring_system": {
+      "total_score": "Platform Score + Social Score",
+      "platform_score": "Canvas stars × 10 points each",
+      "social_score": {
+        "twitter_x": {
+          "likes": "2 points",
+          "retweets": "3 points",
+          "quote_tweets": "5 points",
+          "views": "1 point",
+          "comments": "2 points"
+        },
+        "youtube": {
+          "views": "1 point",
+          "likes": "2 points",
+          "comments": "3 points"
+        }
+      },
+      "content_bonuses": {
+        "video_content": "1.5x multiplier",
+        "thread_with_visuals": "1.2x multiplier",
+        "single_tweet": "1.0x multiplier (no bonus)"
+      }
+    },
+    "prizes": {
+      "main_prizes": [
+        {
+          "rank": "1st Place",
+          "arc_reward": "80,000 ARC",
+          "ryzome_credits": "5,000 credits"
+        },
+        {
+          "rank": "2nd Place",
+          "arc_reward": "40,000 ARC",
+          "ryzome_credits": "3,000 credits"
+        },
+        {
+          "rank": "3rd Place",
+          "arc_reward": "25,000 ARC",
+          "ryzome_credits": "1,500 credits"
+        },
+        {
+          "rank": "4th-10th",
+          "arc_reward": "5,000 ARC each",
+          "ryzome_credits": "500 credits each"
+        }
+      ],
+      "special_categories": [
+        {
+          "category": "Trending Winner",
+          "arc_reward": "10,000 ARC",
+          "ryzome_credits": "1,000 credits"
+        },
+        {
+          "category": "Community Choice",
+          "arc_reward": "10,000 ARC",
+          "ryzome_credits": "700 credits"
+        }
+      ],
+      "participation_reward": "300 Ryzome credits for all remaining participants",
+      "total_prize_pool": "250,000 ARC + Thousands of Ryzome credits"
+    },
+    "rules": {
+      "duration": "14 days from competition start",
+      "hashtag_required": "All social posts must include #RyzomeChallenge",
+      "update_cooldown": "24-hour cooldown between social link updates",
+      "max_submissions": "5 canvases per participant",
+      "public_posts": "Social media posts must be public to count",
+      "authentic_engagement": "Unusual engagement patterns will be flagged for review",
+      "fair_play": "Manual review of top 20 entries and detection of unusual engagement patterns"
+    },
+    "supported_platforms": [
+      "Twitter/X: All engagement types tracked",
+      "YouTube: Views, likes, and comments counted",
+      "LinkedIn: Basic engagement tracking",
+      "Blog Posts: Custom content with engagement metrics"
+    ],
+    "tips_for_success": {
+      "canvas_creation": [
+        "Focus on high-quality, visually appealing canvases",
+        "Use rich content: images, videos, interactive elements",
+        "Create canvases that tell a compelling story or solve interesting problems",
+        "Polish your canvas before publishing - first impressions matter"
+      ],
+      "social_media_strategy": [
+        "Prioritize video content for the 1.5x multiplier",
+        "Create engaging threads with visuals for 1.2x bonus",
+        "Post across multiple platforms to maximize reach",
+        "Engage with other participants to build community",
+        "Use compelling captions that encourage interaction"
+      ],
+      "platform_engagement": [
+        "Share your canvas with the Ryzome community",
+        "Engage with other submissions by starring quality work",
+        "Participate in platform discussions about your canvas",
+        "Leverage your existing network to drive initial engagement"
+      ]
+    },
+    "challenge_url": "https://ryzome.ai/challenge"
+  },
+  "meta": {
+    "platform_name": "Ryzome",
+    "website": "https://ryzome.ai",
+    "tagline": "Visual workspace where your thoughts become connected insights",
+    "core_concept": "Second brain that actually thinks with you",
+    "primary_use_cases": [
+      "Research and literature reviews",
+      "Content creation and writing",
+      "Knowledge synthesis",
+      "Visual thinking and brainstorming",
+      "AI-powered analysis and insights"
+    ]
+  }
+}

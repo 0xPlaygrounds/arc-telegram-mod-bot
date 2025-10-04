@@ -3,6 +3,9 @@ import re
 import json
 import unicodedata
 import logging
+import asyncio
+from pydantic import BaseModel
+from api.arclan_turing import chat_endpoint
 import threading
 from dotenv import load_dotenv
 from telegram import (
@@ -71,6 +74,23 @@ WHITELIST_PHRASES_FILE = "whitelists/whitelist_phrases.txt"
 
 # Whitelisted commands
 WHITELIST_FILTERS = ["/growth", "/metrics", "/news", "/posts", "/report"]
+
+class ArcLanRequest(BaseModel):
+    message: str
+    telegram_user_id: str
+    telegram_username: str
+    conversation_history: str = ""
+
+# --- Async function that handles the API call ---
+async def handle_arclan_command_async(user_message: str, telegram_user_id: str, telegram_username: str, conversation_history=""):    
+    request_data = ArcLanRequest(
+        message=user_message,
+        telegram_user_id=telegram_user_id,
+        telegram_username=telegram_username,
+        conversation_history=conversation_history
+    )
+    response = await chat_endpoint(request_data)
+    return response.reply
 
 # Mute duration in seconds (3 days)
 MUTE_DURATION = 3 * 24 * 60 * 60
@@ -779,6 +799,29 @@ def check_message(update: Update, context: CallbackContext):
             message.reply_text(response_text)
         except Exception as e:
             message.reply_text(f"⚠️ Error reading weekly metrics: {e}")
+        return
+    
+    if re.search(r'(?<!\w)/arclan(?!\w)', message_text):
+        try:
+            # Strip the /arclan command from the message
+            user_message = re.sub(r'(?i)^/arclan\s*', '', message_text)
+
+            # Call the async function and wait for reply
+            response_text = asyncio.run(
+                handle_arclan_command_async(
+                    user_message,
+                    str(message.from_user.id),
+                    message.from_user.username or "",
+                    conversation_history=""  # or fetch per-user conversation history
+                )
+            )
+
+            # Send reply in Telegram
+            message.reply_text(response_text)
+
+        except Exception:
+            message.reply_text("⚠️ Error reaching arclan. Maybe he is sleeping? 😴")
+
         return
     
     if re.search(r'(?<!\w)/posts(?!\w)', message_text):

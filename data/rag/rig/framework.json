@@ -1,0 +1,231 @@
+{
+  "overview": {
+    "title": "What is RIG",
+    "tagline": "Rust library for building portable, modular, and lightweight Fullstack AI Agents",
+    "description": "Rig is a Rust library for building LLM-powered applications that focuses on ergonomics and modularity. It provides full support for LLM completion and embedding workflows with simple but powerful abstractions.",
+    "installation": "cargo add rig-core",
+    "key_features": [
+      "Full support for LLM completion and embedding workflows",
+      "Simple but powerful common abstractions over LLM providers (OpenAI, Cohere, etc.) and vector stores (MongoDB, in-memory, etc.)",
+      "Integrate LLMs in your app with minimal boilerplate",
+      "Lightweight: Rust runs orders of magnitude faster than Python",
+      "Safety: Rust's type system and ownership model helps work with unexpected LLM outputs",
+      "Portability: Rust code can be compiled to WebAssembly (WASM support coming soon)"
+    ],
+    "github": "https://github.com/0xplaygrounds/rig",
+    "docs": "https://docs.rs/rig-core",
+    "community": "Discord server available for discussions"
+  },
+  "quick_start": {
+    "title": "Quick Start Guide",
+    "prerequisites": "Rust programming language installed",
+    "installation_steps": [
+      "Run: cargo add rig-core tokio",
+      "This adds rig-core dependency and Tokio (async Rust runtime)",
+      "Set up environment variable: OPENAI_API_KEY (for OpenAI examples)"
+    ],
+    "basic_example": {
+      "description": "Simple example prompting OpenAI's GPT-4 model",
+      "code": "use rig::{completion::Prompt, providers::openai};\n\n#[tokio::main]\nasync fn main() {\n    // Create OpenAI client and agent\n    // Requires OPENAI_API_KEY environment variable\n    let openai_client = openai::Client::from_env();\n    \n    let gpt4 = openai_client.agent(\"gpt-4\").build();\n    \n    // Prompt the model and print response\n    let response = gpt4\n        .prompt(\"Who are you?\")\n        .await\n        .expect(\"Failed to prompt GPT-4\");\n    \n    println!(\"GPT-4: {response}\");\n}",
+      "note": "Using #[tokio::main] requires enabling tokio's macros and rt-multi-thread features: cargo add tokio --features macros,rt-multi-thread"
+    },
+    "run_command": "cargo run"
+  },
+  "core_concepts": {
+    "completion_and_embedding_models": {
+      "title": "Completion and Embedding Models",
+      "description": "Rig provides a consistent API for working with LLMs and embeddings. Each provider (e.g. OpenAI, Cohere) has a Client struct that can be used to initialize completion and embedding models.",
+      "traits": [
+        "CompletionModel: Common low-level interface for creating and executing completion requests",
+        "EmbeddingModel: Common low-level interface for creating and executing embedding requests"
+      ],
+      "features": "Each model implements traits that provide consistent API across different providers"
+    },
+    "agents": {
+      "title": "Agents",
+      "description": "High-level abstractions over LLMs in the form of the Agent type",
+      "capabilities": [
+        "Simple agents using vanilla models",
+        "Full-blown RAG systems for answering questions using a knowledge base",
+        "Context-aware agents that leverage connected information",
+        "Multi-step reasoning and task completion"
+      ],
+      "usage": "The Agent type can be used to create anything from basic chatbots to sophisticated AI systems"
+    },
+    "vector_stores_and_indexes": {
+      "title": "Vector Stores and Indexes",
+      "description": "Rig defines a common interface for working with vector stores and indexes",
+      "traits": [
+        "VectorStore: Interface for vector storage implementations",
+        "VectorStoreIndex: Interface for vector index implementations"
+      ],
+      "use_cases": [
+        "Knowledge base for RAG-enabled agents",
+        "Source of context documents in custom architectures",
+        "Multi-LLM or multi-agent systems",
+        "Semantic search and similarity matching"
+      ]
+    }
+  },
+  "integrations": {
+    "model_providers": {
+      "title": "Model Provider Integrations",
+      "description": "Rig natively supports the following completion and embedding model providers",
+      "supported_providers": [
+        "Anthropic",
+        "Azure",
+        "Cohere",
+        "Deepseek",
+        "Galadriel",
+        "Gemini",
+        "Groq",
+        "Huggingface",
+        "Hyperbolic",
+        "Mira",
+        "Mistral",
+        "Moonshot",
+        "Ollama",
+        "OpenAI",
+        "OpenRouter",
+        "Perplexity",
+        "Together",
+        "Voyage AI",
+        "xAI"
+      ],
+      "custom_providers": "You can implement your own model provider integration by defining types that implement the CompletionModel and EmbeddingModel traits",
+      "openai_compatible": "If a provider has an OpenAI compatible API, you can use the existing openai integration module"
+    },
+    "vector_stores": {
+      "title": "Vector Store Integrations",
+      "description": "Vector stores are available as separate companion crates",
+      "available_stores": [
+        "rig-mongodb: Vector store implementation for MongoDB",
+        "rig-lancedb: Vector store implementation for LanceDB",
+        "rig-neo4j: Vector store implementation for Neo4j",
+        "rig-qdrant: Vector store implementation for Qdrant",
+        "rig-sqlite: Vector store implementation for SQLite",
+        "rig-surrealdb: Vector store implementation for SurrealDB",
+        "rig-milvus: Vector store implementation for Milvus",
+        "rig-scylladb: Vector store implementation for ScyllaDB",
+        "rig-s3vectors: Vector store implementation for AWS S3Vectors"
+      ],
+      "custom_stores": "You can implement your own vector store integration by defining types that implement the VectorStoreIndex trait",
+      "companion_providers": [
+        "rig-fastembed: Fastembed integration",
+        "rig-eternalai: Eternal AI integration"
+      ]
+    }
+  },
+  "modules": {
+    "agent": "Implementation of the Agent struct and its builder",
+    "audio_generation": "Everything related to audio generation (Text To Speech). Abstracts over different providers using the AudioGenerationModel trait",
+    "cli_chatbot": "Command-line chatbot utilities",
+    "client": "Traits for defining and creating provider clients. Used to create models for completion, embeddings, etc.",
+    "completion": "Functionality for LLM completions and responses",
+    "embeddings": "Working with embeddings - numerical representations of documents. Used for NLP tasks like text classification, information retrieval, and document similarity",
+    "extractor": "High-level abstractions for extracting structured data from text using LLMs",
+    "image_generation": "Core image generation abstractions. Allows calling different providers using the ImageGenerationModel trait",
+    "loaders": "Utility structs for loading and preprocessing files",
+    "pipeline": "Flexible pipeline API for defining sequences of operations with or without AI components (semantic search, LLM prompting, etc.)",
+    "providers": "Clients for the different LLM providers that Rig supports",
+    "streaming": "Working with streaming completion models. Traits and types for streaming requests and responses",
+    "telemetry": "Orchestrate telemetry across pipelines and workflows. Includes tracing, OpenTelemetry collector support, and platform integrations like Langfuse",
+    "tool": "Tool-related structs and traits for agent capabilities",
+    "transcription": "Audio transcription models. Traits, structs, and enums for transcription requests and responses",
+    "vector_store": "Vector store abstractions and implementations"
+  },
+  "architecture": {
+    "title": "Architecture and Design",
+    "rust_advantages": [
+      "Lightweight: Runs orders of magnitude faster than Python, making running and deploying swarms of agents efficient",
+      "Safety: Type system and ownership model helps work with unexpected LLM outputs, coercing types and handling errors gracefully",
+      "Portability: Can be compiled to WebAssembly for running in web browsers (even local LLM models). Note: WASM support coming soon"
+    ],
+    "design_principles": [
+      "Ergonomics: Simple and intuitive API design",
+      "Modularity: Composable components that work together",
+      "Minimal boilerplate: Get started quickly with less code",
+      "Provider agnostic: Common abstractions across different providers",
+      "Type safety: Leverage Rust's type system for reliability"
+    ],
+    "comparison": "Rig provides similar functionality to Python/JS frameworks like Langchain, LlamaIndex, Marvin, and PyDantic, but with Rust's performance and safety advantages"
+  },
+  "contributing": {
+    "title": "Contributing to RIG",
+    "description": "Rig is an open-source project welcoming contributions from the community",
+    "before_starting": "Search for existing issues and pull requests on GitHub. Open an issue if there is none to discuss your ideas",
+    "areas": {
+      "model_provider_integrations": {
+        "description": "Add support for new language model providers",
+        "location": "Each provider integration is contained in its own module under rig-core/src/providers",
+        "openai_compatible": "If provider has OpenAI compatible API, document how to use existing openai integration instead of creating new module",
+        "requirements": "Should not require new dependencies not already in the project",
+        "guidelines": "Follow repository's contribution guidelines"
+      },
+      "vector_store_integrations": {
+        "description": "Add support for new vector stores",
+        "location": "Each integration is in its own crate in root directory with naming convention: rig-<store_name>",
+        "reason": "Separate crates because vector stores often require many additional dependencies",
+        "testing": "Consider adding integration tests (reference existing tests like Qdrant)",
+        "guidelines": "Follow repository's contribution guidelines"
+      },
+      "bug_fixes": {
+        "description": "Fix bugs in Rig",
+        "process": "Open an issue on repository and consider making a pull request to fix it",
+        "guidelines": "Follow repository's contribution guidelines"
+      },
+      "documentation": {
+        "guides_and_tutorials": "Share knowledge by writing guides or tutorials. Submit to docs repository for featuring on website",
+        "improvements": "Report typos, mistakes, or sections needing improvement. Open issue or PR on docs repository",
+        "local_setup": "Docs repository has CONTRIBUTING.md for getting repo working locally"
+      },
+      "ideas_and_feedback": {
+        "description": "Share ideas for new features or feedback on existing ones",
+        "process": "Open an issue on GitHub repository",
+        "note": "Check existing issues first to avoid duplicates"
+      }
+    }
+  },
+  "key_traits": {
+    "CompletionModel": "Low-level interface for creating and executing completion requests",
+    "EmbeddingModel": "Low-level interface for creating and executing embedding requests",
+    "VectorStore": "Interface for vector storage implementations",
+    "VectorStoreIndex": "Interface for vector index implementations",
+    "AudioGenerationModel": "Interface for text-to-speech providers",
+    "ImageGenerationModel": "Interface for image generation providers",
+    "Embed": "Trait for types that can be embedded (derive macro available)"
+  },
+  "macros": {
+    "conditional": "Creates an Op that conditionally dispatches to one of multiple sub-ops based on input enum variant",
+    "try_conditional": "Creates a TryOp that conditionally dispatches, returning a Result",
+    "parallel": "Parallel operation execution",
+    "try_parallel": "Parallel operation execution with error handling",
+    "derive_Embed": "Derive macro that implements the rig::embedding::Embed trait"
+  },
+  "resources": {
+    "documentation": "https://docs.rs/rig-core",
+    "github": "https://github.com/0xplaygrounds/rig",
+    "discord": "Join the Discord community for discussions",
+    "guides": "Comprehensive tutorials and guides available",
+    "cookbook": "Examples and recipes for building with Rig",
+    "release_notes": "Stay updated with latest changes",
+    "feedback": "Share feedback to help improve the project"
+  },
+  "meta": {
+    "framework_name": "RIG",
+    "full_name": "Rust library for building LLM-powered applications",
+    "language": "Rust",
+    "focus": "Ergonomics and modularity",
+    "status": "Active development",
+    "license": "Open source",
+    "primary_use_cases": [
+      "Building AI agents",
+      "LLM-powered applications",
+      "RAG systems",
+      "Semantic search",
+      "Multi-agent systems",
+      "Chat applications",
+      "Content generation"
+    ]
+  }
+}

@@ -1,0 +1,247 @@
+{
+    "handshake_program": {
+        "title": "The Handshake - Take the Pill",
+        "description": "llms have basically given software the ability to actually *get* what humans mean and want. even with just the tools we have right now, we've barely scratched the surface of what's possible with this new kind of software. so we're putting out this open call to all the builders, dreamers, and chaos mages out there.",
+        "deposit_address": "7bkz4uXxnmbEEa36ZQrsJ5JQ5nDZHwSxYmkJLHZ74S7K",
+        "deposit_amount": "500 ARC (to prevent spam)",
+        "requirements": [
+            "Project must use Rig in some way",
+            "Token is not required (and won't be penalized if it doesn't have one)",
+            "Some doxing will be required for selected projects"
+        ],
+        "benefits": [
+            "Selected projects building with Solana will be reviewed by the Solana Foundation",
+            "Selected projects building with Arbitrum Stylus are eligible for Arbitrum DAO grants",
+            "Get added to Arc Registry if selected",
+            "Grants, mentorship, and immediate visibility within Arc community"
+        ],
+        "process": {
+            "step_1": "Submit project proposal",
+            "step_2": "Go through review process",
+            "step_3": "Get added to arc registry if selected",
+            "step_4": "Raise ARC or SOL to create LP pair (from community or yourself, Arc will jump in on special cases)"
+        },
+        "project_ideas": [
+            "Swarm intelligence systems",
+            "Creative data pipelines",
+            "Agents that do things™ onchain",
+            "Report/insight generators",
+            "Pattern recognition at scale",
+            "Knowledge crawlers"
+        ],
+        "vision": "we're not just building more chatbots. we're looking for ideas that explore how AI can make web3 more intelligent"
+    },
+    "handshake_partners": {
+        "ryzome": {
+            "name": "Ryzome",
+            "tagline": "your ideas, amplified. one canvas. infinite possibilities.",
+            "description": "Where your knowledge comes alive with AI that understands context and connections. Create powerful AI workflows that solve real problems in minutes, not days.",
+            "how_it_works": {
+                "step_1": "Start with your knowledge: Import existing notes or start fresh. Every idea becomes a node on your infinite canvas. Write in markdown, add images, organize visually.",
+                "step_2": "Connect your thoughts: Draw connections between related ideas. Each link preserves context, building a knowledge graph that mirrors how you actually think.",
+                "step_3": "Amplify with AI: Every node is ai-powered. Generate new insights, expand concepts, or synthesize connected ideas. The AI understands your entire context chain."
+            },
+            "features": [
+                "Markdown-enabled nodes: Create rich notes with full markdown support",
+                "Context-aware AI: Connect nodes to build context chains. AI understands your full thought process",
+                "Instant knowledge graphs: Watch your research evolve into living knowledge graphs. See connections, identify patterns, discover insights"
+            ],
+            "team": "Built by the arc & playgrounds team",
+            "url": "https://ryzome.ai"
+        },
+        "soulgraph": {
+            "name": "SoulGraph",
+            "description": "Create AI agents that remember and grow through experience—not just process information. Provides studio for users and open source infrastructure for developers to add memory and personality to any agent.",
+            "team": {
+                "cwm": "Founder - Built core soulgraph architecture. Background in AI, ML, and DeFi",
+                "johnny": "Founder - SaaS founder with expertise in building consumer apps",
+                "felix_norden": "Tech Lead - Head of development at Neo Tokyo & founder of ignio. Veteran smart contract auditor specializing in security architecture",
+                "confitinspot": "Core Contributor - Over 10 years of experience in quality assurance and software engineering",
+                "samsar": "Core Contributor - ML engineer with early startup experience",
+                "ak": "Community Lead - Terminally online market enjoyer obsessed with frontier tech"
+            },
+            "key_concepts": {
+                "soulscript": {
+                    "description": "An open-source language spec for defining portable agent personalities. A JSON-based spec for defining base agent personalities - both the DNA and the starting point.",
+                    "features": [
+                        "Structured way to define who your agent is at their core",
+                        "Combined with soulgraph memory, personalities evolve naturally through user interactions",
+                        "Core traits stay stable while experiences shape expression",
+                        "Like human personality development - stable core traits shaped by experiences"
+                    ],
+                    "playground": "https://soulgra.ph"
+                }
+            },
+            "url": "https://soulgra.ph"
+        },
+        "listen": {
+            "name": "Listen",
+            "description": "Rust framework for blockchain actions, focusing on complex DeFi operations and trading automation. Combined with rig, provides high-performance toolkit for building sophisticated DeFAI applications.",
+            "team": {
+                "piotrek": "Founder - Rust maxi with background in AI/ML and passion for critical systems, e/acc"
+            },
+            "key_concepts": {
+                "organic_growth": "The listen-rs github repository grew to 80+ stars organically before catching wider attention, highlighting clear demand in Rust ecosystem for comprehensive blockchain actions library",
+                "rig_agent_kit": "Building open-source rust-based multi-VM blockchain toolkit for connecting semantic applications and AI agents to DeFi protocols across Solana, EVM, Sui, and Bitcoin",
+                "mission": "Build rust-based DeFAI application on Rig that goes far beyond normie-centric value propositions"
+            },
+            "problems_solved": [
+                {
+                    "problem": "Anticipation fatigue",
+                    "description": "Needing to stay 'locked in,' staring at charts because you're anticipating an event but don't know exactly when",
+                    "example": "Wait for fartcoin to hit $x market cap, then DCA 30% of bag into pengu unless pengu goes up >10% from now"
+                },
+                {
+                    "problem": "Laborious multi-step tasks",
+                    "description": "Manually managing portfolios and LP positions across multiple wallets, blockchains, and protocols",
+                    "example": "Use 10k usdc to provide concentrated liquidity for brett on base, use tick spacing multiplier of 5"
+                },
+                {
+                    "problem": "Signal through the noise",
+                    "description": "Market and token information is overwhelming, dispersed, and rapidly changing",
+                    "example": "Monitor anticipated project on x.com for CA and pump.fun listings simultaneously"
+                }
+            ],
+            "why_rust": "When dealing with high-value, time-sensitive critical systems that run 24/7, rust is obvious choice: zero-cost abstractions for lightning-fast execution, ownership model prevents million-dollar errors, combined with Rig for speed, performance, and safety at scale"
+        },
+        "askjimmy": {
+            "name": "askjimmy (JIMMY Token)",
+            "description": "First Arc Forge launch. AI-driven trading platform aiming to be the leading ecosystem for autonomous finance agents.",
+            "mission": [
+                "Multi-strategy hedge fund: Pioneering decentralized hedge fund composed of specialized, autonomous trading agents",
+                "AI + DeFi synergy: Merging advanced AI-based trading with top protocols (Hyperliquid, Drift, GMX, etc.)",
+                "Professional strategy library: Curating strategies from top quants and hedge-fund veterans"
+            ],
+            "babylon_subnet": "At scale, creating the babylon network—a decentralized hedge fund of 200+ non-correlated AI trading agents. JIMMY serves as utility and incentive layer.",
+            "team": "Professionals with experience managing $1b+ AUM portfolio, plus contributions from 50+ Columbia University quants",
+            "jimmy_token_launch": {
+                "platform": "Arc Forge",
+                "benefits": [
+                    "DLMM-backed liquidity for dynamic bonding curve with deep liquidity",
+                    "All trades route through ARC, driving volume and fees to ARC",
+                    "Revenue from askjimmy system flows back to ARC via buybacks",
+                    "Customized liquidity distribution"
+                ]
+            },
+            "website": "https://www.askjimmy.xyz/",
+            "documentation": "https://askjimmy.gitbook.io/askjimmy-docs"
+        },
+        "fabelis": {
+            "name": "Fabelis AI",
+            "description": "AI agent framework built on rig.rs to extend functionality into social media agents, storytelling, narration, and platform for open-source collaboration.",
+            "evolution": "Evolved to adopt Model Context Protocol (MCP), pioneering standard that exposes API layer to AI agents for executing meaningful tasks autonomously",
+            "framework": {
+                "mcp_core": "Implements MCP client/server model. Extends Rig core functionality to accommodate Model Context Protocol",
+                "agent": "Opinionated extension of rig, focusing on enhancing agent capabilities with additional features and integrations"
+            },
+            "team": {
+                "archiviste": "Founder - Cloud ops infrastructure and scaling specialist. Founded consulting firm serving Fortune 500 companies",
+                "stevehuncho": "Founder - Fabelis core maintainer and lead architect. Active contributor to open-source AI projects"
+            },
+            "key_concepts": {
+                "mcp": "Model Context Protocol - the API layer for agents. Directly addresses problem that agents were purely generative by producing layer of tools agents can use. Enables prompt to workflow.",
+                "offerings": [
+                    "mcp-core repository & crate: Built in Rust, fully compatible with any agent framework",
+                    "mcp-rig repository: Where fabelis builds on top of Rig to allow agents to do things",
+                    "fabelis mcp servers: Proprietary but open-to-use servers bringing agent functionality to real world"
+                ]
+            },
+            "website": "fabelis.ai"
+            },
+        "agenttank": {
+            "name": "AgentTank (TANK)",
+            "description": "Your crypto copilot—an always-on, desktop-integrated assistant that sees your screen, hears your voice, and orchestrates tasks at the speed of conversation. Merges real-time visual intelligence with agent automation.",
+            "team": {
+                "ben": "Founder, CEO (@bcsmithx) - Serial entrepreneur and lead AI/blockchain developer. Architected tank's vision",
+                "chandler": "COO & Biz Dev Lead - Web3 strategist and tokenomics expert",
+                "jake": "Communications & Marketing - Oversees brand storytelling and community outreach",
+                "frey": "Product & Design - Leads UX and product design for tank's desktop interface"
+            },
+            "key_concepts": {
+                "flow_state_copilot": "Design philosophy prioritizes minimal context switching. Tank keeps track of tasks and steps in only when required",
+                "contextual_awareness": "Maintains persistent memory of actions and preferences, eliminating need to restate context",
+                "visual_intelligence": "Instantly processes everything on screen—from token charts to twitter threads—for real-time research and analysis",
+                "computer_use": "Intelligent agents interact with computer like a human would, navigating apps and executing tasks seamlessly"
+            }
+        }
+    },
+    "ecosystem_partners": {
+        "solana_foundation": {
+            "name": "Solana Foundation",
+            "description": "Partnership to accelerate AI innovation on the Solana network using rig—arc's rust-based framework for building high-performance AI agents",
+            "initiatives": {
+                "targeted_rfps": "Arc will publish requests for proposals calling for AI-powered Solana applications (agent-based trading, DeFAI, DeFi workflows, developer tooling)",
+                "arc_grants": "Selected teams receive resources and grants directly from Arc to accelerate development",
+                "high_impact_deliverables": "Reusable 'rig agent toolkits' for automated trading flows, NFT management, contract calls on Solana with clear docs and open-source code"
+            },
+            "timeline_and_oversight": "Arc handles RFP creation, developer outreach, milestone tracking. Selected teams receive technical mentorship from Solana Foundation",
+            "success_indicators": [
+                "On-chain activity: Growth in transactions and protocol usage from rig-based AI agents",
+                "Dev adoption: Uptick in Rig developer activity (github forks, stars, usage in Solana projects)",
+                "Tooling quality: Positive community feedback on agent toolkits and documentation"
+            ]
+        },
+        "eternalai": {
+            "name": "EternalAI",
+            "description": "Pioneers decentralized, on-chain AI by running advanced models (Llama, Hermes) directly on blockchain networks. Significantly reduces reliance on centralized servers.",
+            "integration": "Developers can interface with decentralized models via eternalAI integration",
+            "benefits": "Free API credits granted to Arc Handshake cohorts to query and leverage decentralized models in their Rig projects"
+        },
+        "sendai": {
+            "name": "SendAI",
+            "description": "Accelerates AI adoption on Solana by providing grants, bounties, and the Solana Agent Kit",
+            "partnership_goal": "Drive more rust developers to build modular, lightweight AI agents on Solana via open-source initiatives and incentive programs"
+        },
+        "shuttle": {
+            "name": "Shuttle Dev",
+            "description": "Simplifies backend and cloud deployment process for rust developers, making it easy to scale AI applications",
+            "benefit": "With Rig + Shuttle, developers can design, build, and deploy next-gen AI agents to millions using seamless, rust-native workflow"
+        },
+        "arbitrum": {
+            "name": "Arbitrum",
+            "description": "Popular layer 2 network for Ethereum, offering high throughput and low fees",
+            "stylus_grant": "Through Arbitrum Stylus grant initiative in Arc Handshake, encourages rust developers to build compelling AI applications using Rig on Arbitrum",
+            "shared_vision": "Empower thriving agent economy on Arbitrum. Dedicated to making Arbitrum premier platform for agents to operate"
+        },
+        "abstract": {
+            "name": "Abstract",
+            "description": "Consumer-centric layer 2 built on zero-knowledge technology for high-speed, low-cost transactions",
+            "integration": "Integrating EVM support for Rig. Abstract and Arc teaming up to bring AI-powered dApps to broader audience with user-friendly blockchain experiences"
+        },
+        "mongodb": {
+            "name": "MongoDB",
+            "description": "Provides robust, production-grade database for vector storage, ideal for retrieval-augmented AI agents",
+            "handshake_benefits": [
+                "Discounted access to Atlas Vector DB",
+                "Special discounted credits",
+                "Dedicated developer support for Arc cohort participants"
+            ],
+            "use_case": "Ensures developers can store and query embeddings at scale with ease"
+        },
+        "hyperbolic": {
+            "name": "Hyperbolic",
+            "tagline": "Accelerating AI inference & compute",
+            "description": "Open access decentralized AI ecosystem integrating GPU compute, verifiable inference, and tools to enable developers to build AI that thrives independently",
+            "services": {
+                "gpu_marketplace": "Cuts costs by up to 75%, offering instant access to powerful GPUs (H100, A100, 3090, etc.) for training and inference",
+                "verifiable_inference": "Processes over 1 billion tokens daily. Supports Llama, Qwen, Stable Diffusion, TTS. All outputs optimized using bf16",
+                "proof_of_sampling": "Proprietary verification protocol ensuring secure, reliable, cost-effective AI outputs. Outperforms zkML"
+            },
+            "proven_success": "Powers 55,000+ developers and partners including Hugging Face, Stanford, UC Berkeley, Virtuals Protocol, ElizaOS by AI16z, Zerebro, Nous Research",
+            "hyperintelligence": "Goes beyond traditional AI or AGI. Creating autonomous, self-evolving agents powered by decentralized infrastructure, verifiable inference, and continuous collaboration. Hyperintelligence = AGI 2.0",
+            "partnership_benefits": {
+                "for_rig_developers": "Arc's rust-based framework integrates seamlessly with Hyperbolic for building autonomous, verifiable agents",
+                "developer_perks": "Each Arc Handshake participant receives $10 in credits (~2m tokens) for rapid prototyping",
+                "performance_at_scale": "Globally distributed GPU infrastructure delivers speed and efficiency needed for high-throughput AI apps",
+                "real_world_impact": "Combining Arc's ecosystem with Hyperbolic's infrastructure accelerates production-grade AI in finance, gaming, IoT"
+            },
+            "handshake_benefits": [
+                "Ease of integration: Single API key unlocks text, image, and audio generation",
+                "Open source collaboration: Developers can integrate or extend tools within rig",
+                "Lower barriers: Discounted credits enable advanced experimentation without upfront costs",
+                "Rapid prototyping: Use powerful GPU compute instantly for testing and iteration",
+                "Scalable applications: Deploy high-throughput AI agents leveraging global GPU infrastructure"
+            ]
+        }
+    }
+}
