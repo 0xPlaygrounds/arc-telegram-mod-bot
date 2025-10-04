@@ -120,8 +120,8 @@ def format_filters_for_context(filters_data: Dict[str, Any]) -> str:
 
 def load_rag_documents() -> Dict[str, Any]:
     """Load all RAG documents from organized folders (JSON format)"""
-    base_path = Path(__file__).parent.parent
-    rag_path = base_path / "rag"
+    base_path = Path(__file__).parent.parent  # Gets to project root
+    rag_path = base_path / "data" / "rag"     # Add "data" here
     filters_path = base_path / "filters"
     
     loaded_docs = {}
@@ -133,10 +133,10 @@ def load_rag_documents() -> Dict[str, Any]:
         "arc_core": rag_path / "arc" / "core.json",
         "arc_ecosystem": rag_path / "arc" / "ecosystem.json",
         "guides": rag_path / "guides" / "getting_started.json",
-        "news": filters_path / "posts.json",  # External reference
+        "news": filters_path / "posts.json",
         "roadmap": rag_path / "roadmap" / "upcoming.json",
-        "podcasts": filters_path / "podcasts.json",  # External reference
-        "filters": filters_path / "filters.json"  # External reference
+        "podcasts": filters_path / "podcasts.json",
+        "filters": filters_path / "filters.json"
     }
     
     for key, file_path in doc_files.items():
