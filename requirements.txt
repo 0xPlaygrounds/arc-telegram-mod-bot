@@ -18,3 +18,4 @@ python-multipart==0.0.6
 websockets==11.0.3
 pymongo==4.6.1
 dnspython>=2.7.0,<3.0
+openai==1.33.0
