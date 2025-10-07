@@ -671,9 +671,9 @@ def check_message(update: Update, context: CallbackContext):
         # Normalize the message
         normalized = message_text.strip().lower()
 
-        # Check for banned phrases (exact match only)
+        # Check for banned phrases (contains match)
         for phrase in BAN_PHRASES:
-            if normalized == phrase.lower():
+            if phrase.lower() in normalized:
                 try:
                     # ban the user
                     context.bot.ban_chat_member(chat_id=chat_id, user_id=user.id)
@@ -682,18 +682,17 @@ def check_message(update: Update, context: CallbackContext):
                     context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
 
                     # log result
-                    print(f"[BANNED] Exact match: '{phrase}' in message '{message_text}' from user {user.id}")
+                    print(f"[BANNED] Phrase found: '{phrase}' in message '{message_text}' from user {user.id}")
 
                 except Exception as e:
-                    # log error
                     print(f"[ERROR] Failed to ban/delete user {user.id} for banned phrase '{phrase}': {e}")
 
                 return  # Stop further processing
 
-        # Check for muted phrases (exact match only)
+        # Check for muted phrases (contains match)
         for phrase in MUTE_PHRASES:
-            if normalized == phrase.lower():
-                print(f"[MUTE MATCH] Exact phrase: '{phrase}' matched in message: '{message_text}'")
+            if phrase.lower() in normalized:
+                print(f"[MUTE MATCH] Phrase found: '{phrase}' in message: '{message_text}'")
                 until_date = message.date + timedelta(seconds=MUTE_DURATION)
                 permissions = ChatPermissions(can_send_messages=False)
 
@@ -715,10 +714,10 @@ def check_message(update: Update, context: CallbackContext):
 
                 return  # Stop further processing
 
-        # Check for deleted phrases (exact match only)
+        # Check for deleted phrases (contains match)
         for phrase in DELETE_PHRASES:
-            if normalized == phrase.lower():
-                print(f"[DELETE MATCH] Exact phrase: '{phrase}' matched in message: '{message_text}'")
+            if phrase.lower() in normalized:
+                print(f"[DELETE MATCH] Phrase found: '{phrase}' in message: '{message_text}'")
 
                 try:
                     context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
