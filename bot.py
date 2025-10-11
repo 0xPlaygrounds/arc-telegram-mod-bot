@@ -575,16 +575,20 @@ def check_message(update: Update, context: CallbackContext):
 
     # Normalize and fetch admin names for impersonation check
     admin_names_normalized = get_admin_names(context, chat_id)
-    name_normalized = normalize_name(user.full_name)
+
+    # Construct full name & username explicitly
+    full_name = f"{user.first_name or ''} {user.last_name or ''}".strip()
+    name_normalized = normalize_name(full_name)
     username_normalized = normalize_name(user.username or "")
-    
+
     # Ignore messages from admins
     if user_id not in admin_ids:
 
         combined_identity = f"{name_normalized} {username_normalized} {message_text.lower()}"
 
         # Check for suspicious keywords
-        if name_normalized in SUSPICIOUS_USERNAMES or username_normalized in SUSPICIOUS_USERNAMES:
+        if any(susp in name_normalized for susp in SUSPICIOUS_USERNAMES) \
+                or any(susp in username_normalized for susp in SUSPICIOUS_USERNAMES):
             try:
                 # ban the user
                 context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
@@ -593,11 +597,11 @@ def check_message(update: Update, context: CallbackContext):
                 context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
 
                 # log result
-                print(f"[BANNED] Suspicious keyword match in name/username: {user.full_name} (@{user.username})")
+                print(f"[BANNED] Suspicious keyword match in name/username: {full_name} (@{user.username})")
                 return
             except Exception as e:
                 # log error
-                print(f"[ERROR] Failed to ban suspicious user {user_id}: {e}")
+                print(f"[ERROR] Failed to ban suspicious user {full_name} (@{user.username} | ID: {user_id}): {e}")
 
         # Check for bio-like phrases
         if (
@@ -613,14 +617,14 @@ def check_message(update: Update, context: CallbackContext):
                 context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
 
                 # log result
-                print(f"[BANNED] Suspicious content detected: {combined_identity}")
+                print(f"[BANNED] Suspicious content detected: {combined_identity} | User: {full_name} (@{user.username} | ID: {user_id})")
                 return
             except Exception as e:
                 # log error
-                print(f"[ERROR] Failed to ban user {user_id}: {e}")
+                print(f"[ERROR] Failed to ban user {full_name} (@{user.username} | ID: {user_id}): {e}")
 
         # Check for impersonation
-        if name_normalized in admin_names_normalized:
+        if any(admin_name in name_normalized for admin_name in admin_names_normalized):
             try:
                 # ban the user
                 context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
@@ -629,11 +633,11 @@ def check_message(update: Update, context: CallbackContext):
                 context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
 
                 # log result
-                print(f"[BANNED] Impersonation detected: {user.full_name} matched an admin name")
+                print(f"[BANNED] Impersonation detected: {full_name} matched an admin name")
                 return
             except Exception as e:
                 # log error
-                print(f"[ERROR] Failed to ban impersonator {user_id}: {e}")
+                print(f"[ERROR] Failed to ban impersonator {full_name} (@{user.username} | ID: {user_id}): {e}")
 
         # check if message is too short
         if len(message_text.strip()) < 2:
