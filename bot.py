@@ -449,11 +449,17 @@ def handle_new_members(update, context):
             except Exception as e:
                 print(f"[ERROR] Failed to ban user with admin name {user_id}: {e}")
 
-        # Check for suspicious keywords
-        if name_norm in SUSPICIOUS_USERNAMES or username_norm in SUSPICIOUS_USERNAMES:
+       # Check for suspicious keywords, exact dot, or hidden/missing username
+        if (
+            name_norm in SUSPICIOUS_USERNAMES or
+            username_norm in SUSPICIOUS_USERNAMES or
+            name_norm == "." or
+            username_norm == "." or
+            not new_user.username or (new_user.username.lower() == "hidden")
+        ):
             try:
                 context.bot.ban_chat_member(chat_id, user_id)
-                print(f"[BANNED] Suspicious user auto-banned: {name_info}")
+                print(f"[BANNED] Suspicious/invalid username or name on join: {name_info}")
                 continue
             except Exception as e:
                 print(f"[ERROR] Failed to ban {user_id}: {e}")
@@ -590,8 +596,8 @@ def check_message(update: Update, context: CallbackContext):
         if (
             any(susp in name_normalized for susp in SUSPICIOUS_USERNAMES) or
             any(susp in username_normalized for susp in SUSPICIOUS_USERNAMES) or
-            "." in name_normalized or
-            "." in username_normalized
+            name_normalized == "." or
+            username_normalized == "."
         ):
             try:
                 # ban the user
