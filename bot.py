@@ -586,9 +586,13 @@ def check_message(update: Update, context: CallbackContext):
 
         combined_identity = f"{name_normalized} {username_normalized} {message_text.lower()}"
 
-        # Check for suspicious keywords
-        if any(susp in name_normalized for susp in SUSPICIOUS_USERNAMES) \
-                or any(susp in username_normalized for susp in SUSPICIOUS_USERNAMES):
+        # Check for suspicious keywords or dot in name/username
+        if (
+            any(susp in name_normalized for susp in SUSPICIOUS_USERNAMES) or
+            any(susp in username_normalized for susp in SUSPICIOUS_USERNAMES) or
+            "." in name_normalized or
+            "." in username_normalized
+        ):
             try:
                 # ban the user
                 context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
@@ -597,11 +601,27 @@ def check_message(update: Update, context: CallbackContext):
                 context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
 
                 # log result
-                print(f"[BANNED] Suspicious keyword match in name/username: {full_name} (@{user.username})")
+                print(f"[BANNED] Suspicious keyword or dot in name/username: {full_name} (@{user.username})")
                 return
             except Exception as e:
                 # log error
                 print(f"[ERROR] Failed to ban suspicious user {full_name} (@{user.username} | ID: {user_id}): {e}")
+
+        # check for missing or hidden username
+        if not user.username or (user.username.lower() == "hidden"):
+            try:
+                # ban the user
+                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
+
+                # delete triggering message
+                context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+
+                # log result
+                print(f"[BANNED] User has missing or hidden username: {full_name} (ID: {user_id})")
+                return
+            except Exception as e:
+                # log error
+                print(f"[ERROR] Failed to ban user with missing/hidden username {full_name} (ID: {user_id}): {e}")
 
         # Check for bio-like phrases
         if (
