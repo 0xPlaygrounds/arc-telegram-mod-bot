@@ -600,11 +600,11 @@ def check_message(update: Update, context: CallbackContext):
             username_normalized == "."
         ):
             try:
-                # ban the user
-                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
-
                 # delete triggering message
                 context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+
+                # ban the user
+                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
 
                 # log result
                 print(f"[BANNED] Suspicious keyword or dot in name/username: {full_name} (@{user.username})")
@@ -616,11 +616,12 @@ def check_message(update: Update, context: CallbackContext):
         # check for missing or hidden username
         if not user.username or (user.username.lower() == "hidden"):
             try:
-                # ban the user
-                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
 
                 # delete triggering message
                 context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+
+                # ban the user
+                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
 
                 # log result
                 print(f"[BANNED] User has missing or hidden username: {full_name} (ID: {user_id})")
@@ -641,11 +642,11 @@ def check_message(update: Update, context: CallbackContext):
                 reason = "NON_X_LINK"
 
             if reason:
-                # ban the user
-                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
-
                 # delete triggering message
                 context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+                
+                # ban the user
+                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
 
                 # structured and detailed logging
                 print(
@@ -666,11 +667,12 @@ def check_message(update: Update, context: CallbackContext):
         # Check for impersonation
         if any(admin_name in name_normalized for admin_name in admin_names_normalized):
             try:
-                # ban the user
-                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
 
                 # delete triggering message
                 context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+
+                # ban the user
+                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
 
                 # log result
                 print(f"[BANNED] Impersonation detected: {full_name} matched an admin name")
@@ -719,11 +721,11 @@ def check_message(update: Update, context: CallbackContext):
         for phrase in BAN_PHRASES:
             if phrase.lower() in normalized:
                 try:
-                    # ban the user
-                    context.bot.ban_chat_member(chat_id=chat_id, user_id=user.id)
-
                     # delete triggering message
                     context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+                    
+                    # ban the user
+                    context.bot.ban_chat_member(chat_id=chat_id, user_id=user.id)
 
                     # log result
                     print(f"[BANNED] Phrase found: '{phrase}' in message '{message_text}' from user {user.id}")
