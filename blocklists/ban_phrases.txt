@@ -194,3 +194,4 @@ take immediate action
 migrate your tokens
 old contract
 private mesage
+phantom wallet
