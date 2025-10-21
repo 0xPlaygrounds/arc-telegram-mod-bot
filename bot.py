@@ -444,26 +444,33 @@ def handle_new_members(update, context):
         if name_norm in admin_names:
             try:
                 context.bot.ban_chat_member(chat_id, user_id)
-                print(f"[BANNED] Name '{name}' normalized to '{name_norm}' matches an admin name. Banned for impersonation.")
+                print(f"[BANNED] Admin impersonation: '{name}' (normalized: '{name_norm}') | {name_info} (ID: {user_id})")
                 continue
             except Exception as e:
-                print(f"[ERROR] Failed to ban user with admin name {user_id}: {e}")
+                print(f"[ERROR] Failed to ban user for admin impersonation {user_id}: {e}")
 
        # Check for suspicious keywords, exact dot, or hidden/missing username
-        if (
-            name_norm in SUSPICIOUS_USERNAMES or
-            username_norm in SUSPICIOUS_USERNAMES or
-            name_norm == "." or
-            username_norm == "." or
-            not username or # Check the actual username variable
-            (username and username.lower() == "hidden")
-        ):
+        ban_reason = None
+        if name_norm in SUSPICIOUS_USERNAMES:
+            ban_reason = f"Suspicious name '{name_norm}' in blocklist"
+        elif username_norm in SUSPICIOUS_USERNAMES:
+            ban_reason = f"Suspicious username '{username_norm}' in blocklist"
+        elif name_norm == ".":
+            ban_reason = "Name is single dot"
+        elif username_norm == ".":
+            ban_reason = "Username is single dot"
+        elif not username:
+            ban_reason = "No username (hidden or missing)"
+        elif username.lower() == "hidden":
+            ban_reason = "Username is 'hidden'"
+
+        if ban_reason:
             try:
                 context.bot.ban_chat_member(chat_id, user_id)
-                print(f"[BANNED] Suspicious/invalid username or name on join: {name_info}")
+                print(f"[BANNED] {ban_reason} | {name_info} (ID: {user_id})")
                 continue
             except Exception as e:
-                print(f"[ERROR] Failed to ban {user_id}: {e}")
+                print(f"[ERROR] Failed to ban {user_id} for '{ban_reason}': {e}")
 
         # Check for bio phrases
         if (
