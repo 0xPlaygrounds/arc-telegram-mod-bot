@@ -449,7 +449,7 @@ def handle_new_members(update, context):
             except Exception as e:
                 print(f"[ERROR] Failed to ban user for admin impersonation {user_id}: {e}")
 
-       # Check for suspicious keywords, exact dot, or hidden/missing username
+        # Check for suspicious keywords, exact dot, or hidden/missing username
         ban_reason = None
         if name_norm in SUSPICIOUS_USERNAMES:
             ban_reason = f"Suspicious name '{name_norm}' in blocklist"
@@ -473,17 +473,23 @@ def handle_new_members(update, context):
                 print(f"[ERROR] Failed to ban {user_id} for '{ban_reason}': {e}")
 
         # Check for bio phrases
-        if (
-            any(keyword in combined_identity for keyword in BIO_PHRASES) or
-            contains_multiplication_phrase(combined_identity) or
-            contains_non_x_links(combined_identity)
-        ):
+        detected = []
+        if any(keyword in combined_identity for keyword in BIO_PHRASES):
+            detected.append("bio phrase")
+        if contains_multiplication_phrase(combined_identity):
+            detected.append("multiplication")
+        if contains_non_x_links(combined_identity):
+            detected.append("non-X link")
+
+        if detected:
             try:
                 context.bot.ban_chat_member(chat_id, user_id)
-                print(f"[BANNED] User with suspicious content on join: {name_info}")
+                print(f"[BANNED] Spam detected ({', '.join(detected)}) | {name_info} (ID: {user_id})")
                 continue
             except Exception as e:
                 print(f"[ERROR] Failed to ban user {user_id}: {e}")
+        # new user passed all checks
+        print(f"[JOIN APPROVED] User passed all security checks: {name_info} (ID: {user_id})")
 
 def list_filters(update: Update, context: CallbackContext):
     # Load the latest filters
