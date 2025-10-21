@@ -428,15 +428,15 @@ def handle_new_members(update, context):
 
     for new_user in message.new_chat_members:
         name = new_user.full_name or "No Name"
-        username = new_user.username or "No Username"
-        user_id = new_user.id
+        username = new_user.username # no fallback
+        user_id = new_user.id 
 
-        name_info = f"Name: {name}, Username: @{username}" if new_user.username else f"Name: {name} (no username)"
+        name_info = f"Name: {name}, Username: @{username}" if username else f"Name: {name} (no username)"
         print(f"[JOIN] {name_info} (ID: {user_id})")
 
         # Normalize names and usernames
         name_norm = normalize_name(name)
-        username_norm = normalize_name(username)
+        username_norm = normalize_name(username) if username else "" # Only normalize if exists
 
         # Combine normalized name + username for keyword checks
         combined_identity = f"{name_norm} {username_norm}"
@@ -455,7 +455,8 @@ def handle_new_members(update, context):
             username_norm in SUSPICIOUS_USERNAMES or
             name_norm == "." or
             username_norm == "." or
-            not new_user.username or (new_user.username.lower() == "hidden")
+            not username or # Check the actual username variable
+            (username and username.lower() == "hidden")
         ):
             try:
                 context.bot.ban_chat_member(chat_id, user_id)
