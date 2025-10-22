@@ -18,7 +18,6 @@ from telegram import (
 from telegram.ext import (
     Updater, 
     MessageHandler,
-    MessageReactionHandler, 
     Filters, 
     CallbackContext, 
     CommandHandler,
