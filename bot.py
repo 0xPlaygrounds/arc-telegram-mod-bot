@@ -17,7 +17,8 @@ from telegram import (
 )
 from telegram.ext import (
     Updater, 
-    MessageHandler, 
+    MessageHandler,
+    MessageReactionHandler, 
     Filters, 
     CallbackContext, 
     CommandHandler,
@@ -1044,7 +1045,7 @@ def main():
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, handle_new_members))
 
     # Handler: Message reactions (emoji) - Ban suspicious users who only react
-    dp.add_handler(MessageHandler(Filters.update.message_reaction, handle_message_reaction))
+    dp.add_handler(MessageReactionHandler(handle_message_reaction))
 
     # Handler: All message types - Main security and filter processing
     dp.add_handler(MessageHandler(
