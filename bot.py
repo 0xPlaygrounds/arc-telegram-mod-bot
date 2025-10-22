@@ -513,8 +513,11 @@ def list_filters(update: Update, context: CallbackContext):
 
 def handle_message_reaction(update: Update, context: CallbackContext):
     """Handle emoji reactions and ban suspicious users"""
-    # Get reaction info
-    message_reaction = update.message_reaction
+    # message_reaction_updated is the correct attribute
+    if not hasattr(update, 'message_reaction_updated'):
+        return
+    
+    message_reaction = update.message_reaction_updated
     if not message_reaction:
         return
     
