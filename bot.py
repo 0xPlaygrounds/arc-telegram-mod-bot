@@ -483,7 +483,7 @@ def handle_new_members(update, context):
         if detected:
             try:
                 context.bot.ban_chat_member(chat_id, user_id)
-                print(f"[BANNED] Spam detected ({', '.join(detected)}) | {name_info} (ID: {user_id})")
+                print(f"[BANNED] Disallowed Bio Detected ({', '.join(detected)}) | {name_info} (ID: {user_id})")
                 continue
             except Exception as e:
                 print(f"[ERROR] Failed to ban user {user_id}: {e}")
@@ -594,8 +594,6 @@ def check_message(update: Update, context: CallbackContext):
     user_id = update.effective_user.id
     user = update.effective_user
 
-    should_skip_spam_check = False
-
     # --- Detect if message is forwarded ---
     is_forwarded = False
     forward_info = {}
@@ -617,36 +615,6 @@ def check_message(update: Update, context: CallbackContext):
     if getattr(message, "forward_sender_name", None):
         is_forwarded = True
         forward_info["forward_sender_name"] = message.forward_sender_name
-
-    # Scan for Telegram group/channel links in text or entities
-    def extract_telegram_links(msg):
-        links = []
-        entities = msg.entities or []
-        if getattr(msg, "caption_entities", None):
-            entities += msg.caption_entities
-
-        for ent in entities:
-            if ent.type in ["text_link", "url"]:
-                if ent.type == "text_link":
-                    url = ent.url
-                else:
-                    url = msg.text[ent.offset : ent.offset + ent.length]
-
-                if re.match(r"https?://t\.me/[^\s]+", url):
-                    links.append(url)
-
-        # Extra check: scan raw text/caption for any t.me links not marked as entities
-        raw_text = msg.text or msg.caption or ""
-        extra_links = re.findall(r"https?://t\.me/[^\s]+", raw_text)
-        for url in extra_links:
-            if url not in links:
-                links.append(url)
-        return links
-
-    linked_telegram_channels = extract_telegram_links(message)
-    if linked_telegram_channels:
-        is_forwarded = True
-        forward_info["linked_telegram_channels"] = linked_telegram_channels
 
     # --- Logging ---
     media_indicator = f" [{media_type}]" if media_type else ""
