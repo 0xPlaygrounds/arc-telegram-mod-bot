@@ -511,6 +511,56 @@ def list_filters(update: Update, context: CallbackContext):
     else:
         update.message.reply_text(response, parse_mode="Markdown")
 
+def handle_message_reaction(update: Update, context: CallbackContext):
+    """Handle emoji reactions and ban suspicious users"""
+    # Get reaction info
+    message_reaction = update.message_reaction
+    if not message_reaction:
+        return
+    
+    user = message_reaction.user
+    chat_id = message_reaction.chat.id
+    
+    # Skip if no user info
+    if not user:
+        return
+    
+    user_id = user.id
+    full_name = f"{user.first_name or ''} {user.last_name or ''}".strip()
+    username = user.username
+    
+    # Get admin IDs to skip admin reactions
+    chat_admins = context.bot.get_chat_administrators(chat_id)
+    admin_ids = [admin.user.id for admin in chat_admins]
+    
+    # Skip admins
+    if user_id in admin_ids:
+        return
+    
+    # Normalize name and username
+    name_normalized = normalize_name(full_name)
+    username_normalized = normalize_name(username or "")
+    
+    print(f"[REACTION] From {full_name} (@{username or 'N/A'} | ID: {user_id})")
+    
+    # Check for suspicious usernames
+    ban_reason = None
+    if any(susp in name_normalized for susp in SUSPICIOUS_USERNAMES):
+        ban_reason = f"Suspicious name '{name_normalized}'"
+    elif any(susp in username_normalized for susp in SUSPICIOUS_USERNAMES):
+        ban_reason = f"Suspicious username '{username_normalized}'"
+    elif name_normalized == ".":
+        ban_reason = "Name is single dot"
+    elif not username or username.lower() == "hidden":
+        ban_reason = "No/hidden username"
+    
+    if ban_reason:
+        try:
+            context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
+            print(f"[BANNED] {ban_reason} | {full_name} (@{username or 'N/A'} | ID: {user_id})")
+        except Exception as e:
+            print(f"[ERROR] Failed to ban user for reaction: {e}")
+
 def check_message(update: Update, context: CallbackContext):
     message = extract_message(update)
     if not message:
@@ -975,15 +1025,25 @@ def check_message(update: Update, context: CallbackContext):
 def main():
     logger.info("Starting bot...")
 
-    # Scheduled jobs
+    # Post security reminder at 8 AM daily
     job_queue.run_daily(lambda context: post_security_message(context, 0), time=time(hour=8, minute=0))  
+    
+    # Post security reminder at 4 PM daily
     job_queue.run_daily(lambda context: post_security_message(context, 1), time=time(hour=16, minute=0))
+
+    # Post brand assets at midnight daily
     job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
     
-    # Handlers
+    # /filters - Lists all available custom filters
     dp.add_handler(CommandHandler("filters", list_filters))
+
+    # Handler: New member joins - Security checks for suspicious users
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, handle_new_members))
 
+    # Handler: Message reactions (emoji) - Ban suspicious users who only react
+    dp.add_handler(MessageHandler(Filters.update.message_reaction, handle_message_reaction))
+
+    # Handler: All message types - Main security and filter processing
     dp.add_handler(MessageHandler(
         Filters.text | Filters.command | Filters.photo | Filters.video |
         Filters.document | Filters.animation | Filters.sticker |
