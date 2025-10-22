@@ -438,9 +438,6 @@ def handle_new_members(update, context):
         name_norm = normalize_name(name)
         username_norm = normalize_name(username) if username else "" # Only normalize if exists
 
-        # Combine normalized name + username for keyword checks
-        combined_identity = f"{name_norm} {username_norm}"
-
         if name_norm in admin_names:
             try:
                 context.bot.ban_chat_member(chat_id, user_id)
@@ -474,11 +471,13 @@ def handle_new_members(update, context):
 
         # Check for bio phrases
         detected = []
-        if any(keyword in combined_identity for keyword in BIO_PHRASES):
+        bio_text = (new_user.bio or "").strip().replace("\u200b", "").lower()
+
+        if any(keyword in bio_text.lower() for keyword in BIO_PHRASES):
             detected.append("bio phrase")
-        if contains_multiplication_phrase(combined_identity):
+        if contains_multiplication_phrase(bio_text):
             detected.append("multiplication")
-        if contains_non_x_links(combined_identity):
+        if contains_non_x_links(bio_text):
             detected.append("non-X link")
 
         if detected:
