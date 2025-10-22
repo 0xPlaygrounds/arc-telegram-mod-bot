@@ -597,7 +597,6 @@ def check_message(update: Update, context: CallbackContext):
     # --- Detect if message is forwarded ---
     is_forwarded = False
     forward_info = {}
-    linked_telegram_channels = []
 
     # Classic forward detection
     if getattr(message, "forward_date", None):
@@ -651,8 +650,6 @@ def check_message(update: Update, context: CallbackContext):
             except Exception as e:
                 print(f"[ERROR] Failed to delete {media_type}: {e}")
 
-        combined_identity = f"{name_normalized} {username_normalized} {message_text.lower()}"
-
         # Check for suspicious keywords or dot in name/username
         if (
             any(susp in name_normalized for susp in SUSPICIOUS_USERNAMES) or
@@ -690,40 +687,6 @@ def check_message(update: Update, context: CallbackContext):
             except Exception as e:
                 # log error
                 print(f"[ERROR] Failed to ban user with missing/hidden username {full_name} (ID: {user_id}): {e}")
-
-        # Check for bio-like phrases
-        try:
-            reason = None
-
-            if any(keyword in combined_identity for keyword in BIO_PHRASES):
-                reason = "BIO_PHRASE"
-            elif contains_multiplication_phrase(combined_identity):
-                reason = "MULTIPLICATION_PHRASE"
-            elif contains_non_x_links(combined_identity):
-                reason = "NON_X_LINK"
-
-            if reason:
-                # delete triggering message
-                context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
-                
-                # ban the user
-                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
-
-                # structured and detailed logging
-                print(
-                    f"[BANNED] Reason: {reason} | "
-                    f"User: {full_name} (@{user.username or 'N/A'} | ID: {user_id}) | "
-                    f"Content: {combined_identity}"
-                )
-                return
-
-        except Exception as e:
-            # error logging
-            print(
-                f"[ERROR] Failed to ban user {full_name} "
-                f"(@{user.username or 'N/A'} | ID: {user_id}) | "
-                f"Reason: {reason or 'Unknown'} | Error: {e}"
-            )
 
         # Check for impersonation
         if any(admin_name in name_normalized for admin_name in admin_names_normalized):
