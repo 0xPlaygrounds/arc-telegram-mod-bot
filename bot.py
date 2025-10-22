@@ -521,6 +521,23 @@ def check_message(update: Update, context: CallbackContext):
     raw_text = message.text or message.caption or ""
     message_text = raw_text.lower()
 
+    # for logging entity type
+    media_type = None
+    if message.photo:
+        media_type = "PHOTO"
+    elif message.video:
+        media_type = "VIDEO"
+    elif message.document:
+        media_type = "DOCUMENT"
+    elif message.animation:
+        media_type = "GIF/ANIMATION"
+    elif message.sticker:
+        media_type = "STICKER"
+    elif message.voice:
+        media_type = "VOICE"
+    elif message.video_note:
+        media_type = "VIDEO_NOTE"
+
     chat_id = update.effective_chat.id
     user_id = update.effective_user.id
     user = update.effective_user
@@ -580,13 +597,14 @@ def check_message(update: Update, context: CallbackContext):
         forward_info["linked_telegram_channels"] = linked_telegram_channels
 
     # --- Logging ---
+    media_indicator = f" [{media_type}]" if media_type else ""
     if is_forwarded:
-        print(f"[FORWARDED / LINK MESSAGE] From {user.full_name} (@{user.username} | {user_id})")
+        print(f"[FORWARDED / LINK MESSAGE]{media_indicator} From {user.full_name} (@{user.username} | {user_id})")
         for k, v in forward_info.items():
             print(f"  {k}: {v}")
         print(f"  Text/Capt: {raw_text}")
     else:
-        print(f"[GROUP MESSAGE] From {user.full_name} (@{user.username} | {user_id})")
+        print(f"[GROUP MESSAGE]{media_indicator} From {user.full_name} (@{user.username} | {user_id})")
         print(f"  Text/Capt: {raw_text}")
 
     # Fetch chat admins to prevent acting on their messages
@@ -603,6 +621,15 @@ def check_message(update: Update, context: CallbackContext):
 
     # Ignore messages from admins
     if user_id not in admin_ids:
+
+        # Delete any media from non-admins
+        if media_type:
+            try:
+                context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+                print(f"[DELETED] {media_type} from non-admin | {full_name} (@{user.username or 'N/A'} | ID: {user_id})")
+                return
+            except Exception as e:
+                print(f"[ERROR] Failed to delete {media_type}: {e}")
 
         combined_identity = f"{name_normalized} {username_normalized} {message_text.lower()}"
 
@@ -956,7 +983,14 @@ def main():
     # Handlers
     dp.add_handler(CommandHandler("filters", list_filters))
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, handle_new_members))
-    dp.add_handler(MessageHandler(Filters.text | Filters.command, check_message))
+
+    dp.add_handler(MessageHandler(
+        Filters.text | Filters.command | Filters.photo | Filters.video |
+        Filters.document | Filters.animation | Filters.sticker |
+        Filters.voice | Filters.video_note | Filters.contact |
+        Filters.location | Filters.venue | Filters.poll,
+        check_message
+    ))
 
     # Start polling (non-blocking)
     updater.start_polling()
