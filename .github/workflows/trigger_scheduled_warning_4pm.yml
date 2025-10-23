@@ -1,34 +1,34 @@
-name: Trigger News Message
+name: Trigger Scheduled Warning (4 PM)
 
 on:
   schedule:
-    - cron: "0 18 * * *"  # once per day at 18:00 UTC
+    - cron: "0 16 * * *"  # Daily at 4:00 PM UTC
   workflow_dispatch:
 
 jobs:
-  trigger-news:
+  trigger-warning:
     runs-on: ubuntu-22.04
-
+    
     steps:
       - name: Checkout repo
         uses: actions/checkout@v4
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           fetch-depth: 0
-
+      
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
           python-version: '3.11'
-
+      
       - name: Install dependencies
         run: pip install -r requirements.txt
-
-      - name: Trigger FastAPI news endpoint
+      
+      - name: Trigger FastAPI scheduled warning endpoint (index 1)
         env:
           API_URL: ${{ secrets.API_BASE_URL }}
         run: |
-          echo "Triggering news endpoint..."
-          status_code=$(curl -s -o response.json -w "%{http_code}" -X POST "$API_URL")
+          echo "Triggering scheduled warning (4 PM - index 1)..."
+          status_code=$(curl -s -o response.json -w "%{http_code}" -X POST "$API_URL/trigger/send-scheduled-warning?index=1")
           echo "Status code: $status_code"
           cat response.json

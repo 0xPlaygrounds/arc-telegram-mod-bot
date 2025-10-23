@@ -21,6 +21,8 @@ from telegram import Bot
 from web.backend.api.send_podcasts_message import router as podcast_router
 from web.backend.api.say_command import router as say_router
 from web.backend.api.send_news_message import router as news_router
+from web.backend.api.send_brand_assets import router as brand_assets_router
+from web.backend.api.send_security_warnings import router as security_warning_router
 from api.arclan_turing import router as arclan_router
 
 # -----------------------------
@@ -32,6 +34,8 @@ app = FastAPI()
 app.include_router(podcast_router)
 app.include_router(say_router)
 app.include_router(news_router)
+app.include_router(brand_assets_router)
+app.include_router(security_warning_router)
 app.include_router(arclan_router)
 
 # Allow frontend to connect

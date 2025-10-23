@@ -24,8 +24,6 @@ from telegram.ext import (
 )
 from collections import defaultdict, deque
 from datetime import datetime, timedelta, timezone, time
-from combot.scheduled_warnings import messages
-from combot.brand_assets import messages as brand_assets_messages
 from web.backend.db import telegram_messages
 from web.backend.db import save_message_to_db
 
@@ -147,68 +145,6 @@ def get_admin_names(context, chat_id):
     """Return a list of normalized full names (lowercased, whitespace cleaned) for all human admins."""
     chat_admins = context.bot.get_chat_administrators(chat_id)
     return [normalize_name(admin.user.full_name) for admin in chat_admins if not admin.user.is_bot]
-
-# combot security message
-def post_security_message(context: CallbackContext, index: int):
-    try:
-        chat = context.bot.get_chat(GROUP_CHAT_ID)
-        pinned = chat.pinned_message
-        if pinned:
-            try:
-                context.bot.unpin_chat_message(chat_id=GROUP_CHAT_ID, message_id=pinned.message_id)
-            except Exception as e:
-                print(f"[Security] Failed to unpin message: {e}")
-            try:
-                context.bot.delete_message(chat_id=GROUP_CHAT_ID, message_id=pinned.message_id)
-            except Exception as e:
-                print(f"[Security] Failed to delete message: {e}")
-    except Exception as e:
-        print(f"[Security] Failed to retrieve chat or pinned message: {e}")
-    try:
-        message = messages[index]
-        sent_message = context.bot.send_message(
-            chat_id=GROUP_CHAT_ID, 
-            text=message, 
-            parse_mode=ParseMode.HTML
-        )
-        context.bot.pin_chat_message(
-            chat_id=GROUP_CHAT_ID, 
-            message_id=sent_message.message_id, 
-            disable_notification=True
-        )
-    except Exception as e:
-        print(f"[Security] Failed to pin message: {e}")
-
-# combot brand assets
-def post_brand_assets(context: CallbackContext, index: int = 0):
-    try:
-        chat = context.bot.get_chat(GROUP_CHAT_ID)
-        pinned = chat.pinned_message
-        if pinned:
-            try:
-                context.bot.unpin_chat_message(chat_id=GROUP_CHAT_ID, message_id=pinned.message_id)
-            except Exception as e:
-                print(f"[Brand Assets] Failed to unpin message: {e}")
-            try:
-                context.bot.delete_message(chat_id=GROUP_CHAT_ID, message_id=pinned.message_id)
-            except Exception as e:
-                print(f"[Brand Assets] Failed to delete message: {e}")
-    except Exception as e:
-        print(f"[Brand Assets] Failed to retrieve chat or pinned message: {e}")
-    try:
-        message = brand_assets_messages[index]
-        sent_message = context.bot.send_message(
-            chat_id=GROUP_CHAT_ID,
-            text=message,
-            parse_mode=ParseMode.HTML
-        )
-        context.bot.pin_chat_message(
-            chat_id=GROUP_CHAT_ID,
-            message_id=sent_message.message_id,
-            disable_notification=True
-        )
-    except Exception as e:
-        print(f"[Brand Assets] Failed to send or pin message: {e}")
 
 # Load filters as dict
 def load_filters(file_path):
@@ -957,15 +893,6 @@ def check_message(update: Update, context: CallbackContext):
 
 def main():
     logger.info("Starting bot...")
-
-    # Post security reminder at 8 AM daily
-    job_queue.run_daily(lambda context: post_security_message(context, 0), time=time(hour=8, minute=0))  
-    
-    # Post security reminder at 4 PM daily
-    job_queue.run_daily(lambda context: post_security_message(context, 1), time=time(hour=16, minute=0))
-
-    # Post brand assets at midnight daily
-    job_queue.run_daily(post_brand_assets, time=time(hour=0, minute=0))
     
     # /filters - Lists all available custom filters
     dp.add_handler(CommandHandler("filters", list_filters))
