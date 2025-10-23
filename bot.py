@@ -318,16 +318,9 @@ def contains_give_sol_phrase(text):
     return re.search(pattern, text)
 
 def contains_arrows(message_text):
-    """
-    Returns True if the message contains the → character, False otherwise.
-    """
     return "→" in message_text
 
 def disallowed_filters(update, context):
-    """
-    Deletes a message if it is not in the whitelist filters or custom filters.
-    Caller should decide whether to run this check (e.g., only for commands starting with '/').
-    """
     message_text = update.message.text
     chat_id = update.message.chat_id
     message_id = update.message.message_id
@@ -353,6 +346,33 @@ def contains_non_x_links(text: str) -> bool:
             return True  # Found a non-X link
     return False
 
+def contains_suspicious_keyword(text: str, suspicious_list: list) -> bool:
+    if not text:
+        return False
+    
+    # Check each suspicious keyword
+    for keyword in suspicious_list:
+        # Create a regex pattern that matches the keyword as a whole word
+        # \b ensures word boundaries (won't match partial words)
+        pattern = r'\b' + re.escape(keyword) + r'\b'
+        if re.search(pattern, text, re.IGNORECASE):
+            return True
+    
+    return False
+
+def check_suspicious_bio(bio_text: str) -> tuple[bool, list]:
+    detected = []
+    bio_cleaned = (bio_text or "").strip().replace("\u200b", "").lower()
+    
+    if any(keyword in bio_cleaned for keyword in BIO_PHRASES):
+        detected.append("bio phrase")
+    if contains_multiplication_phrase(bio_cleaned):
+        detected.append("multiplication")
+    if contains_non_x_links(bio_cleaned):
+        detected.append("non-X link")
+    
+    return (len(detected) > 0, detected)
+
 # Suspicious auto-ban function
 def handle_new_members(update, context):
     message = update.message
@@ -364,7 +384,7 @@ def handle_new_members(update, context):
 
     for new_user in message.new_chat_members:
         name = new_user.full_name or "No Name"
-        username = new_user.username # no fallback
+        username = new_user.username
         user_id = new_user.id 
 
         name_info = f"Name: {name}, Username: @{username}" if username else f"Name: {name} (no username)"
@@ -372,8 +392,9 @@ def handle_new_members(update, context):
 
         # Normalize names and usernames
         name_norm = normalize_name(name)
-        username_norm = normalize_name(username) if username else "" # Only normalize if exists
+        username_norm = normalize_name(username) if username else ""
 
+        # Check 1: Admin impersonation
         if name_norm in admin_names:
             try:
                 context.bot.ban_chat_member(chat_id, user_id)
@@ -382,11 +403,11 @@ def handle_new_members(update, context):
             except Exception as e:
                 print(f"[ERROR] Failed to ban user for admin impersonation {user_id}: {e}")
 
-        # Check for suspicious keywords, exact dot, or hidden/missing username
+        # Check 2: Suspicious keywords or dot using whole word matching
         ban_reason = None
-        if name_norm in SUSPICIOUS_USERNAMES:
+        if contains_suspicious_keyword(name_norm, SUSPICIOUS_USERNAMES):
             ban_reason = f"Suspicious name '{name_norm}' in blocklist"
-        elif username_norm in SUSPICIOUS_USERNAMES:
+        elif contains_suspicious_keyword(username_norm, SUSPICIOUS_USERNAMES):
             ban_reason = f"Suspicious username '{username_norm}' in blocklist"
         elif name_norm == ".":
             ban_reason = "Name is single dot"
@@ -405,24 +426,16 @@ def handle_new_members(update, context):
             except Exception as e:
                 print(f"[ERROR] Failed to ban {user_id} for '{ban_reason}': {e}")
 
-        # Check for bio phrases
-        detected = []
-        bio_text = (new_user.bio or "").strip().replace("\u200b", "").lower()
-
-        if any(keyword in bio_text.lower() for keyword in BIO_PHRASES):
-            detected.append("bio phrase")
-        if contains_multiplication_phrase(bio_text):
-            detected.append("multiplication")
-        if contains_non_x_links(bio_text):
-            detected.append("non-X link")
-
-        if detected:
+        # Check 3: Suspicious bio content
+        should_ban, violations = check_suspicious_bio(new_user.bio)
+        if should_ban:
             try:
                 context.bot.ban_chat_member(chat_id, user_id)
-                print(f"[BANNED] Disallowed Bio Detected ({', '.join(detected)}) | {name_info} (ID: {user_id})")
+                print(f"[BANNED] Disallowed Bio Detected ({', '.join(violations)}) | {name_info} (ID: {user_id})")
                 continue
             except Exception as e:
                 print(f"[ERROR] Failed to ban user {user_id}: {e}")
+
         # new user passed all checks
         print(f"[JOIN APPROVED] User passed all security checks: {name_info} (ID: {user_id})")
 
@@ -588,8 +601,8 @@ def check_message(update: Update, context: CallbackContext):
 
         # Check for suspicious keywords or dot in name/username
         if (
-            any(susp in name_normalized for susp in SUSPICIOUS_USERNAMES) or
-            any(susp in username_normalized for susp in SUSPICIOUS_USERNAMES) or
+            contains_suspicious_keyword(name_normalized, SUSPICIOUS_USERNAMES) or
+            contains_suspicious_keyword(username_normalized, SUSPICIOUS_USERNAMES) or
             name_normalized == "." or
             username_normalized == "."
         ):
