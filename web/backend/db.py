@@ -15,6 +15,8 @@ db = client["arc_bot"]
 telegram_messages = db["telegram_messages"]
 last_podcast_message = db["last_podcast_message"]
 last_news_message = db["last_news_message"]
+last_brand_assets_message = db["last_brand_assets_message"]
+last_scheduled_warning_message = db["last_scheduled_warning_message"]
 
 def save_message_to_db(message):
     """
@@ -111,3 +113,51 @@ def save_last_news_message(message):
         print(f"[DB] Saved last news message, message ID: {message.message_id}")
     except Exception as e:
         print(f"[DB] Failed to save last news message: {e}")
+
+def save_last_brand_assets_message(message):
+    """
+    Save or update the last brand assets message in its own collection.
+    Always keeps a single document with _id='latest'.
+    """
+    try:
+        last_brand_assets_message.update_one(
+            {"_id": "latest"},
+            {
+                "$set": {
+                    "message_id": message.message_id,
+                    "text": message.text or "",
+                    "updated_at": datetime.utcnow()
+                },
+                "$setOnInsert": {
+                    "created_at": datetime.utcnow()
+                }
+            },
+            upsert=True
+        )
+        print(f"[DB] Saved last brand assets message, message ID: {message.message_id}")
+    except Exception as e:
+        print(f"[DB] Failed to save last brand assets message: {e}")
+
+def save_last_scheduled_warning_message(message):
+    """
+    Save or update the last scheduled warning message in its own collection.
+    Always keeps a single document with _id='latest'.
+    """
+    try:
+        last_scheduled_warning_message.update_one(
+            {"_id": "latest"},
+            {
+                "$set": {
+                    "message_id": message.message_id,
+                    "text": message.text or "",
+                    "updated_at": datetime.utcnow()
+                },
+                "$setOnInsert": {
+                    "created_at": datetime.utcnow()
+                }
+            },
+            upsert=True
+        )
+        print(f"[DB] Saved last scheduled warning message, message ID: {message.message_id}")
+    except Exception as e:
+        print(f"[DB] Failed to save last scheduled warning message: {e}")
