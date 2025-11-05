@@ -945,10 +945,7 @@ def main():
 
     # Handler: All message types - Main security and filter processing
     dp.add_handler(MessageHandler(
-        Filters.text | Filters.command | Filters.photo | Filters.video |
-        Filters.document | Filters.animation | Filters.sticker |
-        Filters.voice | Filters.video_note | Filters.contact |
-        Filters.location | Filters.venue | Filters.poll,
+        Filters.all,
         check_message
     ))
 
