@@ -122,7 +122,7 @@ BIO_PHRASES = [
     "free crypto", "free sol", "claim now", "airdrop", "giveaway",
     "50x", "100x", "50-x", "100-x", "50X", "100X", "50X+", "100X+",
     "click link", "follow for", "more info", "join now", "instant profit", "earn crypto",
-    "manager", "fourtis"
+    "manager", "fourtis", "contact me", "dm"
 ]
 
 def extract_message(update: Update):
