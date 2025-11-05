@@ -518,6 +518,16 @@ def check_message(update: Update, context: CallbackContext):
     if not message:
         print("==== No message detected in this update ====")
         return
+    
+    # Delete bot spam messages immediately (BuyBot, Rose, Safeguard, etc.)
+    BOT_SPAM_USERNAMES = ["BuyBot", "MissRose_bot", "GroupHelpBot", "SafeguardRobot", "safeguard"]
+    if message.from_user and message.from_user.username in BOT_SPAM_USERNAMES:
+        try:
+            context.bot.delete_message(chat_id=message.chat_id, message_id=message.message_id)
+            print(f"[DELETED] Bot spam from @{message.from_user.username}: {message.message_id}")
+            return
+        except Exception as e:
+            print(f"[ERROR] Failed to delete bot message from @{message.from_user.username}: {e}")
 
     # Normalize text/caption for spam/filter checks
     raw_text = message.text or message.caption or ""
