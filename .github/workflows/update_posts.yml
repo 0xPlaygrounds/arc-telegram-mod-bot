@@ -2,7 +2,8 @@ name: Update X API Posts
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    # Run every other day at midnight UTC
+    - cron: "0 0 */2 * *"
   workflow_dispatch:
 
 jobs:
