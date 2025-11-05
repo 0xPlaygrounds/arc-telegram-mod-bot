@@ -111,7 +111,7 @@ SUSPICIOUS_USERNAMES = [normalize_name(name) for name in [
     "arc_admin", "arc admin", "system", "bot", "official",
     "verification", "verify", "verify_account", "verify-account",
     "check", "checker", "t.me", "telegram", "tg", "contact",
-    "info", "customer_support",
+    "info", "customer_support", "airdrop",
     "admin_", "_admin", "mod_", "_mod", "support_", "_support", "arc complex"
 ]]
 
