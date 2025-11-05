@@ -111,7 +111,7 @@ SUSPICIOUS_USERNAMES = [normalize_name(name) for name in [
     "arc_admin", "arc admin", "system", "bot", "official",
     "verification", "verify", "verify_account", "verify-account",
     "check", "checker", "t.me", "telegram", "tg", "contact",
-    "info", "customer_support", "airdrop",
+    "info", "customer_support", "airdrop", "binance",
     "admin_", "_admin", "mod_", "_mod", "support_", "_support", "arc complex"
 ]]
 
@@ -122,7 +122,7 @@ BIO_PHRASES = [
     "free crypto", "free sol", "claim now", "airdrop", "giveaway",
     "50x", "100x", "50-x", "100-x", "50X", "100X", "50X+", "100X+",
     "click link", "follow for", "more info", "join now", "instant profit", "earn crypto",
-    "manager", "fourtis", "contact me", "dm"
+    "manager", "fourtis", "contact me", "dm", "binance"
 ]
 
 def extract_message(update: Update):
