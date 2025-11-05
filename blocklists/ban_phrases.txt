@@ -193,3 +193,6 @@ migrate your tokens
 old contract
 private mesage
 phantom wallet
+old empty
+exoudos wallet
+trading history
