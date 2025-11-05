@@ -28,6 +28,6 @@ jobs:
           API_URL: ${{ secrets.API_BASE_URL }}
         run: |
           echo "Triggering podcasts endpoint..."
-          status_code=$(curl -s -o response.json -w "%{http_code}" -X POST "$API_URL")
+          status_code=$(curl -s -o response.json -w "%{http_code}" -X POST "$API_URL/trigger/send-podcasts-message")
           echo "Status code: $status_code"
           cat response.json
