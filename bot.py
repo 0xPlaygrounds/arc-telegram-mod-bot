@@ -121,7 +121,8 @@ BIO_PHRASES = [
     "dm me", "message me", "dm for", "contact in bio", "send me", "message for",
     "free crypto", "free sol", "claim now", "airdrop", "giveaway",
     "50x", "100x", "50-x", "100-x", "50X", "100X", "50X+", "100X+",
-    "click link", "follow for", "more info", "join now", "instant profit", "earn crypto"
+    "click link", "follow for", "more info", "join now", "instant profit", "earn crypto",
+    "manager", "fourtis"
 ]
 
 def extract_message(update: Update):
@@ -589,6 +590,21 @@ def check_message(update: Update, context: CallbackContext):
 
     # Ignore messages from admins
     if user_id not in admin_ids:
+
+        # bio check for existing members
+        try:
+            # Fetch full user details to get bio
+            chat_member = context.bot.get_chat_member(chat_id, user_id)
+            user_bio = chat_member.user.bio or ""
+            
+            should_ban, violations = check_suspicious_bio(user_bio)
+            if should_ban:
+                context.bot.delete_message(chat_id=chat_id, message_id=message.message_id)
+                context.bot.ban_chat_member(chat_id=chat_id, user_id=user_id)
+                print(f"[BANNED] Suspicious bio ({', '.join(violations)}): {full_name} (@{user.username})")
+                return
+        except Exception as e:
+            print(f"[ERROR] Failed to check bio for user {user_id}: {e}")
 
         # Delete any media from non-admins
         if media_type:

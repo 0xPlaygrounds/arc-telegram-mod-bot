@@ -105,3 +105,6 @@ next send
 /website
 chart
 mesage
+fourtis
+sample
+$
