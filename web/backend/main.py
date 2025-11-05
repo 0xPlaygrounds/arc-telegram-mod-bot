@@ -24,6 +24,7 @@ from web.backend.api.send_news_message import router as news_router
 from web.backend.api.send_brand_assets import router as brand_assets_router
 from web.backend.api.send_scheduled_warnings import router as scheduled_warnings_router
 from api.arclan_turing import router as arclan_router
+from web.backend.api.chat_cleanup import router as chat_cleanup_router
 
 # -----------------------------
 # Initialize FastAPI
@@ -37,6 +38,7 @@ app.include_router(news_router)
 app.include_router(brand_assets_router)
 app.include_router(scheduled_warnings_router)
 app.include_router(arclan_router)
+app.include_router(chat_cleanup_router)
 
 # Allow frontend to connect
 app.add_middleware(
