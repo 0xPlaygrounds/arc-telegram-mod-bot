@@ -2,7 +2,7 @@ name: Trigger Scheduled Warning (4 PM)
 
 on:
   schedule:
-    - cron: "0 16 * * *"  # Daily at 4:00 PM UTC
+    - cron: "0 16 * * 1"  # Daily at 4:00 PM UTC (10 am CST)
   workflow_dispatch:
 
 jobs:
