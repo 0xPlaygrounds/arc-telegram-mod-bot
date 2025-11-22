@@ -29,7 +29,7 @@ from web.backend.db import telegram_messages, save_message_to_db
 logger = logging.getLogger(__name__)
 
 
-def save_message_if_needed(message, message_text: str, user_id: int, admin_ids: List[int], filters_dict: dict):
+def save_message_db(message, message_text: str, user_id: int, admin_ids: List[int], filters_dict: dict):
     """Save message to DB if needed (not admin, not custom command)"""
     is_admin = user_id in admin_ids
     is_custom_command = (
@@ -93,8 +93,8 @@ def check_message(update: Update, context: CallbackContext):
         ):
             return  # Message was handled by moderation, stop processing
     
-    # Save message if needed
-    save_message_if_needed(message, message_text, user_id, admin_ids, FILTERS)
+    # Save message to mongodb
+    save_message_db(message, message_text, user_id, admin_ids, FILTERS)
     
     # Handle filter responses and special commands
     handle_filter_responses(context, message, chat_id, message_text)
