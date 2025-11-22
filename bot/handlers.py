@@ -2,6 +2,7 @@
 Main event handlers for the bot
 """
 
+import re
 import logging
 from typing import List
 from telegram import Update
@@ -18,6 +19,9 @@ from .admin import get_admin_data
 from .moderation import (
     handle_bot_spam,
     check_user_moderation,
+    contains_suspicious_keyword,
+    check_suspicious_bio,
+    SUSPICIOUS_USERNAMES,
 )
 from .filters import handle_filter_responses, FILTERS
 from web.backend.db import telegram_messages, save_message_to_db
@@ -27,8 +31,6 @@ logger = logging.getLogger(__name__)
 
 def save_message_if_needed(message, message_text: str, user_id: int, admin_ids: List[int], filters_dict: dict):
     """Save message to DB if needed (not admin, not custom command)"""
-    import re
-    
     is_admin = user_id in admin_ids
     is_custom_command = (
         re.search(r'(?<!\w)/metrics(?!\w)', message_text) or
@@ -100,14 +102,6 @@ def check_message(update: Update, context: CallbackContext):
 
 def handle_new_members(update, context):
     """Handle new member joins - perform security checks"""
-    from .admin import get_admin_data
-    from .utils import normalize_name
-    from .moderation import (
-        contains_suspicious_keyword,
-        check_suspicious_bio,
-        SUSPICIOUS_USERNAMES,
-    )
-    
     message = update.message
     if message is None or not message.new_chat_members:
         return
@@ -175,10 +169,6 @@ def handle_new_members(update, context):
 
 def handle_message_reaction(update: Update, context: CallbackContext):
     """Handle emoji reactions and ban suspicious users"""
-    from .admin import get_admin_data
-    from .utils import normalize_name
-    from .moderation import SUSPICIOUS_USERNAMES
-    
     # message_reaction_updated is the correct attribute
     if not hasattr(update, 'message_reaction_updated'):
         return
@@ -228,5 +218,3 @@ def handle_message_reaction(update: Update, context: CallbackContext):
             logger.warning(f"[BANNED] {ban_reason} | {full_name} (@{username or 'N/A'} | ID: {user_id})")
         except Exception as e:
             logger.error(f"[ERROR] Failed to ban user for reaction: {e}")
-
-
