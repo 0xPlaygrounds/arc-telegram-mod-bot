@@ -1,31 +1,25 @@
 """
-Main bot entry point - thin wrapper that imports from bot modules
-Maintains backward compatibility for existing imports (updater, send_news, send_podcasts)
+Main bot entry point - sets up handlers and starts bot
 """
 
 import logging
-from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
-
-# Import from modules
-from bot.config import BOT_TOKEN
-from bot.handlers import check_message, handle_new_members, handle_message_reaction
-from bot.filters import list_filters
-from bot.scheduled import send_news, send_podcasts
-
-# Configure logging
-logging.basicConfig(
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-    level=logging.INFO
+from telegram.ext import (
+    Updater,
+    MessageHandler,
+    Filters,
+    CommandHandler,
 )
+
+from .config import BOT_TOKEN
+from .handlers import check_message, handle_new_members, handle_message_reaction
+from .filters import list_filters
+
 logger = logging.getLogger(__name__)
 
-# Telegram Bot Initialization (exported for backward compatibility with web/backend/main.py)
+# Telegram Bot Initialization
 updater = Updater(BOT_TOKEN, use_context=True)
 dp = updater.dispatcher
 job_queue = updater.job_queue
-
-# Export scheduled functions for backward compatibility (used by web/backend/api/*.py)
-__all__ = ['updater', 'dp', 'job_queue', 'send_news', 'send_podcasts', 'main']
 
 
 def main():
@@ -52,6 +46,3 @@ def main():
     updater.start_polling()
     logger.info("Bot started and polling")
 
-
-if __name__ == "__main__":
-    main()

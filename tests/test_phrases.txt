@@ -1,0 +1,30 @@
+# Test phrases for blocklist testing
+
+# Should match BAN
+dm me
+send message with your address
+airdrop
+hit me up
+scam
+why is arc dumping
+
+# Should match MUTE
+private message
+pm me
+contact me
+wintermute
+
+# Should match DELETE
+if you are still holding
+why price drop
+profit
+i made a lot of sol
+
+# Should NOT match
+hello world
+how are you doing today
+this is a normal message
+what's up
+/ready
+/growth
+
