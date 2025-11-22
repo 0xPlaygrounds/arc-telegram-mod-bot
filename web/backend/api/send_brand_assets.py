@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from bot import updater
+from bot_main import updater
 from web.backend.db import save_last_brand_assets_message, last_brand_assets_message
 from telegram import ParseMode
 import logging

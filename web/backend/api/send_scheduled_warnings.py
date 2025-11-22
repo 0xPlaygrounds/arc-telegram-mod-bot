@@ -1,5 +1,5 @@
 from fastapi import APIRouter, Query
-from bot import updater
+from bot_main import updater
 from web.backend.db import save_last_scheduled_warning_message, last_scheduled_warning_message
 from telegram import ParseMode
 import logging

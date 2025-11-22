@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from bot import send_podcasts, updater
+from bot_main import send_podcasts, updater
 from web.backend.db import save_last_podcast_message, last_podcast_message
 import logging
 

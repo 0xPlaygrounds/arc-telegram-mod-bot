@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from bot import send_news, updater
+from bot_main import send_news, updater
 from web.backend.db import save_last_news_message, last_news_message
 import logging
 

@@ -14,7 +14,7 @@ from pathlib import Path
 import threading
 
 # Import bot objects
-from bot import main as bot_main, updater
+from bot_main import main as bot_main, updater
 from telegram import Bot
 
 # Import API routers
