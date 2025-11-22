@@ -11,7 +11,7 @@ from telegram.ext import (
 )
 
 from .config import BOT_TOKEN
-from .handlers import check_message, handle_new_members, handle_message_reaction
+from .handlers import check_message, handle_new_members
 from .filters import list_filters
 
 logger = logging.getLogger(__name__)
