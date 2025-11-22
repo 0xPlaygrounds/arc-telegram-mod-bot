@@ -8,7 +8,7 @@ from telegram.ext import Updater, MessageHandler, Filters, CommandHandler
 
 # Import from modules
 from bot.config import BOT_TOKEN
-from bot.handlers import check_message, handle_new_members, handle_message_reaction
+from bot.handlers import check_message, handle_new_members
 from bot.filters import list_filters
 from bot.scheduled import send_news, send_podcasts
 
@@ -37,10 +37,6 @@ def main():
 
     # Handler: New member joins - Security checks for suspicious users
     dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, handle_new_members))
-
-    # Handler: Message reactions (emoji) - Ban suspicious users who only react
-    # this isnt supported in tg 13, need to update entire bot and upgrade package
-    # dp.add_handler(MessageReactionHandler(handle_message_reaction))
 
     # Handler: All message types - Main security and filter processing
     dp.add_handler(MessageHandler(
