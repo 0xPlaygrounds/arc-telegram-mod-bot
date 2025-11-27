@@ -86,75 +86,117 @@ def normalize_text_aggressive(text: str) -> str:
     
     # Replace common number/symbol substitutions
     substitutions = {
-        '0': 'o', '1': 'i', '3': 'e', '4': 'a', '5': 's', 
-        '7': 't', '8': 'b', '9': 'g', '@': 'a', '$': 's', 
-        '!': 'i', '|': 'l'
+        '0': 'o', '1': 'i', '3': 'e', '4': 'a', '5': 's',
+        '7': 't', '8': 'b', '9': 'g', '@': 'a', '$': 's',
+        '!': 'i', '|': 'l', 'ø': 'o', 'ö': 'o', 'ó': 'o',
+        'ò': 'o', 'õ': 'o', 'é': 'e', 'è': 'e', 'ê': 'e',
+        'ë': 'e', 'ε': 'e', 'í': 'i', 'ì': 'i', 'î': 'i',
+        'ï': 'i', 'á': 'a', 'à': 'a', 'â': 'a', 'ä': 'a',
+        'α': 'a', 'ú': 'u', 'ù': 'u', 'û': 'u', 'ü': 'u'
     }
     for char, replacement in substitutions.items():
         text = text.replace(char, replacement)
     
     # Remove ALL non-alphanumeric characters (keeps only a-z)
-    # This strips: _ ^ - * spaces punctuation etc.
     text = re.sub(r'[^a-z]', '', text)
     
     return text
 
 
-def check_fuzzy_match(phrase: str, text: str, threshold: float = 0.85) -> bool:
+def check_fuzzy_match(phrase: str, text: str, threshold: float = 0.65) -> bool:
     """
     Check if phrase appears in text with fuzzy matching.
-    Allows for typos, missing letters, and doubled letters.
-    
-    Args:
-        phrase: The blocklist phrase (normalized)
-        text: The message text (normalized)
-        threshold: Match threshold (0.85 = 85% of characters must match)
-    
-    Examples:
-        "privategroup" matches "privategro oup" (with typo)
-        "specialdrop" matches "specialdropp" (extra letter)
-    
-    Returns:
-        True if phrase fuzzy-matches in text
+    Very aggressive matching with vowel-aware tolerance.
     """
     phrase_len = len(phrase)
     if phrase_len == 0:
         return False
     
-    # First try exact substring match (fastest path)
+    # Exact match
     if phrase in text:
         return True
     
-    # Text too short to contain phrase
     text_len = len(text)
-    if text_len < phrase_len * 0.7:
+    if text_len < phrase_len * 0.35:
         return False
     
-    # Sliding window fuzzy match
+    # Helper: Check if character is a vowel
+    def is_vowel(c):
+        return c in 'aeiou'
+    
+    # Method 1: Sliding window with exact phrase length
     for i in range(len(text) - phrase_len + 1):
         window = text[i:i + phrase_len]
         matches = sum(1 for a, b in zip(phrase, window) if a == b)
-        similarity = matches / phrase_len
-        
-        if similarity >= threshold:
+        if matches / phrase_len >= threshold:
             return True
     
-    # Try with length flexibility (for missing/extra chars)
-    max_len = min(phrase_len + 3, text_len)
-    for i in range(len(text) - phrase_len + 1):
-        for length in range(max(phrase_len - 2, 1), max_len + 1):
+    # Method 2: Sequential matching with flexible window - VOWEL AWARE
+    min_len = max(phrase_len - 6, 1)
+    max_len = min(phrase_len + 7, text_len)
+    
+    for i in range(text_len):
+        for length in range(min_len, max_len + 1):
             if i + length > text_len:
                 continue
             window = text[i:i + length]
-            # Count how many phrase characters appear in window
-            matches = sum(1 for c in phrase if c in window)
-            similarity = matches / phrase_len
             
-            if similarity >= threshold:
+            phrase_idx = 0
+            matches = 0
+            consonant_matches = 0
+            phrase_consonants = sum(1 for c in phrase if not is_vowel(c))
+            
+            for char in window:
+                if phrase_idx < phrase_len and char == phrase[phrase_idx]:
+                    matches += 1
+                    if not is_vowel(char):
+                        consonant_matches += 1
+                    phrase_idx += 1
+            
+            # Two checks: overall match OR consonant-heavy match
+            overall_similarity = matches / phrase_len
+            consonant_similarity = consonant_matches / phrase_consonants if phrase_consonants > 0 else 0
+            
+            if overall_similarity >= threshold or consonant_similarity >= 0.75:
                 return True
     
+    # Method 3: Extra lenient for short phrases
+    if phrase_len <= 6:
+        for i in range(text_len):
+            for length in range(max(phrase_len - 3, 1), phrase_len + 5):
+                if i + length > text_len or length < 1:
+                    continue
+                window = text[i:i + length]
+                
+                phrase_idx = 0
+                matches = 0
+                for char in window:
+                    if phrase_idx < phrase_len and char == phrase[phrase_idx]:
+                        matches += 1
+                        phrase_idx += 1
+                
+                if matches / phrase_len >= 0.50:  # 50% for short phrases
+                    return True
+    
+    # Method 4: Longer phrases with more tolerance
+    if phrase_len > 10:
+        for i in range(text_len):
+            for length in range(phrase_len - 7, phrase_len + 8):
+                if i + length > text_len or length < 1:
+                    continue
+                window = text[i:i + length]
+                
+                phrase_idx = 0
+                matches = 0
+                for char in window:
+                    if phrase_idx < phrase_len and char == phrase[phrase_idx]:
+                        matches += 1
+                        phrase_idx += 1
+                
+                if matches / phrase_len >= 0.58:  # 58% for longer phrases
+                    return True
+    
     return False
-
 
 def check_phrase_in_text(phrase: str, text: str) -> bool:
     """
@@ -174,11 +216,8 @@ def check_phrase_in_text(phrase: str, text: str) -> bool:
     Returns:
         True if phrase is found in text (with obfuscation tolerance)
     """
-    # Normalize both phrase and text
     normalized_phrase = normalize_text_aggressive(phrase)
     normalized_text = normalize_text_aggressive(text)
-    
-    # Check fuzzy match
     return check_fuzzy_match(normalized_phrase, normalized_text)
 
 

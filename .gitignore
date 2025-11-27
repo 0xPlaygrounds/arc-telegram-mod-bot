@@ -8,3 +8,5 @@ telegram-bot-env/
 web/frontend/node_modules
 web/frontend/.parcel-cache
 web/frontend/dist
+
+scripts/
