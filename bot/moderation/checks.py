@@ -1,6 +1,5 @@
 """
 Main moderation check orchestration
-UPDATED: Now uses fuzzy matching for blocklists to prevent bypasses
 """
 
 import logging
@@ -15,8 +14,7 @@ from .patterns import (
     contains_give_sol_phrase, 
     contains_arrows, 
     contains_non_x_links,
-    contains_suspicious_keyword,
-    check_phrase_in_text  # fuzzy matching function
+    contains_suspicious_keyword
 )
 from .validators import is_username_valid, is_impersonating_admin
 from .constants import SUSPICIOUS_USERNAMES
@@ -130,36 +128,38 @@ def check_user_moderation(context: CallbackContext, chat_id: int, user_id: int, 
         if disallowed_filters(message, context):
             return True
 
-    # ========================================================================
-    # UPDATED: Check blocklists using fuzzy matching (catches obfuscation)
-    # ========================================================================
+    # Check blocklists (BAN, MUTE, DELETE)
+    normalized = message_text.strip().lower()
     
-    # Check for banned phrases (fuzzy matching - catches pri-vate, sp0t, mes^sage, etc.)
-    for i, (original_phrase, normalized_phrase) in enumerate(BAN_PATTERNS):
-        if check_phrase_in_text(original_phrase, message_text):
+    # Check for banned phrases (pre-compiled regex patterns)
+    for i, pattern in enumerate(BAN_PATTERNS):
+        if pattern.search(normalized):
+            phrase = BAN_PHRASES[i]
             ban_and_delete_message(
                 context, chat_id, user.id, message.message_id,
-                f"Phrase found: '{original_phrase}' in message",
+                f"Phrase found: '{phrase}' in message",
                 f"User {user.id}: '{message_text[:50]}...'"
             )
             return True
 
-    # Check for muted phrases (fuzzy matching)
-    for i, (original_phrase, normalized_phrase) in enumerate(MUTE_PATTERNS):
-        if check_phrase_in_text(original_phrase, message_text):
-            logger.warning(f"[MUTE MATCH] Phrase found: '{original_phrase}' in message: '{message_text}'")
+    # Check for muted phrases (pre-compiled regex patterns)
+    for i, pattern in enumerate(MUTE_PATTERNS):
+        if pattern.search(normalized):
+            phrase = MUTE_PHRASES[i]
+            logger.warning(f"[MUTE MATCH] Phrase found: '{phrase}' in message: '{message_text}'")
             mute_user(
                 context, chat_id, user.id, user.first_name, message,
-                f"Phrase found: '{original_phrase}'"
+                f"Phrase found: '{phrase}'"
             )
             return True
 
-    # Check for deleted phrases (fuzzy matching)
-    for i, (original_phrase, normalized_phrase) in enumerate(DELETE_PATTERNS):
-        if check_phrase_in_text(original_phrase, message_text):
+    # Check for deleted phrases (pre-compiled regex patterns)
+    for i, pattern in enumerate(DELETE_PATTERNS):
+        if pattern.search(normalized):
+            phrase = DELETE_PHRASES[i]
             delete_message_safe(
                 context, chat_id, message.message_id,
-                f"Phrase found: '{original_phrase}' in message",
+                f"Phrase found: '{phrase}' in message",
                 f"User {user.id}: '{message_text[:50]}...'"
             )
             return True
