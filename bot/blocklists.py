@@ -1,8 +1,8 @@
 """
 Blocklist management - loading and pattern compilation
-UPDATED: Now uses fuzzy matching instead of regex patterns
 """
 
+import re
 import logging
 from typing import List
 from pathlib import Path
@@ -13,7 +13,6 @@ from .config import (
     DELETE_PHRASES_FILE,
     WHITELIST_PHRASES_FILE,
 )
-from .moderation.patterns import compile_enhanced_blocklist_patterns
 
 logger = logging.getLogger(__name__)
 
@@ -30,21 +29,29 @@ def load_phrases(file_path):
     return phrases
 
 
+def compile_blocklist_patterns(phrases: List[str]) -> List[re.Pattern]:
+    """Pre-compile regex patterns with word boundaries for blocklist phrases"""
+    patterns = []
+    for phrase in phrases:
+        pattern = r'\b' + re.escape(phrase) + r'\b'
+        patterns.append(re.compile(pattern, re.IGNORECASE))
+    return patterns
+
+
 # Load blocklists
 BAN_PHRASES = load_phrases(BAN_PHRASES_FILE)
 MUTE_PHRASES = load_phrases(MUTE_PHRASES_FILE)
 DELETE_PHRASES = load_phrases(DELETE_PHRASES_FILE)
 WHITELIST_PHRASES = load_phrases(WHITELIST_PHRASES_FILE)
 
-# Compile enhanced patterns for fuzzy matching (catches obfuscation)
-# Returns list of tuples: [(original_phrase, normalized_phrase), ...]
-BAN_PATTERNS = compile_enhanced_blocklist_patterns(BAN_PHRASES)
-MUTE_PATTERNS = compile_enhanced_blocklist_patterns(MUTE_PHRASES)
-DELETE_PATTERNS = compile_enhanced_blocklist_patterns(DELETE_PHRASES)
+# Pre-compile regex patterns for blocklists (performance optimization)
+BAN_PATTERNS = compile_blocklist_patterns(BAN_PHRASES)
+MUTE_PATTERNS = compile_blocklist_patterns(MUTE_PHRASES)
+DELETE_PATTERNS = compile_blocklist_patterns(DELETE_PHRASES)
 
 logger.info(
-    f"Loaded fuzzy-match blocklists - "
-    f"{len(BAN_PATTERNS)} BAN, "
-    f"{len(MUTE_PATTERNS)} MUTE, "
-    f"{len(DELETE_PATTERNS)} DELETE"
+    f"Pre-compiled {len(BAN_PATTERNS)} BAN patterns, "
+    f"{len(MUTE_PATTERNS)} MUTE patterns, "
+    f"{len(DELETE_PATTERNS)} DELETE patterns"
 )
+
